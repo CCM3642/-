@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>نظام إدارة المطعم المتكامل</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+  <title>Crispy Chicken LLC - Management System</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
       --primary: #4361ee;
@@ -17,409 +21,449 @@
       --light: #f1f5f9;
       --shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-    body { background: var(--dark); color: var(--light); }
-    header { background: linear-gradient(180deg, #0c1446, rgba(12, 20, 70, 0.8)); padding: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
-    .tab { cursor: pointer; padding: 0.75rem 1.5rem; border-radius: 8px; background: rgba(255,255,255,0.1); transition: all 0.3s ease; display: inline-flex; align-items: center; margin-right: 0.5rem; }
-    .tab.active { background: var(--primary); color: white; }
-    .card { background: var(--light); border-radius: 12px; padding: 1.5rem; box-shadow: var(--shadow); }
-    .form-group { margin-bottom: 1rem; }
-    .form-control { width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; background: var(--light); }
-    .btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-right: 0.5rem; }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-success { background: var(--success); color: white; }
-    .btn-warning { background: var(--warning); color: white; }
-    .table { width: 100%; border-collapse: collapse; }
-    .table th, .table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
-    .table th { background: var(--primary); color: white; font-weight: 500; }
-    .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
-    .alert-info { background-color: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; color: #1e40af; }
-    .badge { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 500; }
-    .badge-primary { background-color: var(--primary); color: white; }
-    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
-    .modal-content { background: var(--light); margin: 10% auto; border-radius: 12px; width: 90%; max-width: 500px; padding: 2rem; }
-    .chart-container { height: 300px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Cairo", sans-serif; }
+    body { background-color: var(--dark); color: var(--light); line-height: 1.6; }
+    header {
+      background: linear-gradient(180deg, #0c1446, rgba(12, 20, 70, 0.8));
+      padding: 1rem;
+      box-shadow: var(--shadow);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    }
+    header .logo-container {
+      display: flex; align-items: center;
+    }
+    header img.logo {
+      height: 50px; width: auto; margin-right: 15px;
+    }
+    header h1 {
+      font-size: 1.2rem; font-weight: 700; color: #fff;
+    }
+    /* Branch Selector Style */
+    #branchSelector {
+      margin-top: 10px;
+    }
+    #branchSelector select {
+      padding: 0.5rem; border-radius: 8px; border: none; font-weight: 600;
+    }
+    .tabs {
+      display: flex; gap: 8px; margin-top: 1rem; margin-bottom: 15px;
+    }
+    .tab {
+      cursor: pointer; padding: 0.75rem 1.5rem; border-radius: 8px;
+      background: rgba(255,255,255,0.1); transition: all 0.3s ease; font-weight: 600;
+    }
+    .tab.active { background: var(--primary); color: #fff; }
+    main { margin-top: 20px; }
+    section { display: none; padding: 15px; background-color: #2d3e50; border-radius: 10px; }
+    section.active { display: block; }
+    h2 { margin-bottom: 15px; color: #fff; font-size: 1.2rem; }
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 500; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; margin: 0.5rem; border: none; transition: background 0.3s ease;
+    }
+    .btn-primary { background-color: var(--primary); color: #fff; }
+    .btn-success { background-color: var(--success); color: #fff; }
+    .btn-warning { background-color: var(--warning); color: #fff; }
+    .btn-danger { background-color: var(--danger); color: #fff; }
+    .btn:hover { opacity: 0.9; }
+    /* Tables */
+    table {
+      width: 100%; border-collapse: collapse; margin-top: 1rem; background-color: #3a506b; border-radius: 8px;
+    }
+    th, td {
+      padding: 0.75rem; border: 1px solid #29407b; text-align: center; color: #fff;
+    }
+    th { background-color: rgba(255,255,255,0.2); }
+    tbody tr:nth-child(even) { background-color: rgba(255,255,255,0.1); }
+    /* Responsive */
+    .table-responsive { overflow-x: auto; }
+    /* Inputs */
+    input[type="text"], input[type="number"], select, input[type="date"], input[type="month"], input[type="file"] {
+      width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #29407b; background-color: #fff; color: #000;
+    }
+    /* Footer */
+    footer { padding: 1rem; text-align: center; font-size: 0.9rem; color: #9db3e6; margin-top: 20px; }
   </style>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <h1>نظام إدارة المطعم المتكامل (الوصفات + المبيعات + الجرد + الانحراف)</h1>
-      <div class="tabs">
-        <div class="tab active" data-tab="recipes">الوصفات (Sales Mix)</div>
-        <div class="tab" data-tab="sales">المبيعات اليومية</div>
-        <div class="tab" data-tab="monthly">التقرير الشهري</div>
-        <div class="tab" data-tab="inventory">الجرد & الحركات</div>
-        <div class="tab" data-tab="settings">إعدادات/استيراد</div>
-      </div>
+
+<header>
+  <div class="logo-container">
+    <!-- شعار الشركة -->
+    <img src="https://via.placeholder.com/100x50?text=CRISPY+LOGO" alt="Crispy Chicken Logo" class="logo" />
+    <h1>Crispy Chicken LLC Management System</h1>
+  </div>
+</header>
+
+<div class="container">
+  <!-- Branch Selector -->
+  <div id="branchSelector">
+    <label for="branchSelect">Select Branch: </label>
+    <select id="branchSelect">
+      <option value="Hamdan St">Crispy Chicken - Hamdan St</option>
+      <option value="Khaldia">Crispy Chicken Khaldia</option>
+      <option value="Shabiya 11">Crispy Chicken Shabiya 11</option>
+      <option value="Muroor">Crispy Chicken Muroor</option>
+      <option value="Al Electra">Crispy Chicken Al Electra</option>
+      <option value="Al Barsha">Crispy Chicken Al Barsha</option>
+      <option value="Al Satwa">Crispy Chicken Al Satwa</option>
+    </select>
+  </div>
+
+  <!-- تبويبات التنقل -->
+  <div class="tabs">
+    <div class="tab active" data-tab="recipes"><i class="fas fa-utensils"></i> Recipes</div>
+    <div class="tab" data-tab="sales"><i class="fas fa-dollar-sign"></i> Sales</div>
+    <div class="tab" data-tab="report"><i class="fas fa-chart-bar"></i> Monthly Report</div>
+    <div class="tab" data-tab="inventory"><i class="fas fa-warehouse"></i> Inventory & Movements</div>
+    <div class="tab" data-tab="settings"><i class="fas fa-cogs"></i> Settings</div>
+  </div>
+
+  <!-- الوصفات -->
+  <section id="recipes" class="active">
+    <h2>Recipe Management</h2>
+    <div>
+      <button class="btn btn-primary" id="addRecipeBtn"><i class="fas fa-plus"></i> Add Item</button>
+      <button class="btn btn-success" id="addIngredientBtn"><i class="fas fa-plus"></i> Add Ingredient</button>
+      <button class="btn btn-success" id="saveRecipesBtn"><i class="fas fa-save"></i> Save</button>
+      <button class="btn btn-warning" id="exportRecipesBtn"><i class="fas fa-download"></i> Export JSON</button>
     </div>
-  </header>
-  <main class="container">
-    <section id="recipes" class="card">
-      <div class="form-group">
-        <button class="btn btn-primary" id="btnAddItem"><i class="fas fa-plus mr-2"></i> إضافة صنف</button>
-        <button class="btn btn-success" id="btnAddIng"><i class="fas fa-plus mr-2"></i> إضافة مكوّن</button>
-        <button class="btn btn-success" id="btnSave"><i class="fas fa-save mr-2"></i> حفظ (LocalStorage)</button>
-        <button class="btn" id="btnExport"><i class="fas fa-download mr-2"></i> تصدير JSON</button>
-      </div>
-      <div class="table-responsive">
-        <table id="tblRecipes"></table>
-      </div>
-      <div class="alert alert-info mt-3">
-        <i class="fas fa-info-circle mr-2"></i> أدخل كميات المكونات **لكل وحدة بيع**. مثال: صنف 12PCS يستخدم 12 قطعة دجاج → في عمود CHIX اكتب 12.
-      </div>
-    </section>
-    
-    <section id="sales" class="card" style="display: none">
-      <div class="form-group row">
-        <div class="col-md-4">
-          <label>التاريخ</label>
-          <input type="date" id="saleDate" class="form-control" value="">
-        </div>
-        <div class="col-md-4">
-          <label>الصنف</label>
-          <select id="saleItem" class="form-control"></select>
-        </div>
-        <div class="col-md-4">
-          <label>الكمية</label>
-          <input type="number" id="saleQty" class="form-control" min="1" value="1">
-        </div>
-      </div>
-      <button class="btn btn-primary" id="btnAddSale"><i class="fas fa-plus mr-2"></i> إضافة حركة بيع</button>
-      <button class="btn btn-success" id="btnSaveSales"><i class="fas fa-save mr-2"></i> حفظ المبيعات</button>
-      <button class="btn" id="btnExportSales"><i class="fas fa-download mr-2"></i> تصدير المبيعات CSV</button>
-      <div class="table-responsive mt-3">
-        <table id="tblSales"></table>
-      </div>
-    </section>
-    
-    <section id="monthly" class="card" style="display: none">
-      <div class="form-group">
-        <label>شهر التقرير</label>
-        <input type="month" id="repMonth" class="form-control" value="">
-      </div>
-      <button class="btn btn-primary" id="btnBuildMonthly"><i class="fas fa-chart-bar mr-2"></i> حساب التقرير</button>
-      <button class="btn" id="btnExportMonthly"><i class="fas fa-download mr-2"></i> تصدير ملخص CSV</button>
-      <div class="chart-container mt-3">
-        <canvas id="monthlyChart"></canvas>
-      </div>
-    </section>
-    
-    <section id="inventory" class="card" style="display: none">
-      <div class="form-group">
-        <button class="btn btn-success" id="btnSaveInv"><i class="fas fa-save mr-2"></i> حفظ الجرد والحركات</button>
-        <button class="btn" id="btnCalcVariance"><i class="fas fa-calculator mr-2"></i> حساب الانحراف</button>
-      </div>
-      <div class="table-responsive mt-3">
-        <table id="tblInventory"></table>
-      </div>
-      <div class="table-responsive mt-3">
-        <table id="tblVariance"></table>
-      </div>
-    </section>
-    
-    <section id="settings" class="card" style="display: none">
-      <div class="form-group">
-        <input type="file" id="fileImport" accept=".json">
-        <button class="btn btn-primary" id="btnImport"><i class="fas fa-upload mr-2"></i> استيراد JSON</button>
-        <button class="btn btn-danger" id="btnReset"><i class="fas fa-trash-alt mr-2"></i> مسح كل البيانات</button>
-      </div>
-    </section>
-  </main>
-  
-  <footer class="container py-4 text-center text-gray-600">
-    <p><i class="fas fa-lightbulb mr-2"></i> نصيحة: وحِّد وحدات القياس (قطعة/جرام/لتر) داخل الحسابات. عوامل التحويل تُستخدم فقط للعرض.</p>
-  </footer>
-  
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-  <script>
-    // ========= Data Model =========
-    const DB_KEY = 'restaurant_management_system';
-    let state = {
-      ingredients: [
-        'CHIX','STRIP','BEEFBURGER','Beef burger 125 g','CHIX BURGER','ZINGER','FRIES','CHEES','GARLICSUACE','SMALL CLOWSLOW','BIG CLOWSLOW','DYNAMTESAUCE','BPESI PIP','PEPSI LITER','LARGE JUICE','SMALL WATER','BUN 4 INCH','TORTILA','BUN 4.5 INCH','BUN 6 INCH','SAMOLINA 8 INCH','BUN 5','NUGGETS','SMALL JUICE','POP CORN','SHAWRMA','BASMATI RICE','KINZA COLA','FLOOR','lettuce','Mayonnaise','ketchup','SHORTING'
-      ],
-      items: [
-        {name:'12 PCS PACKET MIX', family:'Combo Meal Mix', group:'Food', recipe: {CHIX:12, GARLICSUACE:3, 'SMALL CLOWSLOW':3, 'BUN 5':3, 'BUN 4 INCH':6}},
-        {name:'16 PCS PACKET MIX', family:'Combo Meal Mix', group:'Food', recipe: {CHIX:16, FRIES:5, GARLICSUACE:4, 'BUN 5':4, 'BUN 4 INCH':8}},
-        {name:'20 PCS PACKET MIX', family:'Combo Meal Mix', group:'Food', recipe: {CHIX:20, FRIES:5, GARLICSUACE:5, 'BUN 5':5, 'BUN 4 INCH':8}},
-        {name:'BUCKET MEAL MIX', family:'Combo Meal Mix', group:'Food', recipe: {CHIX:8, STRIP:8, FRIES:5, 'SMALL WATER':1, 'BUN 4 INCH':8}}
-      ],
-      sales: [
-        {date:'2025-03-01', item:'12 PCS PACKET MIX', qty:1},
-        {date:'2025-03-29', item:'12 PCS PACKET MIX', qty:111}
-      ],
-      inventory: { }
+    <div class="table-responsive">
+      <table id="recipesTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Group</th>
+            <th>Ingredients</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- المبيعات -->
+  <section id="sales">
+    <h2>Daily Sales</h2>
+    <div style="margin-bottom:15px;">
+      <label> Date: <input type="date" id="saleDate"></label>
+      <label> Item: 
+        <select id="saleItem"></select>
+      </label>
+      <label> Quantity: <input type="number" id="saleQty" min="1" value="1"></label>
+      <button class="btn btn-primary" id="addSaleBtn"><i class="fas fa-plus"></i> Add Sale</button>
+      <button class="btn btn-success" id="saveSalesBtn"><i class="fas fa-save"></i> Save</button>
+      <button class="btn btn-warning" id="exportSalesBtn"><i class="fas fa-download"></i> Export CSV</button>
+    </div>
+    <div class="table-responsive">
+      <table id="salesTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- التقرير الشهري -->
+  <section id="report">
+    <h2>Monthly Report</h2>
+    <div style="margin-bottom:15px;">
+      <label>Select Month: <input type="month" id="reportMonth"></label>
+      <button class="btn btn-primary" id="generateReportBtn"><i class="fas fa-chart-bar"></i> Generate Report</button>
+      <button class="btn btn-warning" id="exportReportBtn"><i class="fas fa-download"></i> Export CSV</button>
+    </div>
+    <canvas id="monthlyChart" style="width:100%; height:300px; margin-top:1rem; background:#fff; border-radius:8px;"></canvas>
+  </section>
+
+  <!-- الجرد والحركات -->
+  <section id="inventory">
+    <h2>Inventory & Movements</h2>
+    <div style="margin-bottom:15px;">
+      <button class="btn btn-success" id="saveInventoryBtn"><i class="fas fa-save"></i> Save Data</button>
+      <button class="btn btn-warning" id="calculateVarianceBtn"><i class="fas fa-calculator"></i> Calculate Variance</button>
+    </div>
+    <div class="table-responsive">
+      <table id="inventoryTable">
+        <thead>
+          <tr>
+            <th>Ingredient</th>
+            <th>Initial Quantity</th>
+            <th>Purchases</th>
+            <th>Incoming</th>
+            <th>Outgoing</th>
+            <th>Final Quantity</th>
+            <th>Waste</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- الإعدادات -->
+  <section id="settings">
+    <h2>Settings & Import</h2>
+    <div>
+      <input type="file" id="importFile" accept=".json" />
+      <button class="btn btn-primary" id="importBtn"><i class="fas fa-upload"></i> Import JSON</button>
+      <button class="btn btn-danger" id="resetBtn"><i class="fas fa-trash"></i> Reset All Data</button>
+    </div>
+  </section>
+</div>
+
+<!-- Footer -->
+<footer>
+  <p><i class="fas fa-lightbulb"></i> Remember: Standardize measurement units (pieces/grams/liters). Conversion factors are for display only.</p>
+</footer>
+
+<!-- Scripts -->
+<script>
+  // Data Initialization & Storage
+  let data = {
+    branch: 'Hamdan St',
+    ingredients: ['Chicken', 'Fries', 'Bun', 'Sauce'],
+    items: [
+      { name: 'Chicken Burger', recipe: { Chicken: 1, Bun: 1, Sauce: 0.5 } },
+      { name: 'Fries Pack', recipe: { Fries: 1 } }
+    ],
+    sales: [], // { date, item, qty }
+    inventory: {} // { ingredient: { initial, purchases, incoming, outgoing, waste, final } }
+  };
+
+  // Load data from local storage
+  function loadData() {
+    const stored = localStorage.getItem('crispyData');
+    if (stored) {
+      data = JSON.parse(stored);
+    }
+  }
+  // Save data to local storage
+  function saveData() {
+    localStorage.setItem('crispyData', JSON.stringify(data));
+  }
+
+  // Handle Branch Selection
+  const branchSelect = document.getElementById('branchSelect');
+  branchSelect.value = data.branch;
+  branchSelect.onchange = () => {
+    data.branch = branchSelect.value;
+    saveData();
+  };
+
+  // Tab Navigation
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.onclick = () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+      document.getElementById(tab.dataset.tab).classList.add('active');
+      if (tab.dataset.tab === 'report') {
+        generateChart();
+      }
     };
-    
-    // ========= Persistence =========
-    function load(){
-      const raw = localStorage.getItem(DB_KEY);
-      if(raw){
-        try{ state = JSON.parse(raw); }catch(e){ console.warn('failed parse'); }
+  });
+
+  // Populate Recipes Table
+  function renderRecipes() {
+    const tbody = document.querySelector('#recipesTable tbody');
+    tbody.innerHTML = '';
+    data.items.forEach((item, index) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${index + 1}</td>
+        <td contenteditable="true">${item.name}</td>
+        <td contenteditable="true">${item.category || ''}</td>
+        <td contenteditable="true">${item.group || ''}</td>
+        <td>${Object.entries(item.recipe).map(([ing, qty]) => \`\${ing}:\${qty}\`).join(', ')}</td>
+        <td><button class="btn btn-danger btn-sm delete-item">Delete</button></td>
+      `;
+      tr.querySelector('.delete-item').onclick = () => {
+        data.items.splice(index, 1);
+        renderRecipes();
+        populateSaleItems();
+      };
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Add new recipe
+  document.getElementById('addRecipeBtn').onclick = () => {
+    data.items.push({ name: 'New Item', recipe: {} });
+    renderRecipes();
+  };
+
+  // Populate sale items dropdown
+  function populateSaleItems() {
+    const select = document.getElementById('saleItem');
+    select.innerHTML = '';
+    data.items.forEach(item => {
+      const option = document.createElement('option');
+      option.value = item.name;
+      option.textContent = item.name;
+      select.appendChild(option);
+    });
+  }
+
+  // Add sale record
+  document.getElementById('addSaleBtn').onclick = () => {
+    const date = document.getElementById('saleDate').value || new Date().toISOString().slice(0,10);
+    const item = document.getElementById('saleItem').value;
+    const qty = parseInt(document.getElementById('saleQty').value) || 1;
+    data.sales.push({ date, item, qty });
+    renderSales();
+  };
+
+  // Render sales table
+  function renderSales() {
+    const tbody = document.querySelector('#salesTable tbody');
+    tbody.innerHTML = '';
+    data.sales.forEach((sale, index) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${sale.date}</td>
+        <td>${sale.item}</td>
+        <td>${sale.qty}</td>
+        <td><button class="btn btn-danger btn-sm delete-sale">Delete</button></td>
+      `;
+      tr.querySelector('.delete-sale').onclick = () => {
+        data.sales.splice(index, 1);
+        renderSales();
+      };
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Generate Chart for Monthly Report
+  let chartInstance = null;
+  function generateChart() {
+    const ctx = document.getElementById('monthlyChart').getContext('2d');
+    const month = document.getElementById('reportMonth').value || new Date().toISOString().slice(0,7);
+    // Dummy data generation
+    const labels = [];
+    const dataPoints = [];
+    for (let i=1; i<=31; i++) {
+      labels.push(`${month}-${i.toString().padStart(2,'0')}`);
+      dataPoints.push(Math.floor(Math.random() * 20 + 5));
+    }
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Sales Volume',
+          data: dataPoints,
+          backgroundColor: 'rgba(67,97,238,0.5)',
+          borderColor: 'rgba(67,97,238,1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
       }
+    });
+  }
+
+  // Export Recipes as JSON
+  document.getElementById('exportRecipesBtn').onclick = () => {
+    const dataStr = JSON.stringify(data.items, null, 2);
+    const blob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'recipes.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Export sales as CSV
+  document.getElementById('exportSalesBtn').onclick = () => {
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + ["Date,Item,Quantity"]
+      + data.sales.map(s => `${s.date},${s.item},${s.qty}`).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "sales.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Save all data
+  document.getElementById('saveRecipesBtn').onclick = () => {
+    saveData();
+    alert('Data saved successfully!');
+  };
+  document.getElementById('saveSalesBtn').onclick = () => {
+    saveData();
+    alert('Sales data saved successfully!');
+  };
+  document.getElementById('saveInventoryBtn').onclick = () => {
+    saveData();
+    alert('Inventory data saved successfully!');
+  };
+
+  // Import JSON
+  document.getElementById('importBtn').onclick = () => {
+    const file = document.getElementById('importFile').files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          data = importedData;
+          // Keep branch selection
+          document.getElementById('branchSelect').value = data.branch || 'Hamdan St';
+          renderRecipes();
+          populateSaleItems();
+          renderSales();
+          alert('Data imported successfully!');
+        } catch (err) {
+          alert('Invalid JSON file.');
+        }
+      };
+      reader.readAsText(file);
     }
-    function save(){ localStorage.setItem(DB_KEY, JSON.stringify(state)); }
-    
-    // ========= Helpers =========
-    const qs = s=>document.querySelector(s);
-    const ce = (tag,props={})=>Object.assign(document.createElement(tag),props);
-    function fmt(n){ return Number(n||0).toLocaleString('ar-EG'); }
-    function unique(arr){ return [...new Set(arr)]; }
-    
-    // ========= Tabs =========
-    [...document.querySelectorAll('.tab')].forEach(t=>t.addEventListener('click',()=>{
-      document.querySelectorAll('main section').forEach(s=>s.style.display='none');
-      qs('#'+t.dataset.tab).style.display='block';
-    }));
-    
-    // ========= Recipes UI =========
-    function drawRecipes(){
-      qs('#countItems').textContent = state.items.length;
-      qs('#countIngs').textContent = state.ingredients.length;
-      const tbl = qs('#tblRecipes');
-      tbl.innerHTML='';
-      const thead = ce('thead');
-      const hr = ce('tr');
-      ;['#','اسم الصنف','المجموعة','الفئة','—'].concat(state.ingredients).forEach((h,i)=>{
-        const th = ce('th',{textContent:h});
-        if(i>=5) th.title='كمية لكل وحدة بيع';
-        hr.appendChild(th);
-      });
-      thead.appendChild(hr); tbl.appendChild(thead);
-      const tb=ce('tbody');
-      state.items.forEach((it,idx)=>{
-        const tr=ce('tr');
-        tr.appendChild(ce('td',{textContent:idx+1}))
-        const name=ce('input',{value:it.name}); name.onchange=()=>{it.name=name.value; fillSaleItems(); save();}
-        const fam=ce('input',{value:it.family||''}); fam.onchange=()=>{it.family=fam.value; save();}
-        const grp=ce('input',{value:it.group||''}); grp.onchange=()=>{it.group=grp.value; save();}
-        const del=ce('button',{textContent:'حذف'}); del.onclick=()=>{state.items.splice(idx,1); drawRecipes(); fillSaleItems(); save();}
-        const tdName=ce('td'); tdName.appendChild(name); tr.appendChild(tdName);
-        const tdFam=ce('td'); tdFam.appendChild(fam); tr.appendChild(tdFam);
-        const tdGrp=ce('td'); tdGrp.appendChild(grp); tr.appendChild(tdGrp);
-        const tdDel=ce('td'); tdDel.appendChild(del); tr.appendChild(tdDel);
-        // recipe cells
-        if(!it.recipe) it.recipe={};
-        state.ingredients.forEach(ing=>{
-          const v=it.recipe[ing]||0;
-          const inp=ce('input',{type:'number', step:'0.001', value:v});
-          inp.onchange=()=>{ it.recipe[ing]=Number(inp.value)||0; save(); };
-          const td=ce('td'); td.appendChild(inp); tr.appendChild(td);
-        });
-        tb.appendChild(tr);
-      });
-      tbl.appendChild(tb);
-      drawChips();
+  };
+
+  // Reset all data
+  document.getElementById('resetBtn').onclick = () => {
+    if (confirm('Are you sure you want to reset all data?')) {
+      data = {
+        branch: 'Hamdan St',
+        ingredients: ['Chicken', 'Fries', 'Bun', 'Sauce'],
+        items: [],
+        sales: [],
+        inventory: {}
+      };
+      document.getElementById('branchSelect').value = data.branch;
+      renderRecipes();
+      populateSaleItems();
+      renderSales();
     }
-    qs('#btnAddItem').onclick=()=>{ state.items.push({name:'صنف جديد', family:'', group:'', recipe:{}}); drawRecipes(); fillSaleItems(); save(); }
-    qs('#btnAddIng').onclick=()=>{
-      const name=prompt('اسم المكوّن (حروف لاتينية/إنجليزية يفضّل بلا مسافات)');
-      if(!name) return;
-      if(state.ingredients.includes(name)) return alert('المكوّن موجود');
-      state.ingredients.push(name);
-      drawRecipes(); fillSaleItems(); drawInventory(); save();
-    }
-    qs('#btnSave').onclick=save;
-    qs('#btnExport').onclick=()=>{
-      const url = URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}));
-      const a = ce('a',{href:url, download:'restaurant-management.json'}); a.click(); URL.revokeObjectURL(url);
-    }
-    function drawChips(){
-      const box=qs('#ingChips'); box.innerHTML='';
-      state.ingredients.forEach(ing=>{
-        const c=ce('div',{className:'badge badge-primary',textContent:ing}); box.appendChild(c);
-      })
-    }
-    // ========= Sales UI =========
-    function fillSaleItems(){
-      const sel=qs('#saleItem'); sel.innerHTML='';
-      state.items.forEach(it=> sel.appendChild(ce('option',{value:it.name,textContent:it.name})) );
-    }
-    function drawSales(){
-      qs('#salesRows').textContent = state.sales.length;
-      const tbl=qs('#tblSales'); tbl.innerHTML='';
-      const thead=ce('thead');
-      thead.innerHTML='<tr><th>#</th><th>التاريخ</th><th>الصنف</th><th>الكمية</th><th>—</th></tr>';
-      tbl.appendChild(thead);
-      const tb=ce('tbody');
-      state.sales.forEach((s,i)=>{
-        const tr=ce('tr');
-        tr.appendChild(ce('td',{textContent:i+1}))
-        const d=ce('input',{type:'date', value:s.date}); d.onchange=()=>{s.date=d.value; save();}
-        const itm=ce('select'); state.items.forEach(it=> itm.appendChild(ce('option',{value:it.name,textContent:it.name, selected:it.name===s.item})) ); itm.onchange=()=>{s.item=itm.value; save();}
-        const q=ce('input',{type:'number', step:'1', min:'0', value:s.qty}); q.onchange=()=>{s.qty=Number(q.value)||0; save();}
-        const del=ce('button',{textContent:'حذف'}); del.onclick=()=>{state.sales.splice(i,1); drawSales(); save();}
-        const td1=ce('td'); td1.appendChild(d); tr.appendChild(td1);
-        const td2=ce('td'); td2.appendChild(itm); tr.appendChild(td2);
-        const td3=ce('td'); td3.appendChild(q); tr.appendChild(td3);
-        const td4=ce('td'); td4.appendChild(del); tr.appendChild(td4);
-        tb.appendChild(tr);
-      })
-      tbl.appendChild(tb);
-    }
-    qs('#btnAddSale').onclick=()=>{
-      const d=qs('#saleDate').value || new Date().toISOString().slice(0,10);
-      const it=qs('#saleItem').value || (state.items[0]?.name||'');
-      const q=Number(qs('#saleQty').value)||1;
-      state.sales.push({date:d,item:it,qty:q}); drawSales(); save();
-    }
-    qs('#btnSaveSales').onclick=save;
-    qs('#btnExportSales').onclick=()=>{
-      const rows=[['Date','Item','Qty'].concat(state.sales.map(s=>[s.date,s.item,s.qty]))];
-      const csv=rows.map(r=>r.join(',')).join('\n');
-      const url = URL.createObjectURL(new Blob([csv,{type:'text/csv'}]));
-      ce('a',{href:url,download:'sales.csv'}).click(); URL.revokeObjectURL(url);
-    }
-    // ========= Monthly UI =========
-    function buildMonthly(){
-      const ym = qs('#repMonth').value || new Date().toISOString().slice(0,7);
-      const days = daysInMonth(ym);
-      const use = usageByMonth(ym);
-      const tbl=qs('#tblMonthly'); tbl.innerHTML='';
-      const thead=ce('thead');
-      const hr=ce('tr');
-      hr.appendChild(ce('th',{textContent:'التاريخ'}));
-      state.ingredients.forEach(ing=> hr.appendChild(ce('th',{textContent:ing})) );
-      thead.appendChild(hr); tbl.appendChild(thead);
-      const tb=ce('tbody');
-      let totals={};
-      days.forEach(d=>{
-        const tr=ce('tr'); tr.appendChild(ce('td',{textContent:d}));
-        state.ingredients.forEach(ing=>{
-          const v = (use[d]?.[ing])||0;
-          totals[ing]=(totals[ing]||0)+v;
-          tr.appendChild(ce('td',{textContent:fmt(v)}));
-        })
-        tb.appendChild(tr);
-      })
-      tbl.appendChild(tb);
-      // Store latest monthly totals for variance table to reference
-      state.__lastMonthlyTotals = totals; save();
-    }
-    qs('#btnBuildMonthly').onclick=buildMonthly;
-    function buildMonthly(){
-      const ym = qs('#repMonth').value || new Date().toISOString().slice(0,7);
-      const days = daysInMonth(ym);
-      const use = usageByMonth(ym);
-      const totals = getTotalUsage(use);
-      const tbl=qs('#tblMonthly'); tbl.innerHTML='';
-      const thead=ce('thead');
-      thead.innerHTML='<tr><th>التاريخ</th>'+state.ingredients.map(ing=>`<th>${ing}</th>`).join('')+'</tr>';
-      tbl.appendChild(thead);
-      const tb=ce('tbody');
-      days.forEach(d=>{
-        const tr=ce('tr'); tr.appendChild(ce('td',{textContent:d}));
-        state.ingredients.forEach(ing=>{
-          const v = (use[d]?.[ing])||0;
-          tr.appendChild(ce('td',{textContent:fmt(v)}));
-        })
-        tb.appendChild(tr);
-      })
-      tbl.appendChild(tb);
-      // Store latest monthly totals for variance table to reference
-      state.__lastMonthlyTotals = totals; save();
-    }
-    qs('#btnExportMonthly').onclick=()=>{
-      const ym = qs('#repMonth').value || new Date().toISOString().slice(0,7);
-      const totals = state.__lastMonthlyTotals || {};
-      const rows = [['Ingredient','TotalRecipe('+ym+')']];
-      state.ingredients.forEach(ing=> rows.push([ing, (totals[ing]||0)]) );
-      const csv=rows.map(r=>r.join(',')).join('\n');
-      const url = URL.createObjectURL(new Blob([csv,{type:'text/csv'}));
-      ce('a',{href:url,download:'monthly_totals_'+ym+'.csv'}).click(); URL.revokeObjectURL(url);
-    }
-    function usageByMonth(ym){ // ym=YYYY-MM
-      const days = daysInMonth(ym);
-      const result = {}; // {date:{ing:qty}}
-      days.forEach(d=>{
-        result[d]=usageByDate(d);
-      })
-      return result;
-    }
-    function usageByDate(date){
-      // returns {ing: qtyUsed}
-      const obj={};
-      state.sales.filter(s=>s.date===date).forEach(s=>{
-        const rec = mapRecipe(s.item);
-        Object.entries(rec).forEach(([ing,qty])=>{
-          obj[ing]=(obj[ing]||0)+ (s.qty*Number(qty||0));
-        })
-      })
-      return obj;
-    }
-    function daysInMonth(ym){ // ym=YYYY-MM
-      const [y,m]=ym.split('-').map(Number); const last=new Date(y,m,0).getDate();
-      const arr=[]; for(let d=1; d<=last; d++){ arr.push(`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`) }
-      return arr;
-    }
-    // ========= Inventory UI =========
-    function ensureInv(){
-      state.ingredients.forEach(ing=>{
-        if(!state.inventory[ing]) state.inventory[ing]={begin:0,purchases:0,tin:0,tout:0,waste:0,end:0};
-      }
-    }
-    function drawInventory(){
-      ensureInv();
-      const tbl=qs('#tblInventory'); tbl.innerHTML='';
-      const thead=ce('thead');
-      thead.innerHTML='<tr><th>المكوّن</th><th>رصيد أول</th><th>مشتريات</th><th>تحويلات داخلة</th><th>تحويلات خارجة</th><th>هالك</th><th>رصيد آخر</th></tr>';
-      tbl.appendChild(thead);
-      const tb=ce('tbody');
-      state.ingredients.forEach(ing=>{
-        const inv=state.inventory[ing];
-        const tr=ce('tr'); tr.appendChild(ce('td',{textContent:ing}))
-        ;['begin','purchases','tin','tout','waste','end'].forEach(key=>{
-          const inp=ce('input',{type:'number', step:'0.001', value:inv[key]||0});
-          inp.onchange=()=>{ inv[key]=Number(inp.value)||0; save(); };
-          const td=ce('td'); td.appendChild(inp); tr.appendChild(td);
-        })
-        tb.appendChild(tr);
-      })
-      tbl.appendChild(tb);
-    }
-    qs('#btnSaveInv').onclick=save;
-    qs('#btnCalcVariance').onclick=()=>{
-      const totals = state.__lastMonthlyTotals || {};
-      const tbl=qs('#tblVariance'); tbl.innerHTML='';
-      const thead=ce('thead');
-      thead.innerHTML='<tr><th>المكوّن</th><th>Total Recipe</th><th>Actual</th><th>Variance (Actual-Recipe)</th></tr>';
-      tbl.appendChild(thead);
-      const tb=ce('tbody');
-      state.ingredients.forEach(ing=>{
-        const inv=state.inventory[ing]||{};
-        const actual=(+inv.begin||0)+(+inv.purchases||0)+(+inv.tin||0)-(+inv.tout||0)-(+inv.end||0)-(+inv.waste||0);
-        const recipe=+totals[ing]||0;
-        const varc=actual - recipe;
-        const tr=ce('tr');
-        tr.appendChild(ce('td',{textContent:ing}))
-        tr.appendChild(ce('td',{textContent:fmt(recipe)}))
-        tr.appendChild(ce('td',{textContent:fmt(actual)}))
-        const tdv=ce('td',{textContent:fmt(varc)}); tdv.style.color = varc>0? 'var(--danger)': (varc<0? 'var(--ok)':'')); tr.appendChild(tdv);
-        tb.appendChild(tr);
-      })
-      tbl.appendChild(tb);
-    }
-    // ========= Import/Reset =========
-    qs('#btnImport').addEventListener('change',handleImport);
-    qs('#btnReset').addEventListener('click',handleReset);
-    function handleImport(e){
-      const f=qs('#fileImport').files[0]; if(!f) return alert('اختر ملف JSON');
-      const r=new FileReader(); r.onload=e=>{ try{ state=JSON.parse(e.target.result); save(); init(); }catch(err){ alert('ملف غير صالح'); } }; r.readAsText(f);
-    }
-    function handleReset(){
-      if(confirm('مسح كل البيانات؟')){ localStorage.removeItem(DB_KEY); location.reload(); }
-    // ========= Boot =========
-    function init(){
-      load();
-      drawRecipes();
-      fillSaleItems();
-      qs('#repMonth').value = new Date().toISOString().slice(0,7);
-      buildMonthly();
-      drawInventory();
-    }
-    init();
-  </script>
+  };
+
+  // Initialize
+  loadData();
+  renderRecipes();
+  populateSaleItems();
+  renderSales();
+  generateChart();
+</script>
 </body>
 </html>
