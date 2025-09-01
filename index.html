@@ -1,448 +1,121 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Crispy Chicken LLC - Management System</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    :root {
-      --primary: #4361ee;
-      --secondary: #3a0ca3;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --dark: #1e293b;
-      --light: #f1f5f9;
-      --shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Cairo", sans-serif; }
-    body { background-color: var(--dark); color: var(--light); line-height: 1.6; padding: 10px; }
-    header {
-      background: linear-gradient(180deg, #0c1446, rgba(12, 20, 70, 0.8));
-      padding: 1rem;
-      box-shadow: var(--shadow);
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
-    }
-    header .logo-container {
-      display: flex; align-items: center;
-    }
-    header img.logo {
-      height: 50px; width: auto; margin-right: 15px;
-    }
-    header h1 {
-      font-size: 1.2rem; font-weight: 700; color: #fff; margin-top: 0;
-    }
-    /* Branch Selector Style */
-    #branchSelector {
-      margin: 10px 0;
-    }
-    #branchSelect {
-      padding: 0.5rem; border-radius: 8px; border: none; font-weight: 600;
-    }
-    .tabs {
-      display: flex; gap: 8px; margin-top: 1rem; margin-bottom: 15px;
-    }
-    .tab {
-      cursor: pointer; padding: 0.75rem 1.5rem; border-radius: 8px;
-      background: rgba(255,255,255,0.1); transition: all 0.3s ease; font-weight: 600;
-    }
-    .tab.active { background: var(--primary); color: #fff; }
-    main { margin-top: 20px; }
-    section { display: none; padding: 15px; background-color: #2d3e50; border-radius: 10px; }
-    section.active { display: block; }
-    h2 { margin-bottom: 15px; color: #fff; font-size: 1.2rem; }
-    /* Buttons */
-    .btn {
-      padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 500; cursor: pointer;
-      display: inline-flex; align-items: center; justify-content: center; margin: 0.5rem; border: none; transition: background 0.3s ease;
-    }
-    .btn-primary { background-color: var(--primary); color: #fff; }
-    .btn-success { background-color: var(--success); color: #fff; }
-    .btn-warning { background-color: var(--warning); color: #fff; }
-    .btn-danger { background-color: var(--danger); color: #fff; }
-    .btn:hover { opacity: 0.9; }
-    /* Tables */
-    table {
-      width: 100%; border-collapse: collapse; margin-top: 1rem; background-color: #3a506b; border-radius: 8px;
-    }
-    th, td {
-      padding: 0.75rem; border: 1px solid #29407b; text-align: center; color: #fff;
-    }
-    th { background-color: rgba(255,255,255,0.2); }
-    tbody tr:nth-child(even) { background-color: rgba(255,255,255,0.1); }
-    /* Responsive */
-    .table-responsive { overflow-x: auto; }
-    /* Inputs */
-    input[type="text"], input[type="number"], select, input[type="date"], input[type="month"], input[type="file"] {
-      width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #29407b; background-color: #fff; color: #000;
-    }
-    /* Footer */
-    footer { padding: 1rem; text-align: center; font-size: 0.9rem; color: #9db3e6; margin-top: 20px; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ملخص مبيعات الأصناف</title>
+<!-- ربط مكتبة Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- استخدام Tailwind CSS للتصميم السريع -->
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 p-4">
 
-<header>
-  <div class="logo-container">
-    <img src="https://via.placeholder.com/100x50?text=CRISPY+LOGO" alt="Crispy Chicken Logo" class="logo" />
-    <h1>Crispy Chicken LLC Management System</h1>
-  </div>
-</header>
+<h1 class="text-2xl font-bold mb-4 text-center">ملخص مبيعات الأصناف</h1>
 
-<div class="container">
-  <!-- Branch Selector -->
-  <div id="branchSelector">
-    <label for="branchSelect" style="color:#fff;">Select Branch: </label>
-    <select id="branchSelect">
-      <option value="Hamdan St">Crispy Chicken - Hamdan St</option>
-      <option value="Khaldia">Crispy Chicken Khaldia</option>
-      <option value="Shabiya 11">Crispy Chicken Shabiya 11</option>
-      <option value="Muroor">Crispy Chicken Muroor</option>
-      <option value="Al Electra">Crispy Chicken Al Electra</option>
-      <option value="Al Barsha">Crispy Chicken Al Barsha</option>
-      <option value="Al Satwa">Crispy Chicken Al Satwa</option>
-    </select>
-  </div>
-
-  <!-- Tabs -->
-  <div class="tabs">
-    <div class="tab active" data-tab="recipes"><i class="fas fa-utensils"></i> Recipes</div>
-    <div class="tab" data-tab="sales"><i class="fas fa-dollar-sign"></i> Sales</div>
-    <div class="tab" data-tab="report"><i class="fas fa-chart-bar"></i> Monthly Report</div>
-    <div class="tab" data-tab="inventory"><i class="fas fa-warehouse"></i> Inventory & Movements</div>
-    <div class="tab" data-tab="settings"><i class="fas fa-cogs"></i> Settings</div>
-  </div>
-
-  <!-- Sections -->
-  <section id="recipes" class="active">
-    <h2>Recipe Management</h2>
-    <div>
-      <button class="btn btn-primary" id="addRecipeBtn"><i class="fas fa-plus"></i> Add Item</button>
-      <button class="btn btn-success" id="addIngredientBtn"><i class="fas fa-plus"></i> Add Ingredient</button>
-      <button class="btn btn-success" id="saveRecipesBtn"><i class="fas fa-save"></i> Save</button>
-      <button class="btn btn-warning" id="exportRecipesBtn"><i class="fas fa-download"></i> Export JSON</button>
-    </div>
-    <div class="table-responsive">
-      <table id="recipesTable">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Group</th>
-            <th>Ingredients</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
-
-  <section id="sales">
-    <h2>Daily Sales</h2>
-    <div style="margin-bottom:15px;">
-      <label> Date: <input type="date" id="saleDate"></label>
-      <label> Item: 
-        <select id="saleItem"></select>
-      </label>
-      <label> Quantity: <input type="number" id="saleQty" min="1" value="1"></label>
-      <button class="btn btn-primary" id="addSaleBtn"><i class="fas fa-plus"></i> Add Sale</button>
-      <button class="btn btn-success" id="saveSalesBtn"><i class="fas fa-save"></i> Save</button>
-      <button class="btn btn-warning" id="exportSalesBtn"><i class="fas fa-download"></i> Export CSV</button>
-    </div>
-    <div class="table-responsive">
-      <table id="salesTable">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Item</th>
-            <th>Quantity</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
-
-  <section id="report">
-    <h2>Monthly Report</h2>
-    <div style="margin-bottom:15px;">
-      <label>Select Month: <input type="month" id="reportMonth"></label>
-      <button class="btn btn-primary" id="generateReportBtn"><i class="fas fa-chart-bar"></i> Generate Report</button>
-      <button class="btn btn-warning" id="exportReportBtn"><i class="fas fa-download"></i> Export CSV</button>
-    </div>
-    <canvas id="monthlyChart" style="width:100%; height:300px; margin-top:1rem; background:#fff; border-radius:8px;"></canvas>
-  </section>
-
-  <section id="inventory">
-    <h2>Inventory & Movements</h2>
-    <div style="margin-bottom:15px;">
-      <button class="btn btn-success" id="saveInventoryBtn"><i class="fas fa-save"></i> Save Data</button>
-      <button class="btn btn-warning" id="calculateVarianceBtn"><i class="fas fa-calculator"></i> Calculate Variance</button>
-    </div>
-    <div class="table-responsive">
-      <table id="inventoryTable">
-        <thead>
-          <tr>
-            <th>Ingredient</th>
-            <th>Initial Quantity</th>
-            <th>Purchases</th>
-            <th>Incoming</th>
-            <th>Outgoing</th>
-            <th>Final Quantity</th>
-            <th>Waste</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
-
-  <section id="settings">
-    <h2>Settings & Import</h2>
-    <div>
-      <input type="file" id="importFile" accept=".json" />
-      <button class="btn btn-primary" id="importBtn"><i class="fas fa-upload"></i> Import JSON</button>
-      <button class="btn btn-danger" id="resetBtn"><i class="fas fa-trash"></i> Reset All Data</button>
-    </div>
-  </section>
+<!-- زر لتحميل البيانات -->
+<div class="text-center mb-4">
+  <button id="loadDataBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    عرض البيانات
+  </button>
 </div>
 
-<!-- Footer -->
-<footer>
-  <p><i class="fas fa-lightbulb"></i> Remember: Standardize measurement units (pieces/grams/liters). Conversion factors are for display only.</p>
-</footer>
+<!-- جدول البيانات -->
+<div class="overflow-x-auto mb-8">
+  <table class="min-w-full bg-white border border-gray-300">
+    <thead>
+      <tr>
+        <th class="border border-gray-300 px-4 py-2">الصنف</th>
+        <th class="border border-gray-300 px-4 py-2">مبيعات إجمالية</th>
+        <th class="border border-gray-300 px-4 py-2">نسبة المبيعات</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+</div>
 
-<!-- Scripts -->
+<!-- مخطط بياني -->
+<div class="max-w-3xl mx-auto">
+  <canvas id="salesChart"></canvas>
+</div>
+
 <script>
-  // Data Initialization & Storage
-  let data = {
-    branch: 'Hamdan St',
-    ingredients: ['Chicken', 'Fries', 'Bun', 'Sauce'],
-    items: [
-      { name: 'Chicken Burger', recipe: { Chicken: 1, Bun: 1, Sauce: 0.5 } },
-      { name: 'Fries Pack', recipe: { Fries: 1 } }
-    ],
-    sales: [],
-    inventory: {}
-  };
+// البيانات التي أرسلتها، يمكن استبدالها أو تحميلها من API
+const dataItems = [
+  { Item: "Daily Spicy Meal", "Gross Sales": 703150.74, "% Sales": 15.69 },
+  { Item: "DAILY OFFER Spicy Meal", "Gross Sales": 494302.47, "% Sales": 10.24 },
+  { Item: "Daily Original Meal", "Gross Sales": 401143.47, "% Sales": 8.94 },
+  { Item: "DAILY OFFER Original Meal", "Gross Sales": 383665.20, "% Sales": 8.03 },
+  { Item: "CHICKEN DAY SPICY", "Gross Sales": 102203.25, "% Sales": 2.34 },
+  { Item: "DAILY OFFER MIX Meal", "Gross Sales": 93834.33, "% Sales": 2.14 },
+  { Item: "SAVING MEAL Original", "Gross Sales": 93754.72, "% Sales": 1.97 },
+  { Item: "ULTIMATE Spicy", "Gross Sales": 78938.91, "% Sales": 1.81 },
+  { Item: "DAILY OFFER Original Mea", "Gross Sales": 79730.89, "% Sales": 1.65 },
+  { Item: "SAVING MEAL Spicy", "Gross Sales": 75051.87, "% Sales": 1.57 }
+  // يمكنك إضافة المزيد من البيانات هنا
+];
 
-  // Load from local storage
-  function loadData() {
-    const stored = localStorage.getItem('crispyData');
-    if (stored) {
-      data = JSON.parse(stored);
-    }
-  }
-  function saveData() {
-    localStorage.setItem('crispyData', JSON.stringify(data));
-  }
+const loadDataBtn = document.getElementById('loadDataBtn');
+const tableBody = document.getElementById('tableBody');
 
-  // Set branch initial value
-  const branchSelect = document.getElementById('branchSelect');
-  branchSelect.value = data.branch;
-  branchSelect.onchange = () => {
-    data.branch = branchSelect.value;
-    saveData();
-  };
+let salesChart;
 
-  // Tab handling
-  document.querySelectorAll('.tab').forEach(t => {
-    t.onclick = () => {
-      document.querySelectorAll('.tab').forEach(t2 => t2.classList.remove('active'));
-      t.classList.add('active');
-      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-      document.getElementById(t.dataset.tab).classList.add('active');
-      if (t.dataset.tab === 'report') generateChart();
-    };
+loadDataBtn.addEventListener('click', () => {
+  // تحديث الجدول
+  tableBody.innerHTML = "";
+  dataItems.forEach(item => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="border border-gray-300 px-4 py-2">${item.Item}</td>
+      <td class="border border-gray-300 px-4 py-2">${item["Gross Sales"].toLocaleString()}</td>
+      <td class="border border-gray-300 px-4 py-2">${item["% Sales"].toFixed(2)}%</td>
+    `;
+    tableBody.appendChild(row);
   });
 
-  // Render recipes
-  function renderRecipes() {
-    const tbody = document.querySelector('#recipesTable tbody');
-    tbody.innerHTML = '';
-    data.items.forEach((item, index) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${index + 1}</td>
-        <td contenteditable="true">${item.name}</td>
-        <td contenteditable="true">${item.category || ''}</td>
-        <td contenteditable="true">${item.group || ''}</td>
-        <td>${Object.entries(item.recipe).map(([ing, qty]) => \`\${ing}:\${qty}\`).join(', ')}</td>
-        <td><button class="btn btn-danger btn-sm delete-item">Delete</button></td>
-      `;
-      tr.querySelector('.delete-item').onclick = () => {
-        data.items.splice(index, 1);
-        renderRecipes();
-        populateSaleItems();
-      };
-      tbody.appendChild(tr);
-    });
+  // إعداد البيانات للمخطط
+  const labels = dataItems.map(item => item.Item);
+  const salesData = dataItems.map(item => item["Gross Sales"]);
+
+  // تدمير المخطط السابق إذا موجود
+  if (salesChart) {
+    salesChart.destroy();
   }
 
-  document.getElementById('addRecipeBtn').onclick = () => {
-    data.items.push({ name: 'New Item', recipe: {} });
-    renderRecipes();
-    populateSaleItems();
-  };
-
-  // Populate sale item dropdown
-  function populateSaleItems() {
-    const sel = document.getElementById('saleItem');
-    sel.innerHTML = '';
-    data.items.forEach(it => {
-      const opt = document.createElement('option');
-      opt.value = it.name;
-      opt.textContent = it.name;
-      sel.appendChild(opt);
-    });
-  }
-
-  // Add sale
- document.getElementById('addSaleBtn').onclick = () => {
-    const date = document.getElementById('saleDate').value || new Date().toISOString().slice(0,10);
-    const item = document.getElementById('saleItem').value;
-    const qty = parseInt(document.getElementById('saleQty').value) || 1;
-    data.sales.push({ date, item, qty });
-    renderSales();
-  };
-
-  function renderSales() {
-    const tbody = document.querySelector('#salesTable tbody');
-    tbody.innerHTML = '';
-    data.sales.forEach((sale, index) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${sale.date}</td>
-        <td>${sale.item}</td>
-        <td>${sale.qty}</td>
-        <td><button class="btn btn-danger btn-sm delete-sale">Delete</button></td>
-      `;
-      tr.querySelector('.delete-sale').onclick = () => {
-        data.sales.splice(index,1);
-        renderSales();
-      };
-      tbody.appendChild(tr);
-    });
-  }
-
-  // Chart
-  let chartInstance = null;
-  function generateChart() {
-    const ctx = document.getElementById('monthlyChart').getContext('2d');
-    const month = document.getElementById('reportMonth').value || new Date().toISOString().slice(0,7);
-    const labels = [];
-    const dataPoints = [];
-    for(let i=1; i<=31; i++){
-      labels.push(`${month}-${i.toString().padStart(2,'0')}`);
-      dataPoints.push(Math.floor(Math.random() * 20 + 5));
-    }
-    if (chartInstance) chartInstance.destroy();
-    chartInstance = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [{
-          label: 'Sales Volume',
-          data: dataPoints,
-          backgroundColor: 'rgba(67,97,238,0.5)',
-          borderColor: 'rgba(67,97,238,1)',
-          borderWidth: 1
-        }]
+  // إنشاء المخطط
+  const ctx = document.getElementById('salesChart').getContext('2d');
+  salesChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'مبيعات الأصناف',
+        data: salesData,
+        backgroundColor: 'rgba(59, 130, 246, 0.7)', // أزرق شفاف
+        borderColor: 'rgba(59, 130, 246, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { mode: 'index', intersect: false }
       },
-      options: {
-        responsive: true,
-        scales: { y: { beginAtZero: true } }
-      }
-    });
-  }
-
-  // Export functions
-  document.getElementById('exportRecipesBtn').onclick = () => {
-    const dataStr = JSON.stringify(data.items, null, 2);
-    const blob = new Blob([dataStr], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'recipes.json'; a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  document.getElementById('exportSalesBtn').onclick = () => {
-    const csv = "data:text/csv;charset=utf-8," + ["Date,Item,Quantity"].concat(data.sales.map(s => `${s.date},${s.item},${s.qty}`)).join("\n");
-    const encodedUri = encodeURI(csv);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "sales.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  // Save all
-  document.getElementById('saveRecipesBtn').onclick = () => {
-    saveData(); alert('Data saved successfully!');
-  };
-  document.getElementById('saveSalesBtn').onclick = () => {
-    saveData(); alert('Data saved successfully!');
-  };
-  document.getElementById('saveInventoryBtn').onclick = () => {
-    saveData(); alert('Data saved successfully!');
-  };
-
-  // Import JSON
-  document.getElementById('importBtn').onclick = () => {
-    const file = document.getElementById('importFile').files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        try {
-          const imported = JSON.parse(e.target.result);
-          data = imported;
-          document.getElementById('branchSelect').value = data.branch || 'Hamdan St';
-          renderRecipes();
-          populateSaleItems();
-          renderSales();
-        } catch(e) {
-          alert('Invalid JSON.');
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function(value) {
+              return value.toLocaleString();
+            }
+          }
         }
-      };
-      reader.readAsText(file);
+      }
     }
-  };
-
-  // Reset all data
-  document.getElementById('resetBtn').onclick = () => {
-    if (confirm('Are you sure?')) {
-      data = {
-        branch: 'Hamdan St',
-        ingredients: ['Chicken', 'Fries', 'Bun', 'Sauce'],
-        items: [],
-        sales: [],
-        inventory: {}
-      };
-      document.getElementById('branchSelect').value = data.branch;
-      renderRecipes();
-      populateSaleItems();
-      renderSales();
-    }
-  };
-
-  // Initialize
-  loadData();
-  renderRecipes();
-  populateSaleItems();
-  renderSales();
-  generateChart();
-
+  });
+});
 </script>
+
 </body>
 </html>
