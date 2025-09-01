@@ -3,601 +3,423 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Crispy Chicken UAE - نظام إدارة موحّد</title>
+  <title>نظام إدارة المطعم المتكامل</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
   <style>
     :root {
-      --bg:#0b1020; --card:#121a33; --muted:#8aa0c6; --text:#eaf1ff;
-      --accent:#4dd0e1; --accent2:#ffd166; --danger:#ff6b6b; --ok:#5ad37d;
-      --primary:#b22222; --hover:#d32f2f;
+      --primary: #4361ee;
+      --secondary: #3a0ca3;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --dark: #1e293b;
+      --light: #f1f5f9;
+      --shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:"Cairo",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text)}
-    header{position:sticky;top:0;background:linear-gradient(180deg,#0b1020,rgba(11,16,32,.6));backdrop-filter:blur(8px);z-index:50;border-bottom:1px solid #1f2b50}
-    header .wrap{display:flex;gap:12px;align-items:center;justify-content:space-between}
-    h1{margin:0;font-size:20px;font-weight:800;letter-spacing:.2px;color:var(--accent2)}
-    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-    .tab{padding:8px 12px;border:1px solid #23315b;border-radius:12px;background:#121a33;cursor:pointer;user-select:none}
-    .tab.active{background:linear-gradient(90deg,#1a2450,#18264a);border-color:#345; box-shadow:0 0 0 2px #1f2b50 inset}
-    .wrap{max-width:1200px;margin:auto;padding:12px}
-    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;align-items:center}
-    button{padding:8px 12px;border-radius:10px;border:1px solid #2a3a6f;background:#172247;color:var(--text);cursor:pointer}
-    button.primary{background:var(--primary);border-color:var(--primary)}
-    button.primary:hover{background:var(--hover)}
-    button.good{background:linear-gradient(90deg,#0a6b4a,#0a553e);border-color:#1b8a61}
-    button.warn{background:linear-gradient(90deg,#7a2a2a,#6a1e1e);border-color:#a74343}
-    button:disabled{opacity:.5;cursor:not-allowed}
-    .card{background:var(--card);border:1px solid #21315d;border-radius:16px;padding:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);margin-bottom:12px}
-    table{width:100%;border-collapse:separate;border-spacing:0;min-width:760px}
-    th,td{border-bottom:1px solid #243466;padding:6px 8px;text-align:center}
-    th{position:sticky;top:0;background:#172247;z-index:1}
-    tbody tr:hover{background:#0f1836}
-    input,select{background:#0f1733;border:1px solid #29407b; color:var(--text); border-radius:8px; padding:6px 8px}
-    .row{display:grid;gap:10px}
-    .row.cols-3{grid-template-columns:repeat(3,1fr)}
-    .scroll-x{overflow:auto}
-    .pill{padding:2px 8px;border-radius:999px;border:1px solid #2a3a6f;background:#0f1733;font-size:12px}
-    .muted{color:var(--muted)}
-    .note{font-size:12px;color:#c8d7ffb3}
-    .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    .kpi .box{background:#111a34;border:1px solid #22305a;border-radius:14px;padding:10px}
-    .box h3{margin:0 0 6px 0;font-size:13px;color:var(--muted)}
-    .box b{font-size:18px}
-    .status-low{color:var(--danger)} .status-ok{color:var(--ok)}
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{padding:4px 8px;border:1px dashed #345;border-radius:999px}
-    .search-box{margin-inline-start:auto}
-    .search-box input{width:220px}
-    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:100}
-    .modal>.panel{background:var(--card);border:1px solid #21315d;border-radius:14px;min-width:320px;max-width:90vw;padding:16px}
-    .modal .row{margin:8px 0}
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+    body { background: var(--dark); color: var(--light); }
+    header { background: linear-gradient(180deg, #0c1446, rgba(12, 20, 70, 0.8)); padding: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+    .tab { cursor: pointer; padding: 0.75rem 1.5rem; border-radius: 8px; background: rgba(255,255,255,0.1); transition: all 0.3s ease; display: inline-flex; align-items: center; margin-right: 0.5rem; }
+    .tab.active { background: var(--primary); color: white; }
+    .card { background: var(--light); border-radius: 12px; padding: 1.5rem; box-shadow: var(--shadow); }
+    .form-group { margin-bottom: 1rem; }
+    .form-control { width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; background: var(--light); }
+    .btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-right: 0.5rem; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-success { background: var(--success); color: white; }
+    .btn-warning { background: var(--warning); color: white; }
+    .table { width: 100%; border-collapse: collapse; }
+    .table th, .table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    .table th { background: var(--primary); color: white; font-weight: 500; }
+    .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+    .alert-info { background-color: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; color: #1e40af; }
+    .badge { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 500; }
+    .badge-primary { background-color: var(--primary); color: white; }
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+    .modal-content { background: var(--light); margin: 10% auto; border-radius: 12px; width: 90%; max-width: 500px; padding: 2rem; }
+    .chart-container { height: 300px; }
   </style>
 </head>
 <body>
   <header>
-    <div class="wrap">
-      <h1>Crispy Chicken UAE — إدارة الفروع + الوصفات + المبيعات + التقرير الشهري + الجرد والانحراف</h1>
-      <div class="tabs" id="tabs">
-        <div class="tab active" data-tab="branches">الفروع</div>
-        <div class="tab" data-tab="recipes">الوصفات</div>
+    <div class="container">
+      <h1>نظام إدارة المطعم المتكامل (الوصفات + المبيعات + الجرد + الانحراف)</h1>
+      <div class="tabs">
+        <div class="tab active" data-tab="recipes">الوصفات (Sales Mix)</div>
         <div class="tab" data-tab="sales">المبيعات اليومية</div>
         <div class="tab" data-tab="monthly">التقرير الشهري</div>
         <div class="tab" data-tab="inventory">الجرد & الحركات</div>
-        <div class="tab" data-tab="settings">إعدادات</div>
+        <div class="tab" data-tab="settings">إعدادات/استيراد</div>
       </div>
     </div>
   </header>
-
-  <main class="wrap">
-    <!-- BRANCHES -->
-    <section id="branches" class="card">
-      <div class="toolbar">
-        <button class="primary" id="btnAddBranch">➕ إضافة فرع</button>
-        <span class="pill">عدد الفروع: <b id="branchCount">0</b></span>
+  <main class="container">
+    <section id="recipes" class="card">
+      <div class="form-group">
+        <button class="btn btn-primary" id="btnAddItem"><i class="fas fa-plus mr-2"></i> إضافة صنف</button>
+        <button class="btn btn-success" id="btnAddIng"><i class="fas fa-plus mr-2"></i> إضافة مكوّن</button>
+        <button class="btn btn-success" id="btnSave"><i class="fas fa-save mr-2"></i> حفظ (LocalStorage)</button>
+        <button class="btn" id="btnExport"><i class="fas fa-download mr-2"></i> تصدير JSON</button>
       </div>
-      <div class="scroll-x">
-        <table id="tblBranches"></table>
-      </div>
-    </section>
-
-    <!-- RECIPES -->
-    <section id="recipes" class="card" style="display:none">
-      <div class="toolbar">
-        <button class="primary" id="btnAddItem">+ إضافة صنف</button>
-        <button id="btnAddIng">+ إضافة مكوّن</button>
-        <button class="good" id="btnSave">💾 حفظ (المتصفح)</button>
-        <button id="btnExportJSON">⬇️ تصدير JSON</button>
-        <span class="pill">الأصناف: <b id="countItems">0</b></span>
-        <span class="pill">المكونات: <b id="countIngs">0</b></span>
-      </div>
-      <div class="scroll-x">
+      <div class="table-responsive">
         <table id="tblRecipes"></table>
       </div>
-      <p class="note">أدخل كميات المكونات لكل «وحدة بيع» للصنف.</p>
-      <div class="chips" id="ingChips"></div>
+      <div class="alert alert-info mt-3">
+        <i class="fas fa-info-circle mr-2"></i> أدخل كميات المكونات **لكل وحدة بيع**. مثال: صنف 12PCS يستخدم 12 قطعة دجاج → في عمود CHIX اكتب 12.
+      </div>
     </section>
-
-    <!-- SALES -->
-    <section id="sales" class="card" style="display:none">
-      <div class="toolbar">
-        <div class="row cols-3" style="width:100%">
-          <label>التاريخ <input type="date" id="saleDate"></label>
-          <label>الفرع <select id="saleBranch"></select></label>
-          <label>الصنف <select id="saleItem"></select></label>
-          <label>الكمية <input type="number" id="saleQty" min="1" step="1" value="1"></label>
+    
+    <section id="sales" class="card" style="display: none">
+      <div class="form-group row">
+        <div class="col-md-4">
+          <label>التاريخ</label>
+          <input type="date" id="saleDate" class="form-control" value="">
         </div>
-        <button class="primary" id="btnAddSale">+ إضافة حركة بيع</button>
-        <button class="good" id="btnSaveSales">💾 حفظ</button>
-        <button id="btnExportSales">⬇️ تصدير CSV</button>
-        <span class="pill">عدد السطور: <b id="salesRows">0</b></span>
-        <div class="search-box"><input id="searchSales" placeholder="بحث في المبيعات..."></div>
+        <div class="col-md-4">
+          <label>الصنف</label>
+          <select id="saleItem" class="form-control"></select>
+        </div>
+        <div class="col-md-4">
+          <label>الكمية</label>
+          <input type="number" id="saleQty" class="form-control" min="1" value="1">
+        </div>
       </div>
-      <div class="scroll-x"><table id="tblSales"></table></div>
+      <button class="btn btn-primary" id="btnAddSale"><i class="fas fa-plus mr-2"></i> إضافة حركة بيع</button>
+      <button class="btn btn-success" id="btnSaveSales"><i class="fas fa-save mr-2"></i> حفظ المبيعات</button>
+      <button class="btn" id="btnExportSales"><i class="fas fa-download mr-2"></i> تصدير المبيعات CSV</button>
+      <div class="table-responsive mt-3">
+        <table id="tblSales"></table>
+      </div>
     </section>
-
-    <!-- MONTHLY -->
-    <section id="monthly" class="card" style="display:none">
-      <div class="toolbar">
-        <label>شهر التقرير <input type="month" id="repMonth"></label>
-        <label>الفرع
-          <select id="repBranch"><option value="">جميع الفروع</option></select>
-        </label>
-        <button class="primary" id="btnBuildMonthly">حساب التقرير</button>
-        <button id="btnExportMonthly">⬇️ تصدير ملخص CSV</button>
+    
+    <section id="monthly" class="card" style="display: none">
+      <div class="form-group">
+        <label>شهر التقرير</label>
+        <input type="month" id="repMonth" class="form-control" value="">
       </div>
-      <div class="kpi" id="kpi"></div>
-      <div class="scroll-x"><table id="tblMonthly"></table></div>
-      <p class="note">الاستهلاك النظري = مجموع (كمية بيع الصنف × وصفته لكل مكوّن) لكل يوم.</p>
+      <button class="btn btn-primary" id="btnBuildMonthly"><i class="fas fa-chart-bar mr-2"></i> حساب التقرير</button>
+      <button class="btn" id="btnExportMonthly"><i class="fas fa-download mr-2"></i> تصدير ملخص CSV</button>
+      <div class="chart-container mt-3">
+        <canvas id="monthlyChart"></canvas>
+      </div>
     </section>
-
-    <!-- INVENTORY -->
-    <section id="inventory" class="card" style="display:none">
-      <div class="toolbar">
-        <label>الفرع <select id="invBranch"></select></label>
-        <button class="primary" id="btnAddMovement">+ إضافة حركة جرد</button>
-        <button class="good" id="btnSaveInv">💾 حفظ</button>
-        <button id="btnExportInv">⬇️ تصدير الجرد CSV</button>
-        <button id="btnCalcVariance">حساب الانحراف</button>
-        <div class="search-box"><input id="searchMovements" placeholder="بحث في الحركات..."></div>
+    
+    <section id="inventory" class="card" style="display: none">
+      <div class="form-group">
+        <button class="btn btn-success" id="btnSaveInv"><i class="fas fa-save mr-2"></i> حفظ الجرد والحركات</button>
+        <button class="btn" id="btnCalcVariance"><i class="fas fa-calculator mr-2"></i> حساب الانحراف</button>
       </div>
-      <div class="scroll-x"><table id="tblInventory"></table></div>
-      <div class="scroll-x" style="margin-top:12px"><table id="tblMovements"></table></div>
-      <div class="scroll-x" style="margin-top:12px"><table id="tblVariance"></table></div>
-      <p class="note">الاستهلاك الفعلي = رصيد أول + مشتريات + تحويلات داخلة − تحويلات خارجة − جرد آخر − هالك.</p>
+      <div class="table-responsive mt-3">
+        <table id="tblInventory"></table>
+      </div>
+      <div class="table-responsive mt-3">
+        <table id="tblVariance"></table>
+      </div>
     </section>
-
-    <!-- SETTINGS -->
-    <section id="settings" class="card" style="display:none">
-      <div class="toolbar">
-        <input type="file" id="fileImport" accept="application/json" />
-        <button id="btnImport">📥 استيراد JSON</button>
-        <button class="warn" id="btnReset">🗑️ مسح كل البيانات</button>
+    
+    <section id="settings" class="card" style="display: none">
+      <div class="form-group">
+        <input type="file" id="fileImport" accept=".json">
+        <button class="btn btn-primary" id="btnImport"><i class="fas fa-upload mr-2"></i> استيراد JSON</button>
+        <button class="btn btn-danger" id="btnReset"><i class="fas fa-trash-alt mr-2"></i> مسح كل البيانات</button>
       </div>
-      <p class="muted">صيغة JSON تشمل: branches, ingredients, items, sales, inventory, inventoryMovements.</p>
     </section>
   </main>
-
-  <div id="modal" class="modal" style="display:none"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-/* ================== Data & Storage ================== */
-const DB_KEY = 'crispy_chicken_db_v3';
-let state = {
-  branches: ['Hamdan','Khalidia','Mourro','Shabia 11','Satwa','Barsha','Electra'],
-  ingredients: ['CHIX','STRIP','FRIES','CHEESE','GARLICSAUCE','SMALL COLESLAW','BIG COLESLAW','PEPSI LITER','BUN 4 INCH','BUN 5'],
-  items: [
-    {name:'12 PCS PACKET MIX', family:'Combo Meal Mix', group:'Food', recipe:{CHIX:12, GARLICSAUCE:3, 'SMALL COLESLAW':3, 'BUN 5':3, 'BUN 4 INCH':6}},
-    {name:'16 PCS PACKET MIX', family:'Combo Meal Mix', group:'Food', recipe:{CHIX:16, FRIES:5, GARLICSAUCE:4, 'BUN 5':4, 'BUN 4 INCH':8}},
-  ],
-  sales: [
-    {date:'2025-03-01', branch:'Satwa', item:'12 PCS PACKET MIX', qty:1},
-    {date:'2025-03-29', branch:'Satwa', item:'12 PCS PACKET MIX', qty:111}
-  ],
-  inventory: {},             // {branch:[{ingredient,begin,purchases,tin,tout,waste,end,lastUpdated}]}
-  inventoryMovements: []     // [{date,branch,ingredient,type,qty}]
-};
-
-function load(){ const raw = localStorage.getItem(DB_KEY); if(raw){ try{ state = JSON.parse(raw);}catch(e){console.warn('bad local data')}} }
-function save(){ localStorage.setItem(DB_KEY, JSON.stringify(state)); }
-
-/* ================== Utilities ================== */
-const qs = s=>document.querySelector(s);
-const ce = (tag, props={}) => Object.assign(document.createElement(tag), props);
-function fmt(n){ return Number(n||0).toLocaleString('ar-EG'); }
-function daysInMonth(ym){ const [y,m]=ym.split('-').map(Number); const last=new Date(y,m,0).getDate(); return Array.from({length:last},(_,i)=>`${y}-${String(m).padStart(2,'0')}-${String(i+1).padStart(2,'0')}`); }
-function showToast(msg){ alert(msg); }
-
-/* ================== Modal ================== */
-function openModal(inner){
-  const m = qs('#modal'); m.innerHTML = `<div class="panel">${inner}<div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end"><button onclick="closeModal()">إغلاق</button></div></div>`;
-  m.style.display='flex';
-}
-function closeModal(){ qs('#modal').style.display='none'; }
-
-/* ================== Tabs ================== */
-[...document.querySelectorAll('.tab')].forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  document.querySelectorAll('main section').forEach(s=>s.style.display='none');
-  qs('#'+t.dataset.tab).style.display='block';
-}));
-
-/* ================== Branches ================== */
-function drawBranches(){
-  qs('#branchCount').textContent = state.branches.length;
-  const tbl = qs('#tblBranches'); tbl.innerHTML = '';
-  const thead = ce('thead');
-  thead.innerHTML = '<tr><th>#</th><th>اسم الفرع</th><th>—</th></tr>'; tbl.appendChild(thead);
-  const tb = ce('tbody');
-  state.branches.forEach((b,i)=>{
-    const tr=ce('tr');
-    tr.appendChild(ce('td',{textContent:i+1}));
-    const inp=ce('input',{value:b}); inp.onchange=()=>{ state.branches[i]=inp.value.trim(); refreshBranchSelects(); save(); };
-    const td=ce('td'); td.appendChild(inp); tr.appendChild(td);
-    const del=ce('button',{textContent:'حذف', className:'warn'}); del.onclick=()=>{
-      if(!confirm('حذف الفرع؟')) return;
-      state.branches.splice(i,1);
-      state.sales = state.sales.filter(s=>s.branch!==b);
-      delete state.inventory[b];
-      drawBranches(); refreshBranchSelects(); save();
+  
+  <footer class="container py-4 text-center text-gray-600">
+    <p><i class="fas fa-lightbulb mr-2"></i> نصيحة: وحِّد وحدات القياس (قطعة/جرام/لتر) داخل الحسابات. عوامل التحويل تُستخدم فقط للعرض.</p>
+  </footer>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+  <script>
+    // ========= Data Model =========
+    const DB_KEY = 'restaurant_management_system';
+    let state = {
+      ingredients: [
+        'CHIX','STRIP','BEEFBURGER','Beef burger 125 g','CHIX BURGER','ZINGER','FRIES','CHEES','GARLICSUACE','SMALL CLOWSLOW','BIG CLOWSLOW','DYNAMTESAUCE','BPESI PIP','PEPSI LITER','LARGE JUICE','SMALL WATER','BUN 4 INCH','TORTILA','BUN 4.5 INCH','BUN 6 INCH','SAMOLINA 8 INCH','BUN 5','NUGGETS','SMALL JUICE','POP CORN','SHAWRMA','BASMATI RICE','KINZA COLA','FLOOR','lettuce','Mayonnaise','ketchup','SHORTING'
+      ],
+      items: [
+        {name:'12 PCS PACKET MIX', family:'Combo Meal Mix', group:'Food', recipe: {CHIX:12, GARLICSUACE:3, 'SMALL CLOWSLOW':3, 'BUN 5':3, 'BUN 4 INCH':6}},
+        {name:'16 PCS PACKET MIX', family:'Combo Meal Mix', group:'Food', recipe: {CHIX:16, FRIES:5, GARLICSUACE:4, 'BUN 5':4, 'BUN 4 INCH':8}},
+        {name:'20 PCS PACKET MIX', family:'Combo Meal Mix', group:'Food', recipe: {CHIX:20, FRIES:5, GARLICSUACE:5, 'BUN 5':5, 'BUN 4 INCH':8}},
+        {name:'BUCKET MEAL MIX', family:'Combo Meal Mix', group:'Food', recipe: {CHIX:8, STRIP:8, FRIES:5, 'SMALL WATER':1, 'BUN 4 INCH':8}}
+      ],
+      sales: [
+        {date:'2025-03-01', item:'12 PCS PACKET MIX', qty:1},
+        {date:'2025-03-29', item:'12 PCS PACKET MIX', qty:111}
+      ],
+      inventory: { }
     };
-    const td2=ce('td'); td2.appendChild(del); tr.appendChild(td2);
-    tb.appendChild(tr);
-  });
-  tbl.appendChild(tb);
-}
-qs('#btnAddBranch').onclick=()=>{
-  openModal(`
-    <h3>إضافة فرع</h3>
-    <div class="row">
-      <input id="newBranch" placeholder="اسم الفرع"/>
-      <button class="primary" onclick="(function(){const v=document.getElementById('newBranch').value.trim(); if(!v) return alert('أدخل اسم'); if(state.branches.includes(v)) return alert('موجود مسبقًا'); state.branches.push(v); drawBranches(); refreshBranchSelects(); save(); closeModal();})()">إضافة</button>
-    </div>
-  `);
-};
-function refreshBranchSelects(){
-  // sales
-  const s1=qs('#saleBranch'); s1.innerHTML=''; state.branches.forEach(b=> s1.appendChild(ce('option',{value:b,textContent:b})));
-  // monthly
-  const s2=qs('#repBranch'); s2.innerHTML='<option value="">جميع الفروع</option>'; state.branches.forEach(b=> s2.appendChild(ce('option',{value:b,textContent:b})));
-  // inventory
-  const s3=qs('#invBranch'); s3.innerHTML=''; state.branches.forEach(b=> s3.appendChild(ce('option',{value:b,textContent:b})));
-}
-
-/* ================== Recipes ================== */
-function drawChips(){ const box=qs('#ingChips'); box.innerHTML=''; state.ingredients.forEach(ing=> box.appendChild(ce('div',{className:'chip',textContent:ing}))); }
-
-function drawRecipes(){
-  qs('#countItems').textContent = state.items.length;
-  qs('#countIngs').textContent = state.ingredients.length;
-  const tbl = qs('#tblRecipes'); tbl.innerHTML='';
-  const thead = ce('thead'); const hr=ce('tr');
-  ['#','اسم الصنف','المجموعة','الفئة','—', ...state.ingredients].forEach((h,i)=>{ const th=ce('th',{textContent:h}); if(i>=5) th.title='كمية لكل وحدة بيع'; hr.appendChild(th); });
-  thead.appendChild(hr); tbl.appendChild(thead);
-  const tb = ce('tbody');
-  state.items.forEach((it,idx)=>{
-    const tr=ce('tr');
-    tr.appendChild(ce('td',{textContent:idx+1}));
-    const name=ce('input',{value:it.name}); name.onchange=()=>{it.name=name.value; fillSaleItems(); save();};
-    const fam=ce('input',{value:it.family||''}); fam.onchange=()=>{it.family=fam.value; save();};
-    const grp=ce('input',{value:it.group||''}); grp.onchange=()=>{it.group=grp.value; save();};
-    const del=ce('button',{textContent:'حذف', className:'warn'}); del.onclick=()=>{ state.items.splice(idx,1); drawRecipes(); fillSaleItems(); save(); };
-    const td1=ce('td'); td1.appendChild(name); tr.appendChild(td1);
-    const td2=ce('td'); td2.appendChild(fam); tr.appendChild(td2);
-    const td3=ce('td'); td3.appendChild(grp); tr.appendChild(td3);
-    const td4=ce('td'); td4.appendChild(del); tr.appendChild(td4);
-    if(!it.recipe) it.recipe={};
-    state.ingredients.forEach(ing=>{
-      const v=it.recipe[ing]||0;
-      const inp=ce('input',{type:'number', step:'0.001', value:v});
-      inp.onchange=()=>{ it.recipe[ing]=Number(inp.value)||0; save(); };
-      const td=ce('td'); td.appendChild(inp); tr.appendChild(td);
-    });
-    tb.appendChild(tr);
-  });
-  tbl.appendChild(tb);
-  drawChips();
-}
-qs('#btnAddItem').onclick=()=>{ state.items.push({name:'صنف جديد',family:'',group:'',recipe:{}}); drawRecipes(); fillSaleItems(); save(); };
-qs('#btnAddIng').onclick=()=>{
-  openModal(`
-    <h3>إضافة مكوّن</h3>
-    <div class="row">
-      <input id="newIng" placeholder="اسم المكوّن (إنجليزي)"/>
-      <button class="primary" onclick="(function(){const v=document.getElementById('newIng').value.trim(); if(!v) return alert('أدخل اسم'); if(state.ingredients.includes(v)) return alert('موجود'); state.ingredients.push(v); drawRecipes(); fillSaleItems(); ensureInv(); drawInventory(); save(); closeModal();})()">إضافة</button>
-    </div>
-  `);
-};
-qs('#btnSave').onclick=save;
-qs('#btnExportJSON').onclick=()=>{
-  const url=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}));
-  ce('a',{href:url,download:'crispy_chicken_data.json'}).click(); URL.revokeObjectURL(url);
-};
-function fillSaleItems(){ const sel=qs('#saleItem'); sel.innerHTML=''; state.items.forEach(it=> sel.appendChild(ce('option',{value:it.name,textContent:it.name}))); }
-
-/* ================== Sales ================== */
-function drawSales(filter=''){
-  const tbl=qs('#tblSales'); tbl.innerHTML='';
-  const header='<tr><th>#</th><th>التاريخ</th><th>الفرع</th><th>الصنف</th><th>الكمية</th><th>—</th></tr>';
-  const thead=ce('thead'); thead.innerHTML=header; tbl.appendChild(thead);
-  const tb=ce('tbody');
-
-  const filtered = state.sales.filter(s =>
-    (s.item||'').toLowerCase().includes(filter.toLowerCase()) ||
-    (s.branch||'').toLowerCase().includes(filter.toLowerCase()) ||
-    (s.date||'').includes(filter)
-  );
-  qs('#salesRows').textContent = filtered.length;
-
-  filtered.forEach((s,i)=>{
-    const tr=ce('tr');
-    tr.appendChild(ce('td',{textContent:i+1}));
-    const d=ce('input',{type:'date', value:s.date}); d.onchange=()=>{ s.date=d.value; save(); };
-    const b=ce('select'); state.branches.forEach(br=> b.appendChild(ce('option',{value:br,textContent:br, selected:br===s.branch})));
-    b.onchange=()=>{ s.branch=b.value; save(); };
-    const it=ce('select'); state.items.forEach(x=> it.appendChild(ce('option',{value:x.name,textContent:x.name, selected:x.name===s.item})));
-    it.onchange=()=>{ s.item=it.value; save(); };
-    const q=ce('input',{type:'number', step:'1', min:'0', value:s.qty}); q.onchange=()=>{ s.qty=Number(q.value)||0; save(); };
-    const del=ce('button',{textContent:'حذف', className:'warn'}); del.onclick=()=>{ state.sales.splice(state.sales.indexOf(s),1); drawSales(filter); save(); };
-    [d,b, it, q, del].forEach(el=>{ const td=ce('td'); td.appendChild(el); tr.appendChild(td); });
-    tb.appendChild(tr);
-  });
-  tbl.appendChild(tb);
-}
-qs('#btnAddSale').onclick=()=>{
-  const d = qs('#saleDate').value || new Date().toISOString().slice(0,10);
-  const br = qs('#saleBranch').value || state.branches[0] || '';
-  const it = qs('#saleItem').value || (state.items[0]?.name||'');
-  const q = Number(qs('#saleQty').value)||1;
-  if(q<=0) return alert('الكمية > 0');
-  state.sales.push({date:d, branch:br, item:it, qty:q}); drawSales(); save();
-};
-qs('#btnSaveSales').onclick=save;
-qs('#btnExportSales').onclick=()=>{
-  const rows=[['Date','Branch','Item','Qty']].concat(state.sales.map(s=>[s.date,s.branch,s.item,s.qty]));
-  const csv='\uFEFF'+rows.map(r=>r.join(',')).join('\n');
-  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  ce('a',{href:url,download:'sales.csv'}).click(); URL.revokeObjectURL(url);
-};
-qs('#searchSales').oninput=()=>drawSales(qs('#searchSales').value);
-
-/* ================== Math (Recipes Usage) ================== */
-function mapRecipe(itemName){ const it = state.items.find(x=>x.name===itemName); return it?.recipe || {}; }
-function usageByDate(date, branch=''){
-  const obj={};
-  state.sales.filter(s=> s.date===date && (!branch || s.branch===branch)).forEach(s=>{
-    const rec = mapRecipe(s.item);
-    Object.entries(rec).forEach(([ing,qty])=>{
-      obj[ing]=(obj[ing]||0)+ (s.qty * Number(qty||0));
-    });
-  });
-  return obj;
-}
-function usageByMonth(ym, branch=''){
-  const days = daysInMonth(ym);
-  const result={};
-  days.forEach(d=>{ result[d]=usageByDate(d,branch); });
-  return result;
-}
-
-/* ================== Monthly ================== */
-let monthlyTotalsCache = {}; // { ym|branchKey : totalsObj }
-function buildMonthly(){
-  const ym = qs('#repMonth').value || new Date().toISOString().slice(0,7);
-  const br = qs('#repBranch').value;
-  const days = daysInMonth(ym);
-  const use = usageByMonth(ym, br);
-  const tbl = qs('#tblMonthly'); tbl.innerHTML='';
-  const thead=ce('thead'); const hr=ce('tr');
-  hr.appendChild(ce('th',{textContent:'التاريخ'}));
-  state.ingredients.forEach(ing=> hr.appendChild(ce('th',{textContent:ing})));
-  thead.appendChild(hr); tbl.appendChild(thead);
-  const tb=ce('tbody');
-  let totals={};
-  days.forEach(d=>{
-    const tr=ce('tr'); tr.appendChild(ce('td',{textContent:d}));
-    state.ingredients.forEach(ing=>{
-      const v=(use[d]?.[ing])||0;
-      totals[ing]=(totals[ing]||0)+v;
-      tr.appendChild(ce('td',{textContent:fmt(v)}));
-    });
-    tb.appendChild(tr);
-  });
-  const trT=ce('tr'); trT.style.background='#0e1a3a';
-  trT.appendChild(ce('td',{innerHTML:'<b>TOTAL Recipe</b>'}));
-  state.ingredients.forEach(ing=> trT.appendChild(ce('td',{innerHTML:`<b>${fmt(totals[ing]||0)}</b>`})));
-  tb.appendChild(trT); tbl.appendChild(tb);
-
-  const k=qs('#kpi'); k.innerHTML='';
-  const sumSales = state.sales.filter(s=>s.date.startsWith(ym) && (!br || s.branch===br)).reduce((a,b)=>a+b.qty,0);
-  k.appendChild(kpi('إجمالي وحدات المبيعات', sumSales));
-  k.appendChild(kpi('عدد المكونات', state.ingredients.length));
-  k.appendChild(kpi('عدد الأصناف', state.items.length));
-  k.appendChild(kpi('أيام الشهر', days.length));
-
-  const key = ym+'|'+(br||'ALL');
-  monthlyTotalsCache[key]=totals;
-  state.__lastMonthlyYM = ym;
-  state.__lastMonthlyBranch = br;
-  state.__lastMonthlyTotals = totals;
-  save();
-}
-function kpi(title,val){ const d=ce('div',{className:'box'}); d.innerHTML=`<h3>${title}</h3><b>${fmt(val)}</b>`; return d; }
-qs('#btnBuildMonthly').onclick=buildMonthly;
-qs('#btnExportMonthly').onclick=()=>{
-  const ym = qs('#repMonth').value || new Date().toISOString().slice(0,7);
-  const br = qs('#repBranch').value || 'ALL';
-  const totals = monthlyTotalsCache[ym+'|'+br] || state.__lastMonthlyTotals || {};
-  const rows=[['Ingredient',`TotalRecipe(${ym}-${br})`]];
-  state.ingredients.forEach(ing=> rows.push([ing, totals[ing]||0]));
-  const csv='\uFEFF'+rows.map(r=>r.join(',')).join('\n');
-  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  ce('a',{href:url,download:`monthly_totals_${ym}_${br}.csv`}).click(); URL.revokeObjectURL(url);
-};
-
-/* ================== Inventory ================== */
-function ensureInv(){
-  // Ensure structure exists for every branch/ingredient
-  state.branches.forEach(br=>{
-    if(!state.inventory[br]) state.inventory[br]=[];
-    state.ingredients.forEach(ing=>{
-      if(!state.inventory[br].find(i=>i.ingredient===ing)){
-        state.inventory[br].push({ingredient:ing, begin:0, purchases:0, tin:0, tout:0, waste:0, end:0, lastUpdated: new Date().toISOString().slice(0,10)});
+    
+    // ========= Persistence =========
+    function load(){
+      const raw = localStorage.getItem(DB_KEY);
+      if(raw){
+        try{ state = JSON.parse(raw); }catch(e){ console.warn('failed parse'); }
       }
-    });
-  });
-}
-function drawInventory(){
-  ensureInv();
-  const br = qs('#invBranch').value || state.branches[0];
-  const tbl=qs('#tblInventory'); tbl.innerHTML='';
-  const thead=ce('thead'); thead.innerHTML='<tr><th>المكوّن</th><th>رصيد أول</th><th>مشتريات</th><th>تحويلات داخلة</th><th>تحويلات خارجة</th><th>هالك</th><th>رصيد آخر</th><th>حالة</th></tr>';
-  tbl.appendChild(thead);
-  const tb=ce('tbody');
-  (state.inventory[br]||[]).forEach(inv=>{
-    const tr=ce('tr');
-    tr.appendChild(ce('td',{textContent:inv.ingredient}));
-    ['begin','purchases','tin','tout','waste'].forEach(key=>{
-      const inp=ce('input',{type:'number', step:'0.001', value:inv[key]||0});
-      inp.onchange=()=>{ inv[key]=Number(inp.value)||0; inv.end=(+inv.begin)+(+inv.purchases)+(+inv.tin)-(+inv.tout)-(+inv.waste); inv.lastUpdated=new Date().toISOString().slice(0,10); save(); drawInventory(); };
-      const td=ce('td'); td.appendChild(inp); tr.appendChild(td);
-    });
-    const endTd=ce('td',{textContent:fmt(inv.end||0)}); tr.appendChild(endTd);
-    const status= (inv.end||0)<10 ? ce('td',{textContent:'⚠️ منخفض', className:'status-low'}) : ce('td',{textContent:'✅ طبيعي', className:'status-ok'});
-    tr.appendChild(status);
-    tb.appendChild(tr);
-  });
-  tbl.appendChild(tb);
-  drawInventoryMovements();
-}
-function drawInventoryMovements(filter=''){
-  const br = qs('#invBranch').value || state.branches[0];
-  const tbl=qs('#tblMovements'); tbl.innerHTML='';
-  const thead=ce('thead'); thead.innerHTML='<tr><th>#</th><th>التاريخ</th><th>الفرع</th><th>المكوّن</th><th>نوع الحركة</th><th>الكمية</th><th>—</th></tr>';
-  tbl.appendChild(thead);
-  const tb=ce('tbody');
-  const rows = state.inventoryMovements.filter(m=> (!br || m.branch===br) &&
-    (m.ingredient.toLowerCase().includes(filter.toLowerCase()) || m.type.toLowerCase().includes(filter.toLowerCase()) || m.date.includes(filter))
-  );
-  rows.forEach((m,i)=>{
-    const tr=ce('tr');
-    tr.appendChild(ce('td',{textContent:i+1}));
-    const d=ce('input',{type:'date', value:m.date}); d.onchange=()=>{ m.date=d.value; save(); };
-    const b=ce('select'); state.branches.forEach(x=> b.appendChild(ce('option',{value:x,textContent:x,selected:x===m.branch}))); b.onchange=()=>{ m.branch=b.value; save(); };
-    const ing=ce('select'); state.ingredients.forEach(x=> ing.appendChild(ce('option',{value:x,textContent:x,selected:x===m.ingredient}))); ing.onchange=()=>{ m.ingredient=ing.value; save(); };
-    const type=ce('select'); ['purchases','tin','tout','waste'].forEach(t=> type.appendChild(ce('option',{value:t,textContent:t,selected:t===m.type}))); type.onchange=()=>{ m.type=type.value; save(); };
-    const qty=ce('input',{type:'number', step:'0.001', min:'0', value:m.qty}); qty.onchange=()=>{ m.qty=Number(qty.value)||0; applyMovement(m); save(); drawInventory(); drawInventoryMovements(filter); };
-    const del=ce('button',{textContent:'حذف', className:'warn'}); del.onclick=()=>{ state.inventoryMovements.splice(state.inventoryMovements.indexOf(m),1); revertMovement(m); save(); drawInventory(); drawInventoryMovements(filter); };
-    [d,b,ing,type,qty,del].forEach(el=>{ const td=ce('td'); td.appendChild(el); tr.appendChild(td); });
-    tb.appendChild(tr);
-  });
-  tbl.appendChild(tb);
-}
-function applyMovement(m){
-  // Update inventory snapshot for the movement branch/ingredient
-  const list = state.inventory[m.branch]||[];
-  const inv = list.find(x=>x.ingredient===m.ingredient);
-  if(!inv) return;
-  if(m.type==='purchases') inv.purchases = (+inv.purchases) + (+m.qty);
-  if(m.type==='tin') inv.tin = (+inv.tin) + (+m.qty);
-  if(m.type==='tout') inv.tout = (+inv.tout) + (+m.qty);
-  if(m.type==='waste') inv.waste = (+inv.waste) + (+m.qty);
-  inv.end = (+inv.begin)+(+inv.purchases)+(+inv.tin)-(+inv.tout)-(+inv.waste);
-  inv.lastUpdated = m.date;
-}
-function revertMovement(m){
-  const list = state.inventory[m.branch]||[];
-  const inv = list.find(x=>x.ingredient===m.ingredient);
-  if(!inv) return;
-  if(m.type==='purchases') inv.purchases = Math.max(0,(+inv.purchases) - (+m.qty));
-  if(m.type==='tin') inv.tin = Math.max(0,(+inv.tin) - (+m.qty));
-  if(m.type==='tout') inv.tout = Math.max(0,(+inv.tout) - (+m.qty));
-  if(m.type==='waste') inv.waste = Math.max(0,(+inv.waste) - (+m.qty));
-  inv.end = (+inv.begin)+(+inv.purchases)+(+inv.tin)-(+inv.tout)-(+inv.waste);
-}
-qs('#btnAddMovement').onclick=()=>{
-  openModal(`
-    <h3>إضافة حركة جرد</h3>
-    <div class="row">
-      <label>التاريخ <input type="date" id="movDate" value="${new Date().toISOString().slice(0,10)}"></label>
-      <label>الفرع
-        <select id="movBranch">${state.branches.map(b=>`<option value="${b}">${b}</option>`).join('')}</select>
-      </label>
-      <label>المكوّن
-        <select id="movIng">${state.ingredients.map(i=>`<option value="${i}">${i}</option>`).join('')}</select>
-      </label>
-      <label>النوع
-        <select id="movType">
-          <option value="purchases">مشتريات</option>
-          <option value="tin">تحويل داخلة</option>
-          <option value="tout">تحويل خارجة</option>
-          <option value="waste">هالك</option>
-        </select>
-      </label>
-      <label>الكمية <input type="number" id="movQty" min="0" step="0.001" value="0"></label>
-      <button class="primary" onclick="(function(){const date=movDate.value,branch=movBranch.value,ingredient=movIng.value,type=movType.value,qty=Number(movQty.value)||0;if(qty<=0){alert('الكمية > 0');return;} state.inventoryMovements.push({date,branch,ingredient,type,qty}); applyMovement({date,branch,ingredient,type,qty}); save(); drawInventory(); drawInventoryMovements(); closeModal();})()">إضافة</button>
-    </div>
-  `);
-};
-qs('#btnSaveInv').onclick=save;
-qs('#btnExportInv').onclick=()=>{
-  const br = qs('#invBranch').value || state.branches[0];
-  const rows=[['Ingredient','Begin','Purchases','Tin','Tout','Waste','End','LastUpdated']];
-  (state.inventory[br]||[]).forEach(inv=> rows.push([inv.ingredient,inv.begin,inv.purchases,inv.tin,inv.tout,inv.waste,inv.end,inv.lastUpdated]));
-  const csv='\uFEFF'+rows.map(r=>r.join(',')).join('\n');
-  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  ce('a',{href:url,download:`inventory_${br}.csv`}).click(); URL.revokeObjectURL(url);
-};
-qs('#searchMovements').oninput=()=>drawInventoryMovements(qs('#searchMovements').value);
-
-qs('#btnCalcVariance').onclick=()=>{
-  const ym = qs('#repMonth').value || new Date().toISOString().slice(0,7);
-  const br = qs('#invBranch').value || state.branches[0];
-  // Ensure we have monthly totals for the same branch context:
-  const brForMonthly = (qs('#repBranch').value || '');
-  if(brForMonthly!==br){
-    // compute totals for chosen branch to keep apples-to-apples
-    state.__lastMonthlyTotals = usageTotalsFor(ym, br);
-  }
-  const totals = state.__lastMonthlyTotals || usageTotalsFor(ym, br);
-  const tbl=qs('#tblVariance'); tbl.innerHTML='';
-  const thead=ce('thead'); thead.innerHTML='<tr><th>المكوّن</th><th>Total Recipe</th><th>Actual</th><th>Variance</th></tr>'; tbl.appendChild(thead);
-  const tb=ce('tbody');
-  (state.inventory[br]||[]).forEach(inv=>{
-    const actual = (+inv.begin||0) + (+inv.purchases||0) + (+inv.tin||0) - (+inv.tout||0) - (+inv.waste||0);
-    const recipe = +totals[inv.ingredient] || 0;
-    const varc = actual - recipe;
-    const tr=ce('tr');
-    tr.appendChild(ce('td',{textContent:inv.ingredient}));
-    tr.appendChild(ce('td',{textContent:fmt(recipe)}));
-    tr.appendChild(ce('td',{textContent:fmt(actual)}));
-    const tdv=ce('td',{textContent:fmt(varc)});
-    tdv.style.color = Math.abs(varc / (recipe || 1)) > 0.1 ? 'var(--danger)' : 'var(--ok)';
-    tr.appendChild(tdv);
-    tb.appendChild(tr);
-  });
-  tbl.appendChild(tb);
-};
-function usageTotalsFor(ym, branch){
-  const days = daysInMonth(ym);
-  const totals={};
-  days.forEach(d=>{
-    const u=usageByDate(d, branch);
-    Object.entries(u).forEach(([k,v])=> totals[k]=(totals[k]||0)+v);
-  });
-  return totals;
-}
-
-/* ================== Settings (Import/Reset) ================== */
-qs('#btnImport').onclick=()=>{
-  const f=qs('#fileImport').files[0]; if(!f) return alert('اختر ملف JSON');
-  const r=new FileReader();
-  r.onload=e=>{
-    try{
-      const data=JSON.parse(e.target.result);
-      if(!data.branches||!data.ingredients||!data.items||!data.sales||!data.inventory||!data.inventoryMovements) throw new Error('صيغة JSON غير مكتملة');
-      state=data; save(); init(); alert('تم الاستيراد بنجاح');
-    }catch(err){ alert('ملف JSON غير صالح: '+err.message); }
-  };
-  r.readAsText(f);
-};
-qs('#btnReset').onclick=()=>{ if(confirm('مسح كل البيانات؟')){ localStorage.removeItem(DB_KEY); location.reload(); } };
-
-/* ================== Boot ================== */
-function init(){
-  load();
-  drawBranches();
-  drawRecipes();
-  fillSaleItems();
-  refreshBranchSelects();
-  drawSales();
-  ensureInv();
-  qs('#repMonth').value = new Date().toISOString().slice(0,7);
-  buildMonthly();
-  qs('#invBranch').value = state.branches[0] || '';
-  drawInventory();
-}
-init();
-</script>
+    }
+    function save(){ localStorage.setItem(DB_KEY, JSON.stringify(state)); }
+    
+    // ========= Helpers =========
+    const qs = s=>document.querySelector(s);
+    const ce = (tag,props={})=>Object.assign(document.createElement(tag),props);
+    function fmt(n){ return Number(n||0).toLocaleString('ar-EG'); }
+    function unique(arr){ return [...new Set(arr)]; }
+    
+    // ========= Tabs =========
+    [...document.querySelectorAll('.tab')].forEach(t=>t.addEventListener('click',()=>{
+      document.querySelectorAll('main section').forEach(s=>s.style.display='none');
+      qs('#'+t.dataset.tab).style.display='block';
+    }));
+    
+    // ========= Recipes UI =========
+    function drawRecipes(){
+      qs('#countItems').textContent = state.items.length;
+      qs('#countIngs').textContent = state.ingredients.length;
+      const tbl = qs('#tblRecipes');
+      tbl.innerHTML='';
+      const thead = ce('thead');
+      const hr = ce('tr');
+      ;['#','اسم الصنف','المجموعة','الفئة','—'].concat(state.ingredients).forEach((h,i)=>{
+        const th = ce('th',{textContent:h});
+        if(i>=5) th.title='كمية لكل وحدة بيع';
+        hr.appendChild(th);
+      });
+      thead.appendChild(hr); tbl.appendChild(thead);
+      const tb=ce('tbody');
+      state.items.forEach((it,idx)=>{
+        const tr=ce('tr');
+        tr.appendChild(ce('td',{textContent:idx+1}))
+        const name=ce('input',{value:it.name}); name.onchange=()=>{it.name=name.value; fillSaleItems(); save();}
+        const fam=ce('input',{value:it.family||''}); fam.onchange=()=>{it.family=fam.value; save();}
+        const grp=ce('input',{value:it.group||''}); grp.onchange=()=>{it.group=grp.value; save();}
+        const del=ce('button',{textContent:'حذف'}); del.onclick=()=>{state.items.splice(idx,1); drawRecipes(); fillSaleItems(); save();}
+        const tdName=ce('td'); tdName.appendChild(name); tr.appendChild(tdName);
+        const tdFam=ce('td'); tdFam.appendChild(fam); tr.appendChild(tdFam);
+        const tdGrp=ce('td'); tdGrp.appendChild(grp); tr.appendChild(tdGrp);
+        const tdDel=ce('td'); tdDel.appendChild(del); tr.appendChild(tdDel);
+        // recipe cells
+        if(!it.recipe) it.recipe={};
+        state.ingredients.forEach(ing=>{
+          const v=it.recipe[ing]||0;
+          const inp=ce('input',{type:'number', step:'0.001', value:v});
+          inp.onchange=()=>{ it.recipe[ing]=Number(inp.value)||0; save(); };
+          const td=ce('td'); td.appendChild(inp); tr.appendChild(td);
+        });
+        tb.appendChild(tr);
+      });
+      tbl.appendChild(tb);
+      drawChips();
+    }
+    qs('#btnAddItem').onclick=()=>{ state.items.push({name:'صنف جديد', family:'', group:'', recipe:{}}); drawRecipes(); fillSaleItems(); save(); }
+    qs('#btnAddIng').onclick=()=>{
+      const name=prompt('اسم المكوّن (حروف لاتينية/إنجليزية يفضّل بلا مسافات)');
+      if(!name) return;
+      if(state.ingredients.includes(name)) return alert('المكوّن موجود');
+      state.ingredients.push(name);
+      drawRecipes(); fillSaleItems(); drawInventory(); save();
+    }
+    qs('#btnSave').onclick=save;
+    qs('#btnExport').onclick=()=>{
+      const url = URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}));
+      const a = ce('a',{href:url, download:'restaurant-management.json'}); a.click(); URL.revokeObjectURL(url);
+    }
+    function drawChips(){
+      const box=qs('#ingChips'); box.innerHTML='';
+      state.ingredients.forEach(ing=>{
+        const c=ce('div',{className:'badge badge-primary',textContent:ing}); box.appendChild(c);
+      })
+    }
+    // ========= Sales UI =========
+    function fillSaleItems(){
+      const sel=qs('#saleItem'); sel.innerHTML='';
+      state.items.forEach(it=> sel.appendChild(ce('option',{value:it.name,textContent:it.name})) );
+    }
+    function drawSales(){
+      qs('#salesRows').textContent = state.sales.length;
+      const tbl=qs('#tblSales'); tbl.innerHTML='';
+      const thead=ce('thead');
+      thead.innerHTML='<tr><th>#</th><th>التاريخ</th><th>الصنف</th><th>الكمية</th><th>—</th></tr>';
+      tbl.appendChild(thead);
+      const tb=ce('tbody');
+      state.sales.forEach((s,i)=>{
+        const tr=ce('tr');
+        tr.appendChild(ce('td',{textContent:i+1}))
+        const d=ce('input',{type:'date', value:s.date}); d.onchange=()=>{s.date=d.value; save();}
+        const itm=ce('select'); state.items.forEach(it=> itm.appendChild(ce('option',{value:it.name,textContent:it.name, selected:it.name===s.item})) ); itm.onchange=()=>{s.item=itm.value; save();}
+        const q=ce('input',{type:'number', step:'1', min:'0', value:s.qty}); q.onchange=()=>{s.qty=Number(q.value)||0; save();}
+        const del=ce('button',{textContent:'حذف'}); del.onclick=()=>{state.sales.splice(i,1); drawSales(); save();}
+        const td1=ce('td'); td1.appendChild(d); tr.appendChild(td1);
+        const td2=ce('td'); td2.appendChild(itm); tr.appendChild(td2);
+        const td3=ce('td'); td3.appendChild(q); tr.appendChild(td3);
+        const td4=ce('td'); td4.appendChild(del); tr.appendChild(td4);
+        tb.appendChild(tr);
+      })
+      tbl.appendChild(tb);
+    }
+    qs('#btnAddSale').onclick=()=>{
+      const d=qs('#saleDate').value || new Date().toISOString().slice(0,10);
+      const it=qs('#saleItem').value || (state.items[0]?.name||'');
+      const q=Number(qs('#saleQty').value)||1;
+      state.sales.push({date:d,item:it,qty:q}); drawSales(); save();
+    }
+    qs('#btnSaveSales').onclick=save;
+    qs('#btnExportSales').onclick=()=>{
+      const rows=[['Date','Item','Qty'].concat(state.sales.map(s=>[s.date,s.item,s.qty]))];
+      const csv=rows.map(r=>r.join(',')).join('\n');
+      const url = URL.createObjectURL(new Blob([csv,{type:'text/csv'}]));
+      ce('a',{href:url,download:'sales.csv'}).click(); URL.revokeObjectURL(url);
+    }
+    // ========= Monthly UI =========
+    function buildMonthly(){
+      const ym = qs('#repMonth').value || new Date().toISOString().slice(0,7);
+      const days = daysInMonth(ym);
+      const use = usageByMonth(ym);
+      const tbl=qs('#tblMonthly'); tbl.innerHTML='';
+      const thead=ce('thead');
+      const hr=ce('tr');
+      hr.appendChild(ce('th',{textContent:'التاريخ'}));
+      state.ingredients.forEach(ing=> hr.appendChild(ce('th',{textContent:ing})) );
+      thead.appendChild(hr); tbl.appendChild(thead);
+      const tb=ce('tbody');
+      let totals={};
+      days.forEach(d=>{
+        const tr=ce('tr'); tr.appendChild(ce('td',{textContent:d}));
+        state.ingredients.forEach(ing=>{
+          const v = (use[d]?.[ing])||0;
+          totals[ing]=(totals[ing]||0)+v;
+          tr.appendChild(ce('td',{textContent:fmt(v)}));
+        })
+        tb.appendChild(tr);
+      })
+      tbl.appendChild(tb);
+      // Store latest monthly totals for variance table to reference
+      state.__lastMonthlyTotals = totals; save();
+    }
+    qs('#btnBuildMonthly').onclick=buildMonthly;
+    function buildMonthly(){
+      const ym = qs('#repMonth').value || new Date().toISOString().slice(0,7);
+      const days = daysInMonth(ym);
+      const use = usageByMonth(ym);
+      const totals = getTotalUsage(use);
+      const tbl=qs('#tblMonthly'); tbl.innerHTML='';
+      const thead=ce('thead');
+      thead.innerHTML='<tr><th>التاريخ</th>'+state.ingredients.map(ing=>`<th>${ing}</th>`).join('')+'</tr>';
+      tbl.appendChild(thead);
+      const tb=ce('tbody');
+      days.forEach(d=>{
+        const tr=ce('tr'); tr.appendChild(ce('td',{textContent:d}));
+        state.ingredients.forEach(ing=>{
+          const v = (use[d]?.[ing])||0;
+          tr.appendChild(ce('td',{textContent:fmt(v)}));
+        })
+        tb.appendChild(tr);
+      })
+      tbl.appendChild(tb);
+      // Store latest monthly totals for variance table to reference
+      state.__lastMonthlyTotals = totals; save();
+    }
+    qs('#btnExportMonthly').onclick=()=>{
+      const ym = qs('#repMonth').value || new Date().toISOString().slice(0,7);
+      const totals = state.__lastMonthlyTotals || {};
+      const rows = [['Ingredient','TotalRecipe('+ym+')']];
+      state.ingredients.forEach(ing=> rows.push([ing, (totals[ing]||0)]) );
+      const csv=rows.map(r=>r.join(',')).join('\n');
+      const url = URL.createObjectURL(new Blob([csv,{type:'text/csv'}));
+      ce('a',{href:url,download:'monthly_totals_'+ym+'.csv'}).click(); URL.revokeObjectURL(url);
+    }
+    function usageByMonth(ym){ // ym=YYYY-MM
+      const days = daysInMonth(ym);
+      const result = {}; // {date:{ing:qty}}
+      days.forEach(d=>{
+        result[d]=usageByDate(d);
+      })
+      return result;
+    }
+    function usageByDate(date){
+      // returns {ing: qtyUsed}
+      const obj={};
+      state.sales.filter(s=>s.date===date).forEach(s=>{
+        const rec = mapRecipe(s.item);
+        Object.entries(rec).forEach(([ing,qty])=>{
+          obj[ing]=(obj[ing]||0)+ (s.qty*Number(qty||0));
+        })
+      })
+      return obj;
+    }
+    function daysInMonth(ym){ // ym=YYYY-MM
+      const [y,m]=ym.split('-').map(Number); const last=new Date(y,m,0).getDate();
+      const arr=[]; for(let d=1; d<=last; d++){ arr.push(`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`) }
+      return arr;
+    }
+    // ========= Inventory UI =========
+    function ensureInv(){
+      state.ingredients.forEach(ing=>{
+        if(!state.inventory[ing]) state.inventory[ing]={begin:0,purchases:0,tin:0,tout:0,waste:0,end:0};
+      }
+    }
+    function drawInventory(){
+      ensureInv();
+      const tbl=qs('#tblInventory'); tbl.innerHTML='';
+      const thead=ce('thead');
+      thead.innerHTML='<tr><th>المكوّن</th><th>رصيد أول</th><th>مشتريات</th><th>تحويلات داخلة</th><th>تحويلات خارجة</th><th>هالك</th><th>رصيد آخر</th></tr>';
+      tbl.appendChild(thead);
+      const tb=ce('tbody');
+      state.ingredients.forEach(ing=>{
+        const inv=state.inventory[ing];
+        const tr=ce('tr'); tr.appendChild(ce('td',{textContent:ing}))
+        ;['begin','purchases','tin','tout','waste','end'].forEach(key=>{
+          const inp=ce('input',{type:'number', step:'0.001', value:inv[key]||0});
+          inp.onchange=()=>{ inv[key]=Number(inp.value)||0; save(); };
+          const td=ce('td'); td.appendChild(inp); tr.appendChild(td);
+        })
+        tb.appendChild(tr);
+      })
+      tbl.appendChild(tb);
+    }
+    qs('#btnSaveInv').onclick=save;
+    qs('#btnCalcVariance').onclick=()=>{
+      const totals = state.__lastMonthlyTotals || {};
+      const tbl=qs('#tblVariance'); tbl.innerHTML='';
+      const thead=ce('thead');
+      thead.innerHTML='<tr><th>المكوّن</th><th>Total Recipe</th><th>Actual</th><th>Variance (Actual-Recipe)</th></tr>';
+      tbl.appendChild(thead);
+      const tb=ce('tbody');
+      state.ingredients.forEach(ing=>{
+        const inv=state.inventory[ing]||{};
+        const actual=(+inv.begin||0)+(+inv.purchases||0)+(+inv.tin||0)-(+inv.tout||0)-(+inv.end||0)-(+inv.waste||0);
+        const recipe=+totals[ing]||0;
+        const varc=actual - recipe;
+        const tr=ce('tr');
+        tr.appendChild(ce('td',{textContent:ing}))
+        tr.appendChild(ce('td',{textContent:fmt(recipe)}))
+        tr.appendChild(ce('td',{textContent:fmt(actual)}))
+        const tdv=ce('td',{textContent:fmt(varc)}); tdv.style.color = varc>0? 'var(--danger)': (varc<0? 'var(--ok)':'')); tr.appendChild(tdv);
+        tb.appendChild(tr);
+      })
+      tbl.appendChild(tb);
+    }
+    // ========= Import/Reset =========
+    qs('#btnImport').addEventListener('change',handleImport);
+    qs('#btnReset').addEventListener('click',handleReset);
+    function handleImport(e){
+      const f=qs('#fileImport').files[0]; if(!f) return alert('اختر ملف JSON');
+      const r=new FileReader(); r.onload=e=>{ try{ state=JSON.parse(e.target.result); save(); init(); }catch(err){ alert('ملف غير صالح'); } }; r.readAsText(f);
+    }
+    function handleReset(){
+      if(confirm('مسح كل البيانات؟')){ localStorage.removeItem(DB_KEY); location.reload(); }
+    // ========= Boot =========
+    function init(){
+      load();
+      drawRecipes();
+      fillSaleItems();
+      qs('#repMonth').value = new Date().toISOString().slice(0,7);
+      buildMonthly();
+      drawInventory();
+    }
+    init();
+  </script>
 </body>
 </html>
