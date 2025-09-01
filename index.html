@@ -22,7 +22,7 @@
       --shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Cairo", sans-serif; }
-    body { background-color: var(--dark); color: var(--light); line-height: 1.6; }
+    body { background-color: var(--dark); color: var(--light); line-height: 1.6; padding: 10px; }
     header {
       background: linear-gradient(180deg, #0c1446, rgba(12, 20, 70, 0.8));
       padding: 1rem;
@@ -36,13 +36,13 @@
       height: 50px; width: auto; margin-right: 15px;
     }
     header h1 {
-      font-size: 1.2rem; font-weight: 700; color: #fff;
+      font-size: 1.2rem; font-weight: 700; color: #fff; margin-top: 0;
     }
     /* Branch Selector Style */
     #branchSelector {
-      margin-top: 10px;
+      margin: 10px 0;
     }
-    #branchSelector select {
+    #branchSelect {
       padding: 0.5rem; border-radius: 8px; border: none; font-weight: 600;
     }
     .tabs {
@@ -90,7 +90,6 @@
 
 <header>
   <div class="logo-container">
-    <!-- شعار الشركة -->
     <img src="https://via.placeholder.com/100x50?text=CRISPY+LOGO" alt="Crispy Chicken Logo" class="logo" />
     <h1>Crispy Chicken LLC Management System</h1>
   </div>
@@ -99,7 +98,7 @@
 <div class="container">
   <!-- Branch Selector -->
   <div id="branchSelector">
-    <label for="branchSelect">Select Branch: </label>
+    <label for="branchSelect" style="color:#fff;">Select Branch: </label>
     <select id="branchSelect">
       <option value="Hamdan St">Crispy Chicken - Hamdan St</option>
       <option value="Khaldia">Crispy Chicken Khaldia</option>
@@ -111,7 +110,7 @@
     </select>
   </div>
 
-  <!-- تبويبات التنقل -->
+  <!-- Tabs -->
   <div class="tabs">
     <div class="tab active" data-tab="recipes"><i class="fas fa-utensils"></i> Recipes</div>
     <div class="tab" data-tab="sales"><i class="fas fa-dollar-sign"></i> Sales</div>
@@ -120,7 +119,7 @@
     <div class="tab" data-tab="settings"><i class="fas fa-cogs"></i> Settings</div>
   </div>
 
-  <!-- الوصفات -->
+  <!-- Sections -->
   <section id="recipes" class="active">
     <h2>Recipe Management</h2>
     <div>
@@ -146,7 +145,6 @@
     </div>
   </section>
 
-  <!-- المبيعات -->
   <section id="sales">
     <h2>Daily Sales</h2>
     <div style="margin-bottom:15px;">
@@ -174,7 +172,6 @@
     </div>
   </section>
 
-  <!-- التقرير الشهري -->
   <section id="report">
     <h2>Monthly Report</h2>
     <div style="margin-bottom:15px;">
@@ -185,7 +182,6 @@
     <canvas id="monthlyChart" style="width:100%; height:300px; margin-top:1rem; background:#fff; border-radius:8px;"></canvas>
   </section>
 
-  <!-- الجرد والحركات -->
   <section id="inventory">
     <h2>Inventory & Movements</h2>
     <div style="margin-bottom:15px;">
@@ -211,7 +207,6 @@
     </div>
   </section>
 
-  <!-- الإعدادات -->
   <section id="settings">
     <h2>Settings & Import</h2>
     <div>
@@ -237,23 +232,22 @@
       { name: 'Chicken Burger', recipe: { Chicken: 1, Bun: 1, Sauce: 0.5 } },
       { name: 'Fries Pack', recipe: { Fries: 1 } }
     ],
-    sales: [], // { date, item, qty }
-    inventory: {} // { ingredient: { initial, purchases, incoming, outgoing, waste, final } }
+    sales: [],
+    inventory: {}
   };
 
-  // Load data from local storage
+  // Load from local storage
   function loadData() {
     const stored = localStorage.getItem('crispyData');
     if (stored) {
       data = JSON.parse(stored);
     }
   }
-  // Save data to local storage
   function saveData() {
     localStorage.setItem('crispyData', JSON.stringify(data));
   }
 
-  // Handle Branch Selection
+  // Set branch initial value
   const branchSelect = document.getElementById('branchSelect');
   branchSelect.value = data.branch;
   branchSelect.onchange = () => {
@@ -261,20 +255,18 @@
     saveData();
   };
 
-  // Tab Navigation
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.onclick = () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
+  // Tab handling
+  document.querySelectorAll('.tab').forEach(t => {
+    t.onclick = () => {
+      document.querySelectorAll('.tab').forEach(t2 => t2.classList.remove('active'));
+      t.classList.add('active');
       document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-      document.getElementById(tab.dataset.tab).classList.add('active');
-      if (tab.dataset.tab === 'report') {
-        generateChart();
-      }
+      document.getElementById(t.dataset.tab).classList.add('active');
+      if (t.dataset.tab === 'report') generateChart();
     };
   });
 
-  // Populate Recipes Table
+  // Render recipes
   function renderRecipes() {
     const tbody = document.querySelector('#recipesTable tbody');
     tbody.innerHTML = '';
@@ -297,26 +289,26 @@
     });
   }
 
-  // Add new recipe
   document.getElementById('addRecipeBtn').onclick = () => {
     data.items.push({ name: 'New Item', recipe: {} });
     renderRecipes();
+    populateSaleItems();
   };
 
-  // Populate sale items dropdown
+  // Populate sale item dropdown
   function populateSaleItems() {
-    const select = document.getElementById('saleItem');
-    select.innerHTML = '';
-    data.items.forEach(item => {
-      const option = document.createElement('option');
-      option.value = item.name;
-      option.textContent = item.name;
-      select.appendChild(option);
+    const sel = document.getElementById('saleItem');
+    sel.innerHTML = '';
+    data.items.forEach(it => {
+      const opt = document.createElement('option');
+      opt.value = it.name;
+      opt.textContent = it.name;
+      sel.appendChild(opt);
     });
   }
 
-  // Add sale record
-  document.getElementById('addSaleBtn').onclick = () => {
+  // Add sale
+ document.getElementById('addSaleBtn').onclick = () => {
     const date = document.getElementById('saleDate').value || new Date().toISOString().slice(0,10);
     const item = document.getElementById('saleItem').value;
     const qty = parseInt(document.getElementById('saleQty').value) || 1;
@@ -324,7 +316,6 @@
     renderSales();
   };
 
-  // Render sales table
   function renderSales() {
     const tbody = document.querySelector('#salesTable tbody');
     tbody.innerHTML = '';
@@ -337,22 +328,21 @@
         <td><button class="btn btn-danger btn-sm delete-sale">Delete</button></td>
       `;
       tr.querySelector('.delete-sale').onclick = () => {
-        data.sales.splice(index, 1);
+        data.sales.splice(index,1);
         renderSales();
       };
       tbody.appendChild(tr);
     });
   }
 
-  // Generate Chart for Monthly Report
+  // Chart
   let chartInstance = null;
   function generateChart() {
     const ctx = document.getElementById('monthlyChart').getContext('2d');
     const month = document.getElementById('reportMonth').value || new Date().toISOString().slice(0,7);
-    // Dummy data generation
     const labels = [];
     const dataPoints = [];
-    for (let i=1; i<=31; i++) {
+    for(let i=1; i<=31; i++){
       labels.push(`${month}-${i.toString().padStart(2,'0')}`);
       dataPoints.push(Math.floor(Math.random() * 20 + 5));
     }
@@ -371,31 +361,24 @@
       },
       options: {
         responsive: true,
-        scales: {
-          y: { beginAtZero: true }
-        }
+        scales: { y: { beginAtZero: true } }
       }
     });
   }
 
-  // Export Recipes as JSON
+  // Export functions
   document.getElementById('exportRecipesBtn').onclick = () => {
     const dataStr = JSON.stringify(data.items, null, 2);
     const blob = new Blob([dataStr], {type: 'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = 'recipes.json';
-    a.click();
+    a.href = url; a.download = 'recipes.json'; a.click();
     URL.revokeObjectURL(url);
   };
 
-  // Export sales as CSV
   document.getElementById('exportSalesBtn').onclick = () => {
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + ["Date,Item,Quantity"]
-      + data.sales.map(s => `${s.date},${s.item},${s.qty}`).join("\n");
-    const encodedUri = encodeURI(csvContent);
+    const csv = "data:text/csv;charset=utf-8," + ["Date,Item,Quantity"].concat(data.sales.map(s => `${s.date},${s.item},${s.qty}`)).join("\n");
+    const encodedUri = encodeURI(csv);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", "sales.csv");
@@ -404,18 +387,15 @@
     document.body.removeChild(link);
   };
 
-  // Save all data
+  // Save all
   document.getElementById('saveRecipesBtn').onclick = () => {
-    saveData();
-    alert('Data saved successfully!');
+    saveData(); alert('Data saved successfully!');
   };
   document.getElementById('saveSalesBtn').onclick = () => {
-    saveData();
-    alert('Sales data saved successfully!');
+    saveData(); alert('Data saved successfully!');
   };
   document.getElementById('saveInventoryBtn').onclick = () => {
-    saveData();
-    alert('Inventory data saved successfully!');
+    saveData(); alert('Data saved successfully!');
   };
 
   // Import JSON
@@ -425,16 +405,14 @@
       const reader = new FileReader();
       reader.onload = e => {
         try {
-          const importedData = JSON.parse(e.target.result);
-          data = importedData;
-          // Keep branch selection
+          const imported = JSON.parse(e.target.result);
+          data = imported;
           document.getElementById('branchSelect').value = data.branch || 'Hamdan St';
           renderRecipes();
           populateSaleItems();
           renderSales();
-          alert('Data imported successfully!');
-        } catch (err) {
-          alert('Invalid JSON file.');
+        } catch(e) {
+          alert('Invalid JSON.');
         }
       };
       reader.readAsText(file);
@@ -443,7 +421,7 @@
 
   // Reset all data
   document.getElementById('resetBtn').onclick = () => {
-    if (confirm('Are you sure you want to reset all data?')) {
+    if (confirm('Are you sure?')) {
       data = {
         branch: 'Hamdan St',
         ingredients: ['Chicken', 'Fries', 'Bun', 'Sauce'],
@@ -464,6 +442,7 @@
   populateSaleItems();
   renderSales();
   generateChart();
+
 </script>
 </body>
 </html>
