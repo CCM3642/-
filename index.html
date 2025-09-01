@@ -2,136 +2,195 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Crispy Chicken – Branch & Recipe System</title>
-  <style>
-    body {font-family: Arial, sans-serif; margin:0; background:#0b1d3a; color:#eaf1ff;}
-    header {background:#d93900; padding:15px; text-align:center; font-size:22px; font-weight:bold;}
-    nav {display:flex; background:#12214d;}
-    nav button {flex:1; padding:12px; background:#12214d; border:none; color:#fff; cursor:pointer;}
-    nav button.active {background:#d93900;}
-    section {display:none; padding:20px;}
-    table {width:100%; border-collapse:collapse; margin:10px 0;}
-    th, td {border:1px solid #345; padding:8px; text-align:center;}
-    th {background:#23315b;}
-    .kpi {background:#1e2f5c; padding:10px; margin:5px; border-radius:5px; display:inline-block;}
-    input, select, button {padding:6px; margin:3px;}
-    canvas {background:#12214d; border-radius:5px;}
-  </style>
+  <title>Crispy Chicken - All in One</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { background:#0d1b2a; color:#eaf1ff; font-family:Arial,sans-serif; padding:20px;}
+    h1,h2 { color:#ffcc00 }
+    section { border:1px solid #23315b; padding:15px; margin-bottom:20px; border-radius:8px; }
+    input,select,button { padding:6px; margin:4px; border-radius:4px; border:none }
+    button { background:#ff6600; color:white; cursor:pointer }
+    table { border-collapse:collapse; width:100%; margin-top:10px; }
+    th,td { border:1px solid #23315b; padding:8px; text-align:center }
+    th { background:#1b263b }
+    canvas { background:#14213d; border-radius:6px; padding:10px; }
+  </style>
 </head>
 <body>
-<header>🍗 Crispy Chicken – Branch, Recipe & Sales System</header>
-<nav>
-  <button onclick="show('branches')">Branches</button>
-  <button onclick="show('ingredients')">Ingredients</button>
-  <button onclick="show('recipes')">Recipes</button>
-  <button onclick="show('sales')">Sales</button>
-  <button onclick="show('stock')">Stock</button>
-  <button onclick="show('monthly')">Monthly Report</button>
-</nav>
+  <h1>🍗 Crispy Chicken – All in One System</h1>
 
-<!-- Branches -->
-<section id="branches">
-  <h2>Branches</h2>
-  <input id="branchName" placeholder="Branch Name">
-  <button onclick="addBranch()">➕ Add Branch</button>
-  <table><thead><tr><th>ID</th><th>Name</th></tr></thead><tbody id="branchList"></tbody></table>
-</section>
+  <!-- Branch Section -->
+  <section>
+    <h2>🏪 Branches</h2>
+    <input id="branchName" placeholder="Branch name">
+    <button onclick="addBranch()">Add Branch</button>
+    <ul id="branchList"></ul>
+  </section>
 
-<!-- Ingredients -->
-<section id="ingredients">
-  <h2>Ingredients</h2>
-  <input id="ingName" placeholder="Ingredient">
-  <button onclick="addIngredient()">➕ Add</button>
-  <table><thead><tr><th>Name</th></tr></thead><tbody id="ingList"></tbody></table>
-</section>
+  <!-- Recipe Section -->
+  <section>
+    <h2>📋 Recipes</h2>
+    <input id="recipeName" placeholder="Recipe name">
+    <input id="recipeIngredients" placeholder="Ingredients (comma)">
+    <button onclick="addRecipe()">Add Recipe</button>
+    <ul id="recipeList"></ul>
+  </section>
 
-<!-- Recipes -->
-<section id="recipes">
-  <h2>Recipes</h2>
-  <input id="recipeName" placeholder="Recipe">
-  <select id="recipeIng"></select>
-  <input id="recipeQty" type="number" min="0.1" step="0.1" placeholder="Qty">
-  <button onclick="addToRecipe()">➕ Add to Recipe</button>
-  <button onclick="saveRecipe()">💾 Save Recipe</button>
-  <table><thead><tr><th>Recipe</th><th>Ingredient</th><th>Qty</th></tr></thead><tbody id="recipeList"></tbody></table>
-</section>
+  <!-- Sales Section -->
+  <section>
+    <h2>💰 Sales</h2>
+    <select id="saleBranch"></select>
+    <select id="saleRecipe"></select>
+    <input id="saleQty" type="number" placeholder="Qty" min="1">
+    <button onclick="addSale()">Add Sale</button>
+    <ul id="salesList"></ul>
+    <button onclick="exportSales()">⬇️ Export Sales CSV</button>
+  </section>
 
-<!-- Sales -->
-<section id="sales">
-  <h2>Sales</h2>
-  <select id="saleBranch"></select>
-  <select id="saleRecipe"></select>
-  <input id="saleQty" type="number" min="1" value="1">
-  <button onclick="recordSale()">➕ Record Sale</button>
-  <table><thead><tr><th>Date</th><th>Branch</th><th>Recipe</th><th>Qty</th></tr></thead><tbody id="saleList"></tbody></table>
-  <button onclick="exportSales()">⬇️ Export Sales CSV</button>
-</section>
+  <!-- Inventory Section -->
+  <section>
+    <h2>📦 Inventory</h2>
+    <input id="ingName" placeholder="Ingredient">
+    <input id="ingStock" type="number" placeholder="Stock" min="0">
+    <button onclick="addIngredient()">Add / Update</button>
+    <table><thead><tr><th>Ingredient</th><th>Stock</th></tr></thead>
+    <tbody id="inventoryList"></tbody></table>
+  </section>
 
-<!-- Stock -->
-<section id="stock">
-  <h2>Stock</h2>
-  <select id="stockIng"></select>
-  <input id="stockQty" type="number" min="0" placeholder="Qty">
-  <button onclick="updateStock()">💾 Update</button>
-  <table><thead><tr><th>Ingredient</th><th>Available</th></tr></thead><tbody id="stockList"></tbody></table>
-</section>
+  <!-- Reports -->
+  <section>
+    <h2>📊 Reports</h2>
+    <h3>Daily</h3>
+    <input type="date" id="dailyDate">
+    <button onclick="buildDaily()">Build Daily Report</button>
+    <div id="dailyKPI"></div>
+    <table><thead><tr><th>Ingredient</th><th>Qty</th></tr></thead>
+    <tbody id="dailyTable"></tbody></table>
+    <canvas id="dailyChart" width="400" height="200"></canvas>
 
-<!-- Monthly Report -->
-<section id="monthly">
-  <h2>📊 Monthly Report</h2>
-  <div id="kpis"></div>
-  <table><thead><tr id="monthlyHead"></tr></thead><tbody id="monthlyBody"></tbody></table>
-  <canvas id="monthlyChart" height="120"></canvas>
-  <button onclick="exportMonthly()">⬇️ Export Monthly CSV</button>
-</section>
+    <h3>Monthly</h3>
+    <input type="month" id="monthlyDate">
+    <button onclick="buildMonthly()">Build Monthly Report</button>
+    <div id="monthlyKPI"></div>
+    <table><thead id="monthlyHead"></thead><tbody id="monthlyTable"></tbody></table>
+    <canvas id="monthlyChart" width="400" height="200"></canvas>
+    <button onclick="exportMonthly()">⬇️ Export Monthly CSV</button>
+  </section>
 
 <script>
-const qs=id=>document.querySelector(id);
-let state={branches:[], ingredients:[], recipes:[], sales:[], stock:{}};
-let tempRecipe={}, monthlyChart;
+let state = JSON.parse(localStorage.getItem("crispy")) || {
+  branches:[], recipes:[], sales:[], ingredients:[]
+};
+let dailyChart, monthlyChart;
 
-function save(){localStorage.setItem('crispySys',JSON.stringify(state));}
-function load(){let d=localStorage.getItem('crispySys'); if(d) state=JSON.parse(d);}
-function show(id){document.querySelectorAll('section').forEach(s=>s.style.display='none');qs('#'+id).style.display='block';document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));event.target.classList.add('active'); if(id==='monthly') buildMonthly();}
-function render(){
-  // Branch
-  qs('#branchList').innerHTML=state.branches.map((b,i)=>`<tr><td>${i+1}</td><td>${b}</td></tr>`).join('');
-  qs('#saleBranch').innerHTML=state.branches.map(b=>`<option>${b}</option>`).join('');
-  // Ing
-  qs('#ingList').innerHTML=state.ingredients.map(i=>`<tr><td>${i}</td></tr>`).join('');
-  qs('#recipeIng').innerHTML=state.ingredients.map(i=>`<option>${i}</option>`).join('');
-  qs('#stockIng').innerHTML=state.ingredients.map(i=>`<option>${i}</option>`).join('');
-  // Recipe
-  qs('#recipeList').innerHTML=Object.entries(tempRecipe).map(([r,ings])=>ings.map(i=>`<tr><td>${r}</td><td>${i.ing}</td><td>${i.qty}</td></tr>`).join('')).join('');
-  qs('#saleRecipe').innerHTML=state.recipes.map(r=>`<option>${r.name}</option>`).join('');
-  // Sales
-  qs('#saleList').innerHTML=state.sales.map(s=>`<tr><td>${s.date}</td><td>${s.branch}</td><td>${s.recipe}</td><td>${s.qty}</td></tr>`).join('');
-  // Stock
-  qs('#stockList').innerHTML=Object.entries(state.stock).map(([i,q])=>`<tr><td>${i}</td><td>${q}</td></tr>`).join('');
+// helpers
+const qs=s=>document.querySelector(s);
+function save(){ localStorage.setItem("crispy",JSON.stringify(state)); }
+
+// Branch
+function addBranch(){
+  let name=qs("#branchName").value.trim();
+  if(!name) return;
+  state.branches.push(name); save(); renderBranches();
 }
-function addBranch(){let v=qs('#branchName').value.trim();if(!v) return;state.branches.push(v);qs('#branchName').value='';save();render();}
-function addIngredient(){let v=qs('#ingName').value.trim();if(!v) return;state.ingredients.push(v);state.stock[v]=0;qs('#ingName').value='';save();render();}
-function addToRecipe(){let r=qs('#recipeName').value.trim();let i=qs('#recipeIng').value;let q=+qs('#recipeQty').value;if(!r||!i||!q) return;if(!tempRecipe[r]) tempRecipe[r]=[];tempRecipe[r].push({ing:i,qty:q});render();}
-function saveRecipe(){for(let [n,ings] of Object.entries(tempRecipe)) state.recipes.push({name:n,ings});tempRecipe={};save();render();}
-function recordSale(){let b=qs('#saleBranch').value;let r=qs('#saleRecipe').value;let q=+qs('#saleQty').value;if(!b||!r||!q) return;state.sales.push({branch:b,recipe:r,qty:q,date:new Date().toLocaleString()});let rec=state.recipes.find(x=>x.name===r);rec.ings.forEach(i=>{state.stock[i.ing]=(state.stock[i.ing]||0)-i.qty*q});save();render();}
-function updateStock(){let i=qs('#stockIng').value;let q=+qs('#stockQty').value;state.stock[i]=q;save();render();}
-function exportSales(){let rows=[["Date","Branch","Recipe","Qty"],...state.sales.map(s=>[s.date,s.branch,s.recipe,s.qty])];let csv=rows.map(r=>r.join(",")).join("\n");let blob=new Blob([csv],{type:"text/csv"});let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="sales.csv";a.click();}
-function exportMonthly(){let rows=[["Day",...state.ingredients,"Total"]];document.querySelectorAll("#monthlyBody tr").forEach(tr=>{rows.push([...tr.children].map(td=>td.textContent));});let csv=rows.map(r=>r.join(",")).join("\n");let blob=new Blob([csv],{type:"text/csv"});let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="monthly.csv";a.click();}
+function renderBranches(){
+  qs("#branchList").innerHTML=state.branches.map(b=>"<li>"+b+"</li>").join("");
+  qs("#saleBranch").innerHTML=state.branches.map(b=>"<option>"+b+"</option>").join("");
+}
+
+// Recipe
+function addRecipe(){
+  let name=qs("#recipeName").value.trim();
+  let ing=qs("#recipeIngredients").value.split(",").map(x=>x.trim()).filter(x=>x);
+  if(!name||!ing.length) return;
+  state.recipes.push({name,ing}); save(); renderRecipes();
+}
+function renderRecipes(){
+  qs("#recipeList").innerHTML=state.recipes.map(r=>"<li>"+r.name+" - "+r.ing.join(",")+"</li>").join("");
+  qs("#saleRecipe").innerHTML=state.recipes.map(r=>"<option>"+r.name+"</option>").join("");
+}
+
+// Ingredient
+function addIngredient(){
+  let name=qs("#ingName").value.trim();
+  let stock=+qs("#ingStock").value;
+  if(!name) return;
+  let f=state.ingredients.find(i=>i===name);
+  if(!f) state.ingredients.push(name);
+  localStorage.setItem("crispy",JSON.stringify(state));
+  renderInventory();
+}
+function renderInventory(){
+  qs("#inventoryList").innerHTML=state.ingredients.map(i=>`<tr><td>${i}</td><td>-</td></tr>`).join("");
+}
+
+// Sales
+function addSale(){
+  let branch=qs("#saleBranch").value, recipe=qs("#saleRecipe").value, qty=+qs("#saleQty").value;
+  if(!branch||!recipe||qty<=0) return;
+  state.sales.push({branch,recipe,qty,date:new Date().toISOString().slice(0,10)});
+  save(); renderSales();
+}
+function renderSales(){
+  qs("#salesList").innerHTML=state.sales.slice(-5).map(s=>`<li>${s.date} - ${s.recipe} x${s.qty} (${s.branch})</li>`).join("");
+}
+
+// Daily Report
+function buildDaily(){
+  let date=qs("#dailyDate").value;
+  let sales=state.sales.filter(s=>s.date===date);
+  let usage={};
+  sales.forEach(s=>{
+    let r=state.recipes.find(r=>r.name===s.recipe);
+    if(r) r.ing.forEach(i=>usage[i]=(usage[i]||0)+s.qty);
+  });
+  qs("#dailyTable").innerHTML=Object.entries(usage).map(([i,q])=>`<tr><td>${i}</td><td>${q}</td></tr>`).join("");
+  qs("#dailyKPI").innerHTML=`<p>Total Sales: ${sales.length} | Total Qty: ${sales.reduce((a,b)=>a+b.qty,0)}</p>`;
+  let ctx=qs("#dailyChart").getContext("2d");
+  if(dailyChart) dailyChart.destroy();
+  dailyChart=new Chart(ctx,{type:"bar",data:{labels:Object.keys(usage),datasets:[{label:"Usage",data:Object.values(usage)}]}});
+}
+
+// Monthly Report
 function buildMonthly(){
-  let month=new Date().getMonth();let days=[...Array(31).keys()].map(i=>i+1);
-  let use={};state.sales.forEach(s=>{let d=new Date(s.date).getDate();if(new Date(s.date).getMonth()!==month) return;if(!use[d]) use[d]={};let rec=state.recipes.find(r=>r.name===s.recipe);rec.ings.forEach(i=>{use[d][i.ing]=(use[d][i.ing]||0)+i.qty*s.qty;});});
-  // Head
-  qs('#monthlyHead').innerHTML='<th>Day</th>'+state.ingredients.map(i=>`<th>${i}</th>`).join('')+'<th>Total</th>';
-  let totals={};qs('#monthlyBody').innerHTML=days.map(d=>{let row=[d];let sum=0;state.ingredients.forEach(i=>{let v=use[d]?.[i]||0;row.push(v);sum+=v;totals[i]=(totals[i]||0)+v;});row.push(sum);return '<tr>'+row.map(x=>`<td>${x}</td>`).join('')+'</tr>';}).join('');
-  qs('#monthlyBody').innerHTML+='<tr><td><b>TOTAL</b></td>'+state.ingredients.map(i=>`<td><b>${totals[i]||0}</b></td>`).join('')+'<td><b>'+Object.values(totals).reduce((a,b)=>a+b,0)+'</b></td></tr>';
-  // KPIs
-  qs('#kpis').innerHTML=`<div class="kpi">Total Sales: ${state.sales.length}</div><div class="kpi">Total Ingredients Used: ${Object.values(totals).reduce((a,b)=>a+b,0)}</div>`;
-  // Chart
-  const ctx=qs('#monthlyChart').getContext('2d'); if(monthlyChart) monthlyChart.destroy();
-  monthlyChart=new Chart(ctx,{type:'line',data:{labels:days,datasets:state.ingredients.map(i=>({label:i,data:days.map(d=>use[d]?.[i]||0),borderWidth:2,fill:false}))},options:{responsive:true,plugins:{legend:{position:'top',labels:{color:'#eaf1ff'}}},scales:{x:{ticks:{color:'#eaf1ff'},grid:{color:'#23315b'}},y:{ticks:{color:'#eaf1ff'},grid:{color:'#23315b'}}}}});
+  let ym=qs("#monthlyDate").value; if(!ym) return;
+  let [y,m]=ym.split("-"); let days=[...Array(31).keys()].map(d=>(new Date(y,m-1,d+1).toISOString().slice(0,10))).filter(d=>d.slice(5,7)===m);
+  let use={}; state.ingredients.forEach(i=>use[i]={});
+  days.forEach(d=>{
+    let sales=state.sales.filter(s=>s.date===d);
+    sales.forEach(s=>{
+      let r=state.recipes.find(r=>r.name===s.recipe);
+      if(r) r.ing.forEach(i=>use[i][d]=(use[i][d]||0)+s.qty);
+    });
+  });
+  qs("#monthlyHead").innerHTML="<tr><th>Ingredient</th>"+days.map(d=>"<th>"+d.slice(8)+"</th>").join("")+"<th>Total</th></tr>";
+  qs("#monthlyTable").innerHTML=state.ingredients.map(i=>{
+    let rowDays=days.map(d=>use[i][d]||0); let tot=rowDays.reduce((a,b)=>a+b,0);
+    return "<tr><td>"+i+"</td>"+rowDays.map(v=>"<td>"+v+"</td>").join("")+"<td>"+tot+"</td></tr>";
+  }).join("");
+  qs("#monthlyKPI").innerHTML=`<p>Total Ingredients: ${state.ingredients.length} | Total Days: ${days.length}</p>`;
+  let ctx=qs("#monthlyChart").getContext("2d"); if(monthlyChart) monthlyChart.destroy();
+  monthlyChart=new Chart(ctx,{type:"line",data:{labels:days.map(d=>d.slice(8)),datasets:state.ingredients.map(i=>({label:i,data:days.map(d=>use[i][d]||0]}))}});
 }
-load();render();show('branches');
+
+// Export
+function exportSales(){
+  let rows=["Date,Branch,Recipe,Qty"];
+  state.sales.forEach(s=>rows.push([s.date,s.branch,s.recipe,s.qty].join(",")));
+  download("sales.csv",rows.join("\n"));
+}
+function exportMonthly(){
+  let table=document.querySelector("#monthlyTable").outerHTML;
+  download("monthly_report.csv",table.replace(/<[^>]+>/g,","));
+}
+function download(filename,text){
+  let a=document.createElement("a");
+  a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(text);
+  a.download=filename; a.click();
+}
+
+// Init
+renderBranches(); renderRecipes(); renderSales(); renderInventory();
 </script>
 </body>
 </html>
