@@ -16,9 +16,6 @@
             --text-secondary: #666;
             --noon-color: #FFB800;
             --careem-color: #00A86B;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --info-color: #17a2b8;
         }
         
         body {
@@ -99,11 +96,11 @@
         }
         
         .stat-card.sent {
-            border-color: var(--warning-color);
+            border-color: #ffc107;
         }
         
         .stat-card.closed {
-            border-color: var(--success-color);
+            border-color: #28a745;
         }
         
         .stat-card h3 {
@@ -121,11 +118,11 @@
         }
         
         .stat-card.sent h3 {
-            color: var(--warning-color);
+            color: #ffc107;
         }
         
         .stat-card.closed h3 {
-            color: var(--success-color);
+            color: #28a745;
         }
         
         .stat-card p {
@@ -248,7 +245,7 @@
         
         .tickets-header h2 {
             margin: 0;
-            color: var(--crispy-red);
+            color: var(--crispy-dark);
             font-weight: 700;
             font-size: 1.8rem;
         }
@@ -361,12 +358,12 @@
         }
         
         .btn-edit {
-            background-color: var(--warning-color);
+            background-color: #ffc107;
             color: #212529;
         }
         
         .btn-email {
-            background-color: var(--info-color);
+            background-color: #17a2b8;
             color: white;
         }
         
@@ -376,7 +373,7 @@
         }
         
         .btn-close {
-            background-color: var(--success-color);
+            background-color: #28a745;
             color: white;
         }
         
@@ -518,7 +515,7 @@
         }
         
         .notification.success {
-            border-left-color: var(--success-color);
+            border-left-color: #28a745;
         }
         
         .notification.error {
@@ -531,7 +528,7 @@
         }
         
         .notification.success i {
-            color: var(--success-color);
+            color: #28a745;
         }
         
         .notification.error i {
@@ -755,27 +752,7 @@
         let tickets = JSON.parse(localStorage.getItem('crispyTickets')) || [];
         let filteredTickets = [...tickets];
         
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add sample data if no tickets exist
-            if (tickets.length === 0) {
-                addSampleData();
-            }
-            
-            // Set today's date
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('orderDate').value = today;
-            
-            // Initialize
-            renderTickets();
-            updateStats();
-            updatePlatformStats();
-            
-            // Setup form submission
-            document.getElementById('addTicketForm').addEventListener('submit', saveTicket);
-        });
-        
-        // Add sample data
+        // Function to add sample data
         function addSampleData() {
             const sampleTickets = [
                 {
@@ -820,6 +797,26 @@
             filteredTickets = [...tickets];
             localStorage.setItem('crispyTickets', JSON.stringify(tickets));
         }
+        
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add sample data if no tickets exist
+            if (tickets.length === 0) {
+                addSampleData();
+            }
+            
+            // Set today's date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('orderDate').value = today;
+            
+            // Initialize
+            renderTickets();
+            updateStats();
+            updatePlatformStats();
+            
+            // Setup form submission
+            document.getElementById('addTicketForm').addEventListener('submit', saveTicket);
+        });
         
         // Open add ticket modal
         function openAddTicketModal() {
