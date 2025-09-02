@@ -1,641 +1,283 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Crispy Chicken - Complaints Dashboard (Improved)</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
-  <!-- Chart.js for analytics -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <!-- heatmap.js for simple client-side heatmaps -->
+  <meta charset="UTF-8">
+  <title>Compensation Tickets Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/heatmapjs@2.0.5/heatmap.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    :root {
-      --crispy-red: #d32f2f;
-      --crispy-dark: #b71c1c;
-      --crispy-light: #ffcdd2;
-      --bg-light: #fafafa;
-      --text-primary: #333;
-      --text-secondary: #666;
-      --noon-color: #ffb800;
-      --careem-color: #00a86b;
+    /* Floating Dock */
+    .dock {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-end;
+      z-index: 1000;
+      cursor: grab;
     }
-
-    html, body { height: 100%; }
-    body {
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-      background-color: var(--bg-light);
-      color: var(--text-primary);
-      margin: 0;
-      line-height: 1.55;
+    .dock:active {
+      cursor: grabbing;
     }
-
-    .navbar {
-      background: linear-gradient(135deg, var(--crispy-red) 0%, var(--crispy-dark) 100%);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      padding: 12px 0;
-      position: sticky;
-      top: 0;
-      z-index: 1030;
+    .dock-buttons {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      animation: fadeIn 0.3s ease-in-out;
     }
-    .navbar-brand { font-weight: 800; color: #fff !important; display: flex; align-items: center; gap: .5rem; }
-
-    .container-page { padding: 20px; max-width: 1280px; margin: 0 auto; }
-
-    /* Stats */
-    .dashboard-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 4px 14px rgba(0,0,0,.06); border-inline-start: 6px solid transparent; }
-    .stat-card.total { border-color: var(--crispy-red); }
-    .stat-card.open { border-color: #0d6efd; }
-    .stat-card.sent { border-color: #f59f00; }
-    .stat-card.closed { border-color: #2fb344; }
-    .stat-card h3 { margin: 4px 0 2px; font-weight: 800; }
-    .stat-card p { margin: 0; color: var(--text-secondary); font-weight: 600; }
-
-    /* Platform */
-    .platform-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-    .platform-card { background:#fff; border-radius: 16px; padding: 22px; box-shadow: 0 6px 16px rgba(0,0,0,.08); border: 3px solid transparent; text-align: center; }
-    .platform-card.noon { border-color: var(--noon-color); }
-    .platform-card.careem { border-color: var(--careem-color); }
-
-    /* Tickets */
-    .tickets-section { background:#fff; border-radius: 18px; padding: 22px; box-shadow: 0 8px 20px rgba(0,0,0,.08); margin-bottom: 28px; }
-    .tickets-header { display:flex; gap:12px; justify-content:space-between; align-items:center; flex-wrap:wrap; }
-
-    .table-responsive { border-radius: 14px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,.06); }
-    thead th { background: var(--crispy-light); color: var(--crispy-dark); font-weight: 800; border: none !important; }
-    tbody tr:hover { background: rgba(211,47,47,.05); }
-
-    .badge-open { background:#e7f1ff; color:#0d47a1; }
-    .badge-sent { background:#fff5db; color:#a15c00; }
-    .badge-closed { background:#e6f8ea; color:#1b6b2e; }
-
-    .action-btn { padding: 6px 10px; border-radius: 8px; border: none; font-weight: 700; }
-    .btn-edit { background:#ffc107; }
-    .btn-email { background:#17a2b8; color:#fff; }
-    .btn-whatsapp { background:#25D366; color:#fff; }
-    .btn-close { background:#28a745; color:#fff; }
-
-    /* 1) Long-text UX: truncation + expand */
-    .truncate { max-width: 360px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .issue-cell { position: relative; }
-    .issue-expand { appearance: none; border: none; background: transparent; text-decoration: underline; padding: 0; margin-left: 6px; cursor: pointer; font-size: .85rem; }
-
-    /* 2) Fixed action dock */
-    .action-dock { position: fixed; right: 16px; bottom: 16px; z-index: 1040; display: flex; flex-direction: column; gap: 10px; }
-    .action-dock .btn { box-shadow: 0 8px 24px rgba(0,0,0,.18); font-weight: 700; border-radius: 999px; padding: 12px 16px; }
-
-    /* 3) Print styles */
-    @media print {
-      @page { margin: 14mm; }
-      .navbar, .action-dock, .tickets-header .btn, .modal, .notification { display: none !important; }
-      body { background:#fff; }
-      .container-page { padding: 0; max-width: 100%; }
-      .tickets-section, .platform-card, .stat-card { box-shadow: none !important; border: 1px solid #ddd; }
-      thead th { background: #f3f3f3 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .dock-buttons.show {
+      display: flex;
     }
-
-    /* Notification */
-    .notification { position: fixed; top: 20px; right: 20px; padding: 14px 18px; background:#fff; border-left: 5px solid var(--crispy-red); border-radius: 12px; box-shadow: 0 10px 26px rgba(0,0,0,.15); z-index: 2000; transform: translateX(130%); transition: transform .45s cubic-bezier(.68,-.55,.27,1.55); }
-    .notification.show { transform: translateX(0); }
-    .notification.success { border-left-color:#28a745; }
-    .notification.error { border-left-color:#dc3545; }
-
-    /* Modal textarea autosize */
-    textarea.autogrow { overflow: hidden; resize: none; min-height: 90px; }
-
-    /* Heatmap canvas holder */
-    #heatmapContainer { position: fixed; inset: 0; pointer-events: none; z-index: 5; }
-
-    /* Responsive tweaks */
-    @media (max-width: 768px) {
-      .truncate { max-width: 160px; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: none;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 400px;
     }
   </style>
 </head>
-<body>
-  <!-- Heatmap layer (5) -->
-  <div id="heatmapContainer" aria-hidden="true"></div>
+<body class="bg-gray-50 p-6">
 
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container-page">
-      <a class="navbar-brand" href="#"><i class="bi bi-fire"></i> Crispy Chicken • Complaints</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="nav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link active" href="#">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="#tickets">Tickets</a></li>
-          <li class="nav-item"><a class="nav-link" href="#reports">Reports</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <main class="container-page">
-    <!-- Stats -->
-    <section class="dashboard-stats" aria-label="Key stats">
-      <div class="stat-card total"><h3 id="totalTickets">0</h3><p>Total Tickets</p></div>
-      <div class="stat-card open"><h3 id="openTickets">0</h3><p>Open Tickets</p></div>
-      <div class="stat-card sent"><h3 id="sentTickets">0</h3><p>Sent Tickets</p></div>
-      <div class="stat-card closed"><h3 id="closedTickets">0</h3><p>Closed Tickets</p></div>
-    </section>
-
-    <!-- Platform distribution -->
-    <section class="mb-4">
-      <h2 class="h5 fw-bold text-danger" style="color: var(--crispy-dark) !important;">Platform Distribution</h2>
-      <div class="platform-cards">
-        <div class="platform-card noon text-center">
-          <i class="bi bi-cart-check fs-1 d-block mb-2" style="color: var(--noon-color)"></i>
-          <h3 id="noonCount">0</h3>
-          <p class="mb-1">Noon Orders</p>
-          <div class="fw-bold" id="noonPercentage">0%</div>
-        </div>
-        <div class="platform-card careem text-center">
-          <i class="bi bi-car-front fs-1 d-block mb-2" style="color: var(--careem-color)"></i>
-          <h3 id="careemCount">0</h3>
-          <p class="mb-1">Careem Orders</p>
-          <div class="fw-bold" id="careemPercentage">0%</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Analytics (4) -->
-    <section id="reports" class="mb-4">
-      <div class="row g-3">
-        <div class="col-lg-6">
-          <div class="tickets-section">
-            <h3 class="h6 fw-bold mb-3"><i class="bi bi-geo-alt"></i> Top Branches by Complaints</h3>
-            <canvas id="branchBar"></canvas>
-          </div>
-        </div>
-        <div class="col-lg-6">
-          <div class="tickets-section">
-            <h3 class="h6 fw-bold mb-3"><i class="bi bi-exclamation-triangle"></i> Most Common Issue Types</h3>
-            <canvas id="issuePie"></canvas>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Tickets -->
-    <section id="tickets" class="tickets-section">
-      <div class="tickets-header">
-        <h2 class="h5 m-0"><i class="bi bi-list-task me-1"></i> Complaint Tickets</h2>
-        <div class="d-flex flex-wrap gap-2">
-          <button class="btn btn-danger" id="btnAdd" onclick="openAddTicketModal()"><i class="bi bi-plus-circle"></i> Add Ticket</button>
-          <button class="btn btn-outline-danger" onclick="addSampleTicket()"><i class="bi bi-plus-circle"></i> Add Sample</button>
-          <button class="btn btn-outline-secondary" onclick="resetData()"><i class="bi bi-arrow-clockwise"></i> Reset</button>
-          <button class="btn btn-outline-dark" onclick="window.print()"><i class="bi bi-printer"></i> Print Report</button>
-        </div>
-      </div>
-      <div id="ticketsContainer" class="mt-3"></div>
-    </section>
-  </main>
-
-  <!-- Fixed Action Dock (2 + 3) -->
-  <div class="action-dock" aria-label="Quick actions">
-    <button class="btn btn-danger" onclick="openAddTicketModal()"><i class="bi bi-plus-lg"></i> New Ticket</button>
-    <button class="btn btn-outline-dark" onclick="window.print()"><i class="bi bi-printer"></i> Print Report</button>
-    <button class="btn btn-outline-secondary" onclick="toggleHeatmap()"><i class="bi bi-activity"></i> Heatmap</button>
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-800 flex items-center">
+      📑 Compensation Tickets
+    </h1>
   </div>
 
-  <!-- Add/Edit Ticket Modal (1: textarea autogrow) -->
-  <div class="modal fade" id="addTicketModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header text-white" style="background: linear-gradient(135deg, var(--crispy-red), var(--crispy-dark));">
-          <h5 class="modal-title"><i class="bi bi-plus-circle"></i> <span id="modalTitle">Add New Ticket</span></h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="addTicketForm">
-            <input type="hidden" id="editingId" value="" />
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label" for="orderId">Order ID</label>
-                <input class="form-control" id="orderId" required />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="orderDate">Order Date</label>
-                <input type="date" class="form-control" id="orderDate" required />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="branch">Branch</label>
-                <select class="form-select" id="branch" required>
-                  <option value="">Select Branch</option>
-                  <option>Crispy Chicken Khalidiya</option>
-                  <option>Crispy Chicken Muroor</option>
-                  <option>Crispy Chicken Shabiya 11</option>
-                  <option>Crispy Chicken Al Barsha</option>
-                  <option>Crispy Chicken Al Satwa</option>
-                  <option>Crispy Chicken Electra</option>
-                  <option>Crispy Chicken Hamdan</option>
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="platform">Platform</label>
-                <select class="form-select" id="platform" required>
-                  <option value="">Select Platform</option>
-                  <option>Noon</option>
-                  <option>Careem</option>
-                </select>
-              </div>
-              <div class="col-12">
-                <label class="form-label" for="issue">Issue Description</label>
-                <textarea id="issue" class="form-control autogrow" placeholder="Write clearly…" required></textarea>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="compensation">Compensation Value (AED)</label>
-                <input type="number" min="0" step="0.01" class="form-control" id="compensation" required />
-              </div>
-              <div class="col-12">
-                <div class="evidence-section border rounded p-3 bg-light-subtle">
-                  <h5 class="mb-3 text-danger"><i class="bi bi-paperclip"></i> Evidence</h5>
-                  <div class="row g-3">
-                    <div class="col-md-9">
-                      <label class="form-label" for="evidenceLink">Evidence Link (optional)</label>
-                      <input type="url" class="form-control" id="evidenceLink" placeholder="https://…" />
-                    </div>
-                    <div class="col-md-3 d-flex align-items-end">
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="noEvidence" />
-                        <label class="form-check-label" for="noEvidence">No evidence</label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="mt-3">
-              <button class="btn btn-danger w-100 fw-bold" type="submit"><i class="bi bi-check-circle"></i> Save</button>
-            </div>
-          </form>
-        </div>
-      </div>
+  <!-- Tickets Table -->
+  <div class="bg-white shadow rounded-lg p-4">
+    <table id="ticketsTable" class="min-w-full border-collapse">
+      <thead>
+        <tr class="text-left text-gray-700 border-b">
+          <th class="py-2 px-3">Order ID</th>
+          <th class="py-2 px-3">Order Date</th>
+          <th class="py-2 px-3">Branch</th>
+          <th class="py-2 px-3">Platform</th>
+          <th class="py-2 px-3">Issue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b">
+          <td class="font-bold px-3 py-2">0258</td>
+          <td class="px-3 py-2">2025-09-02</td>
+          <td class="px-3 py-2">Crispy Chicken Muroor</td>
+          <td class="px-3 py-2">Noon</td>
+          <td class="px-3 py-2">Incorrect items: Ultimate Spicy x 1, Ultimate Mix</td>
+        </tr>
+        <tr class="border-b">
+          <td class="font-bold px-3 py-2">FF92NNY2JHDG0HA</td>
+          <td class="px-3 py-2">2025-09-02</td>
+          <td class="px-3 py-2">Crispy Chicken Hamdan</td>
+          <td class="px-3 py-2">Noon</td>
+          <td class="px-3 py-2">Refund: Missing item (Outlet)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Charts Section -->
+  <div id="dashboard" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <div class="bg-white p-4 rounded-lg shadow">
+      <h2 class="text-lg font-semibold mb-2">Complaints by Branch</h2>
+      <canvas id="barChart"></canvas>
+    </div>
+    <div class="bg-white p-4 rounded-lg shadow">
+      <h2 class="text-lg font-semibold mb-2">Issues Breakdown</h2>
+      <canvas id="pieChart"></canvas>
     </div>
   </div>
 
-  <!-- View/Expand Issue Modal -->
-  <div class="modal fade" id="issueModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header" style="background: linear-gradient(135deg, var(--crispy-red), var(--crispy-dark));">
-          <h5 class="modal-title text-white"><i class="bi bi-chat-square-text"></i> Issue Details</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+  <!-- Modal for New Ticket -->
+  <div id="ticketModal" class="modal">
+    <div class="modal-content">
+      <h2 class="text-lg font-bold mb-4">➕ Add New Ticket</h2>
+      <form id="ticketForm" class="space-y-3">
+        <input type="text" id="orderId" placeholder="Order ID" class="w-full border px-3 py-2 rounded">
+        <input type="date" id="orderDate" class="w-full border px-3 py-2 rounded">
+        <input type="text" id="branch" placeholder="Branch" class="w-full border px-3 py-2 rounded">
+        <input type="text" id="platform" placeholder="Platform" class="w-full border px-3 py-2 rounded">
+        <input type="text" id="issue" placeholder="Issue" class="w-full border px-3 py-2 rounded">
+        <div class="flex justify-end gap-2">
+          <button type="button" id="cancelModal" class="bg-gray-400 text-white px-4 py-2 rounded">Cancel</button>
+          <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Add</button>
         </div>
-        <div class="modal-body">
-          <p id="issueFullText" class="mb-0"></p>
-        </div>
-      </div>
+      </form>
     </div>
   </div>
 
-  <!-- Notification -->
-  <div id="notification" class="notification"><i class="bi bi-check-circle-fill me-2"></i><span id="notificationText">Action completed successfully!</span></div>
+  <!-- Floating Dock -->
+  <div id="dock" class="dock">
+    <button id="dockToggle" class="bg-gray-800 text-white px-4 py-2 rounded-full shadow">⚙️</button>
+    <div id="dockButtons" class="dock-buttons">
+      <button id="newTicketBtn" class="bg-red-500 text-white px-4 py-2 rounded shadow">➕ New Ticket</button>
+      <button id="addSampleBtn" class="bg-red-400 text-white px-4 py-2 rounded shadow">📌 Add Sample</button>
+      <button id="resetBtn" class="bg-gray-400 text-white px-4 py-2 rounded shadow">🔄 Reset</button>
+      <button id="printBtn" class="bg-blue-500 text-white px-4 py-2 rounded shadow">🖨️ Print</button>
+      <button id="dashboardBtn" class="bg-green-500 text-white px-4 py-2 rounded shadow">📊 Dashboard</button>
+      <button id="heatmapBtn" class="bg-yellow-500 text-white px-4 py-2 rounded shadow">🔥 Heatmap</button>
+      <button id="exportBtn" class="bg-indigo-500 text-white px-4 py-2 rounded shadow">📂 Export</button>
+    </div>
+  </div>
 
-  <footer class="text-center py-4 mt-4 text-white" style="background: var(--crispy-dark); border-radius: 18px 18px 0 0;">
-    <small>&copy; 2025 Crispy Chicken Delivery Management System</small>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // ====== State ======
-    let tickets = JSON.parse(localStorage.getItem('crispyTickets')) || [];
-    let filteredTickets = [...tickets];
+    const tableBody = document.querySelector("#ticketsTable tbody");
 
-    // Heatmap
-    let heatmapVisible = false;
-    let heatmapInstance = null;
-
-    // Charts
-    let branchChart, issueChart;
-
-    // ====== Utils ======
-    const $ = (sel) => document.querySelector(sel);
-    const $$ = (sel) => document.querySelectorAll(sel);
-
-    function showNotification(msg, type = 'success') {
-      const box = $('#notification');
-      $('#notificationText').textContent = msg;
-      box.className = 'notification ' + (type === 'error' ? 'error' : 'success') + ' show';
-      setTimeout(() => box.classList.remove('show'), 2600);
-    }
-
-    function saveToStorage() { localStorage.setItem('crispyTickets', JSON.stringify(tickets)); }
-
-    function classifyIssue(text = '') {
-      const t = text.toLowerCase();
-      if (/(cold|temperature|ice)/.test(t)) return 'Cold Food';
-      if (/(late|delay|time)/.test(t)) return 'Late Delivery';
-      if (/(wrong|incorrect|different)/.test(t)) return 'Wrong Items';
-      if (/(missing|not included|didn\'t receive)/.test(t)) return 'Missing Items';
-      if (/(quality|taste|bad|spoiled)/.test(t)) return 'Food Quality';
-      return 'Other';
-    }
-
-    function autogrow(el) {
-      el.style.height = 'auto';
-      el.style.height = el.scrollHeight + 'px';
-    }
-
-    function currency(aed) { return 'AED ' + Number(aed || 0).toFixed(2); }
-
-    // ====== Sample data ======
-    function addSampleData() {
-      const sample = [
-        { id: Date.now(), orderId: 'NC123456', orderDate: '2025-08-26', branch: 'Crispy Chicken Khalidiya', platform: 'Noon', issue: 'Food was cold and delivery was late', compensation: 50, evidence: 'https://example.com/evidence.jpg', status: 'Open', dateCreated: '2025-08-26' },
-        { id: Date.now()+1, orderId: 'CR789012', orderDate: '2025-08-24', branch: 'Crispy Chicken Muroor', platform: 'Careem', issue: 'Wrong order items received', compensation: 75, evidence: 'None', status: 'Sent', dateCreated: '2025-08-24' },
-        { id: Date.now()+2, orderId: 'NC345678', orderDate: '2025-08-22', branch: 'Crispy Chicken Al Barsha', platform: 'Noon', issue: 'Missing items in the order', compensation: 30, evidence: 'None', status: 'Closed', dateCreated: '2025-08-22' }
-      ];
-      tickets = sample; filteredTickets = [...tickets]; saveToStorage();
-    }
-
-    // ====== Init ======
-    document.addEventListener('DOMContentLoaded', () => {
-      if (tickets.length === 0) addSampleData();
-      // today date
-      const today = new Date().toISOString().split('T')[0];
-      $('#orderDate').value = today;
-
-      // textarea autogrow
-      $$('#issue.autogrow').forEach(el => { autogrow(el); el.addEventListener('input', () => autogrow(el)); });
-
-      renderTickets();
-      updateStats();
-      updatePlatformStats();
-      renderCharts();
-
-      // form submit
-      $('#addTicketForm').addEventListener('submit', saveTicket);
-
-      // Lightweight usability tracking (5)
-      initHeatmapLayer();
-      document.addEventListener('click', recordInteraction, true);
-      document.addEventListener('mousemove', throttle(recordMouseMove, 120));
+    // Dock Toggle
+    document.getElementById("dockToggle").addEventListener("click", () => {
+      document.getElementById("dockButtons").classList.toggle("show");
     });
 
-    // ====== Tickets UI ======
-    function renderTickets() {
-      const container = $('#ticketsContainer');
-      if (filteredTickets.length === 0) {
-        container.innerHTML = `<div class="text-center p-5 border rounded-3 bg-light"><i class="bi bi-inbox fs-1 d-block mb-3 text-secondary"></i><h3 class="h6 fw-bold">No tickets found</h3><p class="text-secondary">Add your first ticket using the buttons above</p></div>`;
-        return;
-      }
+    // Make Dock Draggable
+    const dock = document.getElementById("dock");
+    let isDragging = false, offsetX, offsetY;
+    dock.addEventListener("mousedown", (e) => {
+      if (e.target.id === "dockToggle") return;
+      isDragging = true;
+      offsetX = e.clientX - dock.getBoundingClientRect().left;
+      offsetY = e.clientY - dock.getBoundingClientRect().top;
+    });
+    document.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      dock.style.left = `${e.clientX - offsetX}px`;
+      dock.style.top = `${e.clientY - offsetY}px`;
+      dock.style.bottom = "auto"; dock.style.right = "auto";
+    });
+    document.addEventListener("mouseup", () => isDragging = false);
 
-      let html = `<div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr>
-        <th>Order ID</th><th>Order Date</th><th>Branch</th><th>Platform</th><th>Issue</th><th>Evidence</th><th>Status</th><th>Compensation</th><th>Actions</th>
-      </tr></thead><tbody>`;
+    // Modal Handlers
+    const modal = document.getElementById("ticketModal");
+    document.getElementById("newTicketBtn").addEventListener("click", () => modal.style.display = "flex");
+    document.getElementById("cancelModal").addEventListener("click", () => modal.style.display = "none");
+    document.getElementById("ticketForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const row = document.createElement("tr");
+      row.classList.add("border-b");
+      row.innerHTML = `
+        <td class="font-bold px-3 py-2">${orderId.value}</td>
+        <td class="px-3 py-2">${orderDate.value}</td>
+        <td class="px-3 py-2">${branch.value}</td>
+        <td class="px-3 py-2">${platform.value}</td>
+        <td class="px-3 py-2">${issue.value}</td>
+      `;
+      tableBody.appendChild(row);
+      modal.style.display = "none";
+      e.target.reset();
+    });
 
-      filteredTickets.forEach(t => {
-        const statusClass = 'badge-' + t.status.toLowerCase();
-        const evidence = t.evidence === 'None' ? '<span class="text-muted">No evidence</span>' : `<a href="${t.evidence}" target="_blank">link</a>`;
-        const issueShort = `<span class="truncate">${escapeHtml(t.issue)}</span> <button class="issue-expand" onclick="openIssueModal(${t.id})">View</button>`;
-        html += `<tr>
-          <td><strong>${t.orderId}</strong></td>
-          <td>${t.orderDate}</td>
-          <td>${t.branch}</td>
-          <td>${t.platform}</td>
-          <td class="issue-cell">${issueShort}</td>
-          <td>${evidence}</td>
-          <td><span class="badge ${statusClass}">${t.status}</span></td>
-          <td>${currency(t.compensation)}</td>
-          <td>
-            <div class="d-flex flex-wrap gap-1">
-              <button class="action-btn btn-edit" onclick="editTicket(${t.id})"><i class="bi bi-pencil"></i></button>
-              <button class="action-btn btn-email text-white" onclick="sendEmail(${t.id})"><i class="bi bi-envelope"></i></button>
-              <button class="action-btn btn-whatsapp text-white" onclick="sendWhatsApp(${t.id})"><i class="bi bi-whatsapp"></i></button>
-              <button class="action-btn btn-close" onclick="closeTicket(${t.id})"><i class="bi bi-check2-circle"></i></button>
-            </div>
-          </td>
-        </tr>`;
-      });
+    // Add Sample Ticket
+    document.getElementById("addSampleBtn").addEventListener("click", () => {
+      const row = document.createElement("tr");
+      row.classList.add("border-b");
+      row.innerHTML = `
+        <td class="font-bold px-3 py-2">SAMPLE123</td>
+        <td class="px-3 py-2">2025-09-02</td>
+        <td class="px-3 py-2">Crispy Chicken Al Danah</td>
+        <td class="px-3 py-2">Careem</td>
+        <td class="px-3 py-2">Late delivery + cold fries</td>
+      `;
+      tableBody.appendChild(row);
+    });
 
-      html += `</tbody></table></div>`;
-      container.innerHTML = html;
-    }
+    // Reset Table
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      tableBody.innerHTML = "";
+    });
 
-    function updateStats() {
-      const total = tickets.length;
-      const open = tickets.filter(t => t.status === 'Open').length;
-      const sent = tickets.filter(t => t.status === 'Sent').length;
-      const closed = tickets.filter(t => t.status === 'Closed').length;
-      $('#totalTickets').textContent = total;
-      $('#openTickets').textContent = open;
-      $('#sentTickets').textContent = sent;
-      $('#closedTickets').textContent = closed;
-    }
+    // Print
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
 
-    function updatePlatformStats() {
-      const total = tickets.length || 1;
-      const noon = tickets.filter(t => t.platform === 'Noon').length;
-      const careem = tickets.filter(t => t.platform === 'Careem').length;
-      $('#noonCount').textContent = noon;
-      $('#careemCount').textContent = careem;
-      $('#noonPercentage').textContent = ((noon/total)*100).toFixed(1) + '%';
-      $('#careemPercentage').textContent = ((careem/total)*100).toFixed(1) + '%';
-    }
+    // Scroll to Dashboard
+    document.getElementById("dashboardBtn").addEventListener("click", () => {
+      document.getElementById("dashboard").scrollIntoView({ behavior: "smooth" });
+    });
 
-    // ====== Charts (4) ======
-    function renderCharts() {
-      const byBranch = groupCounts(tickets, t => t.branch);
-      const issueTypes = groupCounts(tickets, t => classifyIssue(t.issue));
-
-      const barCtx = document.getElementById('branchBar');
-      const pieCtx = document.getElementById('issuePie');
-
-      const barLabels = Object.keys(byBranch);
-      const barData = Object.values(byBranch);
-
-      const pieLabels = Object.keys(issueTypes);
-      const pieData = Object.values(issueTypes);
-
-      if (branchChart) branchChart.destroy();
-      if (issueChart) issueChart.destroy();
-
-      branchChart = new Chart(barCtx, {
-        type: 'bar',
-        data: { labels: barLabels, datasets: [{ label: 'Complaints', data: barData }] },
-        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
-      });
-
-      issueChart = new Chart(pieCtx, {
-        type: 'pie',
-        data: { labels: pieLabels, datasets: [{ data: pieData }] },
-        options: { responsive: true }
-      });
-    }
-
-    function groupCounts(arr, keyFn) {
-      return arr.reduce((acc, item) => { const k = keyFn(item) || 'Unknown'; acc[k] = (acc[k]||0)+1; return acc; }, {});
-    }
-
-    // ====== Modal helpers ======
-    function openAddTicketModal() {
-      $('#modalTitle').textContent = 'Add New Ticket';
-      $('#editingId').value = '';
-      $('#addTicketForm').reset();
-      $('#orderDate').value = new Date().toISOString().split('T')[0];
-      const modal = new bootstrap.Modal(document.getElementById('addTicketModal'));
-      modal.show();
-    }
-
-    function openIssueModal(id) {
-      const t = tickets.find(x => x.id === id);
-      if (!t) return;
-      $('#issueFullText').textContent = t.issue;
-      new bootstrap.Modal(document.getElementById('issueModal')).show();
-    }
-
-    function saveTicket(ev) {
-      ev.preventDefault();
-      const editingId = $('#editingId').value;
-      const data = {
-        orderId: $('#orderId').value.trim(),
-        orderDate: $('#orderDate').value,
-        branch: $('#branch').value,
-        platform: $('#platform').value,
-        issue: $('#issue').value.trim(),
-        compensation: parseFloat($('#compensation').value || '0'),
-        evidence: $('#noEvidence').checked ? 'None' : ($('#evidenceLink').value.trim() || 'None'),
-      };
-
-      if (!data.orderId || !data.orderDate || !data.branch || !data.platform || !data.issue) {
-        showNotification('Please fill all required fields', 'error');
-        return;
-      }
-
-      if (editingId) {
-        const t = tickets.find(x => String(x.id) === editingId);
-        if (!t) return;
-        Object.assign(t, data);
-        showNotification('Ticket updated');
-      } else {
-        tickets.unshift({ id: Date.now(), status: 'Open', dateCreated: new Date().toISOString().split('T')[0], ...data });
-        showNotification('Ticket added');
-      }
-
-      filteredTickets = [...tickets];
-      saveToStorage();
-      renderTickets();
-      updateStats();
-      updatePlatformStats();
-      renderCharts();
-
-      bootstrap.Modal.getInstance(document.getElementById('addTicketModal')).hide();
-    }
-
-    function editTicket(id) {
-      const t = tickets.find(x => x.id === id);
-      if (!t) return;
-      $('#modalTitle').textContent = 'Edit Ticket';
-      $('#editingId').value = String(t.id);
-      $('#orderId').value = t.orderId;
-      $('#orderDate').value = t.orderDate;
-      $('#branch').value = t.branch;
-      $('#platform').value = t.platform;
-      $('#issue').value = t.issue; autogrow($('#issue'));
-      $('#compensation').value = t.compensation;
-      $('#noEvidence').checked = t.evidence === 'None';
-      $('#evidenceLink').value = t.evidence === 'None' ? '' : t.evidence;
-      new bootstrap.Modal(document.getElementById('addTicketModal')).show();
-    }
-
-    function closeTicket(id) {
-      if (!confirm('Close this ticket?')) return;
-      const t = tickets.find(x => x.id === id);
-      if (!t) return;
-      t.status = 'Closed';
-      saveToStorage();
-      renderTickets();
-      updateStats();
-      renderCharts();
-      showNotification('Ticket closed');
-    }
-
-    function addSampleTicket() {
-      const s = [
-        { id: Date.now(), orderId: `NC${Math.floor(Math.random()*900000)+100000}`, orderDate: new Date().toISOString().split('T')[0], branch: 'Crispy Chicken Khalidiya', platform: 'Noon', issue: 'Food was cold and delivery was late', compensation: 50, evidence: 'None', status: 'Open', dateCreated: new Date().toISOString().split('T')[0] },
-        { id: Date.now()+1, orderId: `CR${Math.floor(Math.random()*900000)+100000}`, orderDate: new Date().toISOString().split('T')[0], branch: 'Crispy Chicken Muroor', platform: 'Careem', issue: 'Wrong order items received', compensation: 75, evidence: 'None', status: 'Open', dateCreated: new Date().toISOString().split('T')[0] }
-      ];
-      s.forEach(t => tickets.unshift(t));
-      filteredTickets = [...tickets];
-      saveToStorage();
-      renderTickets();
-      updateStats();
-      updatePlatformStats();
-      renderCharts();
-      showNotification('Sample tickets added');
-    }
-
-    function resetData() {
-      if (!confirm('Reset all tickets?')) return;
-      localStorage.removeItem('crispyTickets');
-      tickets = []; filteredTickets = [];
-      renderTickets(); updateStats(); updatePlatformStats(); renderCharts();
-      showNotification('Data reset');
-    }
-
-    function sendEmail(id) {
-      const t = tickets.find(x => x.id === id);
-      if (!t) return;
-      const subject = `Complaint Regarding Order ${t.orderId}`;
-      const body = `Dear Customer,\n\nWe are writing regarding your complaint about order ${t.orderId} from ${t.branch}.\n\nIssue: ${t.issue}\n\nWe are investigating and will update you shortly.\n\nThank you,\nCrispy Chicken Team`;
-      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      t.status = 'Sent'; saveToStorage(); renderTickets(); updateStats(); renderCharts(); showNotification('Email client opened');
-    }
-
-    function sendWhatsApp(id) {
-      const t = tickets.find(x => x.id === id); if (!t) return;
-      const branchNumbers = { 'Crispy Chicken Khalidiya': '971569494764', 'Crispy Chicken Muroor': '971505414641', 'Crispy Chicken Shabiya 11': '971562690688', 'Crispy Chicken Al Barsha': '971569659524', 'Crispy Chicken Al Satwa': '971567970685', 'Crispy Chicken Electra': '971563866859', 'Crispy Chicken Hamdan': '971556886650' };
-      const bn = branchNumbers[t.branch]; if (!bn) { showNotification('No WhatsApp for branch', 'error'); return; }
-      const msg = `Hi, I\'m writing about order ${t.orderId} from ${t.branch}. Issue: ${t.issue}. Please assist.`;
-      window.open(`https://wa.me/${bn}?text=${encodeURIComponent(msg)}`, '_blank');
-      t.status = 'Sent'; saveToStorage(); renderTickets(); updateStats(); renderCharts(); showNotification('WhatsApp opened');
-    }
-
-    // ====== Usability Tracking + Heatmap (5) ======
-    function initHeatmapLayer() {
-      const container = document.getElementById('heatmapContainer');
-      heatmapInstance = h337.create({ container, radius: 35, maxOpacity: .6, minOpacity: .05, blur: .85 });
-      container.style.display = 'none';
-    }
-
-    function toggleHeatmap() {
+    // Heatmap Toggle
+    let heatmapVisible = false;
+    const heatmapContainer = document.createElement("div");
+    heatmapContainer.style.position = "fixed";
+    heatmapContainer.style.top = "0";
+    heatmapContainer.style.left = "0";
+    heatmapContainer.style.width = "100%";
+    heatmapContainer.style.height = "100%";
+    heatmapContainer.style.zIndex = "1500";
+    document.body.appendChild(heatmapContainer);
+    const heatmap = h337.create({ container: heatmapContainer });
+    document.getElementById("heatmapBtn").addEventListener("click", () => {
       heatmapVisible = !heatmapVisible;
-      document.getElementById('heatmapContainer').style.display = heatmapVisible ? 'block' : 'none';
-    }
+      heatmapContainer.style.display = heatmapVisible ? "block" : "none";
+      if (heatmapVisible) {
+        heatmap.setData({
+          max: 5,
+          data: [
+            { x: 200, y: 200, value: 3 },
+            { x: 500, y: 300, value: 5 },
+            { x: 800, y: 400, value: 4 }
+          ]
+        });
+      }
+    });
 
-    const interactions = [];
-    function recordInteraction(e) {
-      const t = Date.now();
-      const entry = { t, type: 'click', x: e.clientX, y: e.clientY, tag: e.target.tagName, id: e.target.id || null, cls: e.target.className || null };
-      interactions.push(entry);
-      if (heatmapInstance) heatmapInstance.addData({ x: e.clientX, y: e.clientY, value: 1 });
-      // Keep only recent 200 to avoid memory growth
-      if (interactions.length > 200) interactions.shift();
-    }
-    function recordMouseMove(e) {
-      if (!heatmapVisible || !heatmapInstance) return;
-      heatmapInstance.addData({ x: e.clientX, y: e.clientY, value: .2 });
-    }
-    function throttle(fn, ms) {
-      let last = 0; return (...args) => { const now = Date.now(); if (now - last >= ms) { last = now; fn.apply(this, args); } };
-    }
+    // Export CSV
+    document.getElementById("exportBtn").addEventListener("click", () => {
+      let csv = [];
+      document.querySelectorAll("#ticketsTable tr").forEach(row => {
+        let rowData = [];
+        row.querySelectorAll("th, td").forEach(cell => rowData.push(cell.innerText));
+        csv.push(rowData.join(","));
+      });
+      const blob = new Blob([csv.join("\n")], { type: "text/csv" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "tickets.csv";
+      a.click();
+    });
 
-    // Export interactions for quick usability review
-    window.exportUsabilityLog = function() {
-      const data = JSON.stringify({ version: 1, at: new Date().toISOString(), interactions }, null, 2);
-      const blob = new Blob([data], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = 'usability-log.json'; a.click(); URL.revokeObjectURL(url);
-    }
+    // Bar Chart
+    new Chart(document.getElementById("barChart"), {
+      type: "bar",
+      data: {
+        labels: ["Muroor", "Hamdan", "Al Danah"],
+        datasets: [{ label: "Complaints", data: [5, 8, 3], backgroundColor: "rgba(239,68,68,0.7)" }]
+      }
+    });
 
-    // ====== Helpers ======
-    function escapeHtml(s='') { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
+    // Pie Chart
+    new Chart(document.getElementById("pieChart"), {
+      type: "pie",
+      data: {
+        labels: ["Cold Food", "Late Delivery", "Wrong Items", "Missing Items", "Food Quality", "Other"],
+        datasets: [{
+          data: [10, 15, 5, 8, 12, 4],
+          backgroundColor: [
+            "rgba(239,68,68,0.7)",
+            "rgba(59,130,246,0.7)",
+            "rgba(16,185,129,0.7)",
+            "rgba(245,158,11,0.7)",
+            "rgba(139,92,246,0.7)",
+            "rgba(107,114,128,0.7)"
+          ]
+        }]
+      }
+    });
   </script>
 </body>
 </html>
