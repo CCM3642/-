@@ -102,6 +102,7 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            cursor: pointer;
         }
         
         .btn-email:hover {
@@ -121,6 +122,7 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            cursor: pointer;
         }
         
         .btn-whatsapp:hover {
@@ -1057,7 +1059,7 @@
         let filteredTickets = [...tickets];
         let uploadedFiles = [];
         
-        // WhatsApp branch numbers with improved error handling
+        // WhatsApp branch numbers
         const branchNumbers = {
             "Crispy Chicken Khalidiya": "971569494764",
             "Crispy Chicken Muroor": "971505414641",
@@ -1070,6 +1072,14 @@
         
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing...');
+            
+            // Test function availability
+            console.log('Function availability:', {
+                sendEmail: typeof sendEmail,
+                sendWhatsApp: typeof sendWhatsApp
+            });
+            
             renderTickets();
             updateStats();
             updatePlatformStats();
@@ -1091,7 +1101,36 @@
             document.getElementById('filterDateFrom').addEventListener('change', applyFilters);
             document.getElementById('filterDateTo').addEventListener('change', applyFilters);
             document.getElementById('filterOrderDate').addEventListener('change', applyFilters);
+            
+            // Test button
+            const testButton = document.createElement('button');
+            testButton.className = 'btn btn-info mt-3';
+            testButton.innerHTML = '<i class="bi bi-bug"></i> Test Functions';
+            testButton.onclick = testFunctions;
+            document.querySelector('.container').appendChild(testButton);
         });
+        
+        // Test functions
+        function testFunctions() {
+            console.log('Testing functions...');
+            alert('Testing functions...\n\n' +
+                  'sendEmail: ' + (typeof sendEmail) + '\n' +
+                  'sendWhatsApp: ' + (typeof sendWhatsApp) + '\n\n' +
+                  'Tickets count: ' + tickets.length + '\n' +
+                  'Branch numbers count: ' + Object.keys(branchNumbers).length);
+            
+            // Test with dummy data
+            const dummyTicket = {
+                platform: 'Noon',
+                orderId: 'TEST123',
+                branch: 'Crispy Chicken Khalidiya',
+                issue: 'Test issue',
+                evidence: 'Test evidence',
+                compensation: '50'
+            };
+            
+            sendEmail(dummyTicket.platform, dummyTicket.orderId, dummyTicket.branch, dummyTicket.issue, dummyTicket.evidence, dummyTicket.compensation);
+        }
         
         // Initialize file upload
         function initFileUpload() {
@@ -1401,10 +1440,10 @@
                         <button class="btn btn-edit" onclick="editTicket(${ticket.id})" title="Edit Ticket">
                             <i class="bi bi-pencil"></i> Edit
                         </button>
-                        <button class="btn btn-email" onclick="sendEmail('${ticket.platform}', '${ticket.orderId}', '${ticket.branch}', '${ticket.issue}', '${ticket.evidence}', '${ticket.compensation}')" title="Send Email">
+                        <button class="btn btn-email" onclick="handleEmailClick('${ticket.platform}', '${ticket.orderId}', '${ticket.branch}', '${ticket.issue}', '${ticket.evidence}', '${ticket.compensation}')" title="Send Email">
                             <i class="bi bi-envelope"></i> Email
                         </button>
-                        <button class="btn btn-whatsapp" onclick="sendWhatsApp('${ticket.branch}', '${ticket.orderId}', '${ticket.issue}', '${ticket.evidence}', '${ticket.compensation}')" title="Send WhatsApp">
+                        <button class="btn btn-whatsapp" onclick="handleWhatsAppClick('${ticket.branch}', '${ticket.orderId}', '${ticket.issue}', '${ticket.evidence}', '${ticket.compensation}')" title="Send WhatsApp">
                             <i class="bi bi-whatsapp"></i> WhatsApp
                         </button>
                         <button class="btn btn-close-ticket" onclick="closeTicket(this, ${ticket.id})" title="Close Ticket">
@@ -1416,21 +1455,10 @@
             });
         }
         
-        // Update statistics
-        function updateStats() {
-            const total = tickets.length;
-            const open = tickets.filter(t => t.status === 'Open').length;
-            const sent = tickets.filter(t => t.status === 'Sent').length;
-            const closed = tickets.filter(t => t.status === 'Closed').length;
+        // Handle email click with improved error handling
+        function handleEmailClick(platform, orderId, branch, issue, evidence, compensation) {
+            console.log('Email clicked:', { platform, orderId, branch, issue, evidence, compensation });
             
-            document.getElementById('totalTickets').textContent = total;
-            document.getElementById('openTickets').textContent = open;
-            document.getElementById('sentTickets').textContent = sent;
-            document.getElementById('closedTickets').textContent = closed;
-        }
-        
-        // Send email with improved template
-        function sendEmail(platform, orderId, branch, issue, evidence, compensation) {
             let emails = "";
             
             if (platform === "Noon") {
@@ -1444,49 +1472,75 @@
                 compensationText = `%nCompensation Amount: ${compensation} AED`;
             }
             
-            // Improved email template with better formatting
-            let body = `Subject: Follow-up on Claim - Order ${orderId}%0D%0A%0D%0ADear Team,%0D%0A%0D%0AWe would like to follow up on the claim regarding order ${orderId}. Please review the claim details and take appropriate action.%0D%0A%0D%0AOrder Details:%0D%0A- Order ID: ${orderId}%0D%0A- Branch: ${branch}%0D%0A- Issue: ${issue}%0D%0A- Evidence: ${evidence}${compensationText}%0D%0A%0D%0APlease investigate this claim and provide an update.%0D%0A%0D%0ABest regards,%0DAhmed Kenawy%0ACall Center Manager | Crispy Chicken`;
+            // Build email body
+            const body = `Dear Team,%0D%0A%0D%0AWe would like to follow up on the claim regarding order ${orderId}. Please review the claim details and take appropriate action.%0D%0A%0D%0AOrder Details:%0D%0A- Order ID: ${orderId}%0D%0A- Branch: ${branch}%0D%0A- Issue: ${issue}%0D%0A- Evidence: ${evidence}${compensationText}%0D%0A%0D%0APlease investigate this claim and provide an update.%0D%0A%0D%0ABest regards,%0DAhmed Kenawy%0ACall Center Manager | Crispy Chicken`;
             
             const subject = `Follow-up on Claim - Order ${orderId}`;
             const mailtoLink = `mailto:${emails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            window.location.href = mailtoLink;
             
-            // Update ticket status
-            const ticket = tickets.find(t => t.orderId === orderId);
-            if (ticket) {
-                ticket.status = "Sent";
-                localStorage.setItem('crispyTickets', JSON.stringify(tickets));
-                renderTickets();
-                updateStats();
-                updatePlatformStats();
+            console.log('Email link:', mailtoLink);
+            
+            try {
+                // Try to open email client
+                window.location.href = mailtoLink;
+                
+                // Update ticket status
+                const ticket = tickets.find(t => t.orderId === orderId);
+                if (ticket) {
+                    ticket.status = "Sent";
+                    localStorage.setItem('crispyTickets', JSON.stringify(tickets));
+                    renderTickets();
+                    updateStats();
+                    updatePlatformStats();
+                }
+                
+                showNotification('Opening email client...');
+            } catch (error) {
+                console.error('Email error:', error);
+                showNotification('Error opening email client. Please try again.', 'error');
+                
+                // Alternative: copy email addresses to clipboard
+                navigator.clipboard.writeText(emails).then(() => {
+                    showNotification('Email addresses copied to clipboard. Please send manually.');
+                }).catch(() => {
+                    showNotification('Please copy email addresses manually: ' + emails, 'error');
+                });
             }
-            
-            showNotification('Email sent successfully!');
         }
         
-        // Send WhatsApp with improved template and fixed branch lookup
-        function sendWhatsApp(branch, orderId, issue, evidence, compensation) {
+        // Handle WhatsApp click with improved error handling
+        function handleWhatsAppClick(branch, orderId, issue, evidence, compensation) {
+            console.log('WhatsApp clicked:', { branch, orderId, issue, evidence, compensation });
+            
             // Check if branch exists in our lookup table
             if (!branchNumbers[branch]) {
-                showNotification(`Branch number not found for: ${branch}. Please check the branch name.`, 'error');
+                showNotification(`Branch number not found for: ${branch}. Available branches: ${Object.keys(branchNumbers).join(', ')}`, 'error');
                 return;
             }
             
             const number = branchNumbers[branch];
+            console.log('WhatsApp number:', number);
             
             let compensationText = "";
             if (compensation > 0) {
                 compensationText = `%nCompensation: ${compensation} AED`;
             }
             
-            // Improved WhatsApp template with better formatting
-            let message = `🔔 New ${branch} Claim%n%nOrder ID: ${orderId}%nIssue: ${issue}%nEvidence: ${evidence}${compensationText}%n%nPlease check the claim details and take appropriate action.%n%nTicket Status: Open%n%nBest regards,%nAhmed Kenawy%nCall Center Manager%nCrispy Chicken`;
+            // Build WhatsApp message
+            const message = `🔔 New ${branch} Claim%n%nOrder ID: ${orderId}%nIssue: ${issue}%nEvidence: ${evidence}${compensationText}%n%nPlease check the claim details and take appropriate action.%n%nTicket Status: Open%n%nBest regards,%nAhmed Kenawy%nCall Center Manager%nCrispy Chicken`;
             
             const waLink = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+            console.log('WhatsApp link:', waLink);
             
             try {
-                window.open(waLink, '_blank');
-                showNotification('WhatsApp message sent successfully!');
+                // Try to open WhatsApp
+                const newWindow = window.open(waLink, '_blank');
+                
+                if (!newWindow || newWindow.closed || typeof newWindow.closed === 'boolean') {
+                    throw new Error('Popup blocked');
+                }
+                
+                showNotification('Opening WhatsApp...');
                 
                 // Update ticket status
                 const ticket = tickets.find(t => t.orderId === orderId);
@@ -1498,9 +1552,29 @@
                     updatePlatformStats();
                 }
             } catch (error) {
-                showNotification('Error opening WhatsApp. Please try again.', 'error');
                 console.error('WhatsApp error:', error);
+                showNotification('Error opening WhatsApp. Please try again.', 'error');
+                
+                // Alternative: copy number to clipboard
+                navigator.clipboard.writeText(number).then(() => {
+                    showNotification('WhatsApp number copied to clipboard. Please send manually.');
+                }).catch(() => {
+                    showNotification('Please copy WhatsApp number manually: ' + number, 'error');
+                });
             }
+        }
+        
+        // Update statistics
+        function updateStats() {
+            const total = tickets.length;
+            const open = tickets.filter(t => t.status === 'Open').length;
+            const sent = tickets.filter(t => t.status === 'Sent').length;
+            const closed = tickets.filter(t => t.status === 'Closed').length;
+            
+            document.getElementById('totalTickets').textContent = total;
+            document.getElementById('openTickets').textContent = open;
+            document.getElementById('sentTickets').textContent = sent;
+            document.getElementById('closedTickets').textContent = closed;
         }
         
         // Close ticket
@@ -1606,7 +1680,7 @@
             } else {
                 notification.style.borderLeftColor = 'var(--crispy-red)';
                 notification.querySelector('i').className = 'bi bi-check-circle-fill';
-                notification.querySelector('i').style.color = 'var(--crispy-red)';
+                notification.querySelector('i').style.color = 'var(--crispy-red');
             }
             
             notification.classList.add('show');
@@ -1615,6 +1689,13 @@
                 notification.classList.remove('show');
             }, 3000);
         }
+        
+        // Global error handler
+        window.onerror = function(message, source, lineno, colno, error) {
+            console.error('Global error:', message, source, lineno, colno, error);
+            showNotification('An error occurred. Please refresh the page.', 'error');
+            return true;
+        };
     </script>
 </body>
 </html>
