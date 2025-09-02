@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
+        /* Previous styles remain the same */
         :root {
             --crispy-red: #d32f2f;
             --crispy-dark: #b71c1c;
@@ -764,6 +765,199 @@
         .form-overlay.show {
             display: block;
         }
+        
+        /* WhatsApp status indicator */
+        .whatsapp-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .whatsapp-status.online {
+            background-color: #25D366;
+        }
+        
+        .whatsapp-status.offline {
+            background-color: #gray;
+        }
+        
+        /* Enhanced styles for new features */
+        .help-section {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 2px solid var(--crispy-light);
+        }
+        
+        .help-section h5 {
+            color: var(--crispy-red);
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--crispy-light);
+            padding-bottom: 10px;
+        }
+        
+        .help-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .help-item:hover {
+            background-color: var(--crispy-light);
+            transform: translateX(5px);
+        }
+        
+        .help-item i {
+            font-size: 1.5rem;
+            color: var(--crispy-red);
+            margin-right: 15px;
+        }
+        
+        .help-item h6 {
+            margin: 0;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .help-item p {
+            margin: 5px 0 0 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .quick-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-stat {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid var(--crispy-light);
+            flex: 1;
+            min-width: 150px;
+            margin: 10px;
+        }
+        
+        .quick-stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+        
+        .quick-stat h6 {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .quick-stat .value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .quick-stat .value.open {
+            color: #0d47a1;
+        }
+        
+        .quick-stat .value.sent {
+            color: #ff8f00;
+        }
+        
+        .quick-stat .value.closed {
+            color: #2e7d32;
+        }
+        
+        .quick-stat .value.total {
+            color: var(--crispy-red);
+        }
+        
+        .recent-tickets {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 2px solid var(--crispy-light);
+        }
+        
+        .recent-tickets h5 {
+            color: var(--crispy-red);
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--crispy-light);
+            padding-bottom: 10px;
+        }
+        
+        .recent-ticket-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .recent-ticket-item:hover {
+            background-color: var(--crispy-light);
+            transform: translateX(5px);
+        }
+        
+        .recent-ticket-info h6 {
+            margin: 0;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .recent-ticket-info p {
+            margin: 5px 0 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .recent-ticket-status {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+        
+        .recent-ticket-status.open {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+        }
+        
+        .recent-ticket-status.sent {
+            background-color: #fff8e1;
+            color: #ff8f00;
+        }
+        
+        .recent-ticket-status.closed {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
     </style>
 </head>
 <body>
@@ -794,6 +988,26 @@
     </nav>
     <!-- Main Content -->
     <div class="container">
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="quick-stat">
+                <h6>Total Tickets</h6>
+                <p class="value total" id="quickTotal">0</p>
+            </div>
+            <div class="quick-stat">
+                <h6>Open</h6>
+                <p class="value open" id="quickOpen">0</p>
+            </div>
+            <div class="quick-stat">
+                <h6>Sent</h6>
+                <p class="value sent" id="quickSent">0</p>
+            </div>
+            <div class="quick-stat">
+                <h6>Closed</h6>
+                <p class="value closed" id="quickClosed">0</p>
+            </div>
+        </div>
+        
         <!-- Platform Statistics -->
         <div class="platform-stats">
             <div class="platform-card noon">
@@ -809,6 +1023,19 @@
                 <div class="percentage" id="careemPercentage">0%</div>
             </div>
         </div>
+        
+        <!-- Recent Tickets -->
+        <div class="recent-tickets">
+            <h5><i class="bi bi-clock-history"></i> Recent Tickets</h5>
+            <div id="recentTicketsList">
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <h5>No recent tickets</h5>
+                    <p>Add your first complaint ticket using the button below</p>
+                </div>
+            </div>
+        </div>
+        
         <!-- Stats Cards -->
         <div class="row mb-4">
             <div class="col-md-3">
@@ -836,6 +1063,40 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Help Section -->
+        <div class="help-section">
+            <h5><i class="bi bi-question-circle"></i> How to Use This Dashboard</h5>
+            <div class="help-item">
+                <i class="bi bi-plus-circle"></i>
+                <div>
+                    <h6>Add New Ticket</h6>
+                    <p>Click the "Add New Ticket" button to create a new complaint record</p>
+                </div>
+            </div>
+            <div class="help-item">
+                <i class="bi bi-funnel"></i>
+                <div>
+                    <h6>Filter Tickets</h6>
+                    <p>Use the filter section to find specific tickets by order ID, branch, platform, or date</p>
+                </div>
+            </div>
+            <div class="help-item">
+                <i class="bi bi-pencil"></i>
+                <div>
+                    <h6>Edit Tickets</h6>
+                    <p>Click the edit button to modify ticket details and evidence</p>
+                </div>
+            </div>
+            <div class="help-item">
+                <i class="bi bi-whatsapp"></i>
+                <div>
+                    <h6>Communicate via WhatsApp</h6>
+                    <p>Send messages directly to customers using WhatsApp integration</p>
+                </div>
+            </div>
+        </div>
+        
         <!-- Filters -->
         <div class="filter-section">
             <h5><i class="bi bi-funnel"></i> Filters</h5>
@@ -903,12 +1164,14 @@
                 </div>
             </div>
         </div>
+        
         <!-- Add New Ticket Button -->
         <div class="text-center mb-5">
             <button class="btn btn-crispy btn-lg pulse" onclick="openForm()">
                 <i class="bi bi-plus-circle"></i> Add New Ticket
             </button>
         </div>
+        
         <!-- Tickets Table -->
         <div class="card">
             <div class="card-header">
@@ -1106,28 +1369,22 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, initializing...');
             
-            // Test function availability
-            console.log('Function availability:', {
-                openForm: typeof openForm,
-                closeForm: typeof closeForm,
-                saveTicket: typeof saveTicket
-            });
-            
-            renderTickets();
-            updateStats();
-            updatePlatformStats();
-            initFileUpload();
-            
             // Set today's date as default for order date
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('orderDate').value = today;
             
-            // Search functionality
-            document.getElementById('searchOrder').addEventListener('input', function() {
-                applyFilters();
-            });
+            // Initialize file upload
+            initFileUpload();
             
-            // Filter change events
+            // Render initial data
+            renderTickets();
+            updateStats();
+            updatePlatformStats();
+            updateRecentTickets();
+            updateQuickStats();
+            
+            // Add event listeners
+            document.getElementById('searchOrder').addEventListener('input', applyFilters);
             document.getElementById('filterBranch').addEventListener('change', applyFilters);
             document.getElementById('filterPlatform').addEventListener('change', applyFilters);
             document.getElementById('filterStatus').addEventListener('change', applyFilters);
@@ -1135,145 +1392,94 @@
             document.getElementById('filterDateTo').addEventListener('change', applyFilters);
             document.getElementById('filterOrderDate').addEventListener('change', applyFilters);
             
-            // Test button
-            const testButton = document.createElement('button');
-            testButton.className = 'btn btn-info mt-3';
-            testButton.innerHTML = '<i class="bi bi-bug"></i> Test Functions';
-            testButton.onclick = testFunctions;
-            document.querySelector('.container').appendChild(testButton);
+            // Show notification on load
+            showNotification('Dashboard loaded successfully!', 'success');
         });
         
-        // Test functions
-        function testFunctions() {
-            console.log('Testing functions...');
-            alert('Testing functions...\n\n' +
-                  'openForm: ' + (typeof openForm) + '\n' +
-                  'closeForm: ' + (typeof closeForm) + '\n' +
-                  'saveTicket: ' + (typeof saveTicket) + '\n\n' +
-                  'Tickets count: ' + tickets.length + '\n' +
-                  'Branch numbers count: ' + Object.keys(branchNumbers).length);
-            
-            // Test form visibility
-            openForm();
-        }
-        
-        // Open form
-        function openForm() {
-            console.log('Opening form...');
-            const form = document.getElementById('orderForm');
-            const overlay = document.getElementById('formOverlay');
-            
-            // Reset form
-            resetForm();
-            
-            // Show form and overlay
-            form.style.display = 'block';
-            overlay.classList.add('show');
-            
-            // Set today's date
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('orderDate').value = today;
-            
-            // Focus on first input
-            document.getElementById('orderId').focus();
-            
-            showNotification('Form opened successfully!');
-        }
-        
-        // Close form
-        function closeForm() {
-            console.log('Closing form...');
-            const form = document.getElementById('orderForm');
-            const overlay = document.getElementById('formOverlay');
-            
-            form.style.display = 'none';
-            overlay.classList.remove('show');
-            
-            showNotification('Form closed');
-        }
-        
-        // Initialize file upload
+        // Initialize file upload functionality
         function initFileUpload() {
             const fileDropArea = document.getElementById('fileDropArea');
             const fileInput = document.getElementById('fileInput');
-            const fileList = document.getElementById('fileList');
             
-            // Prevent default drag behaviors
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                fileDropArea.addEventListener(eventName, preventDefaults, false);
-                document.body.addEventListener(eventName, preventDefaults, false);
-            });
-            
-            // Highlight drop area when item is dragged over it
-            ['dragenter', 'dragover'].forEach(eventName => {
-                fileDropArea.addEventListener(eventName, highlight, false);
-            });
-            
-            ['dragleave', 'drop'].forEach(eventName => {
-                fileDropArea.addEventListener(eventName, unhighlight, false);
-            });
-            
-            // Handle dropped files
-            fileDropArea.addEventListener('drop', handleDrop, false);
-            
-            // Handle file selection via input
-            fileInput.addEventListener('change', function() {
-                handleFiles(this.files);
-            });
-            
-            // Open file selector when drop area is clicked
-            fileDropArea.addEventListener('click', function() {
+            // Click to browse files
+            fileDropArea.addEventListener('click', () => {
                 fileInput.click();
             });
             
-            function preventDefaults(e) {
+            // File input change event
+            fileInput.addEventListener('change', handleFiles);
+            
+            // Drag and drop events
+            fileDropArea.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                e.stopPropagation();
-            }
-            
-            function highlight() {
                 fileDropArea.classList.add('drag-over');
-            }
+            });
             
-            function unhighlight() {
+            fileDropArea.addEventListener('dragleave', () => {
                 fileDropArea.classList.remove('drag-over');
-            }
+            });
             
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                handleFiles(files);
-            }
+            fileDropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileDropArea.classList.remove('drag-over');
+                handleFiles({ target: { files: e.dataTransfer.files } });
+            });
+        }
+        
+        // Handle file uploads
+        function handleFiles(e) {
+            const files = e.target.files;
+            const fileList = document.getElementById('fileList');
             
-            function handleFiles(files) {
-                if (files.length > 0) {
-                    uploadedFiles = Array.from(files);
-                    displayFiles();
+            // Validate file types and sizes
+            const validTypes = ['image/jpeg', 'image/png', 'application/pdf', 'video/mp4'];
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            
+            for (let file of files) {
+                if (!validTypes.includes(file.type)) {
+                    showNotification(`Invalid file type: ${file.name}`, 'error');
+                    continue;
                 }
-            }
-            
-            function displayFiles() {
-                fileList.innerHTML = '';
                 
-                uploadedFiles.forEach((file, index) => {
-                    const fileItem = document.createElement('div');
-                    fileItem.className = 'file-item';
-                    
-                    const fileSize = formatFileSize(file.size);
-                    const fileIcon = getFileIcon(file.type);
-                    
-                    fileItem.innerHTML = `
-                        <div>
-                            <i class="${fileIcon}"></i>
-                            <span>${file.name} (${fileSize})</span>
-                        </div>
-                        <button type="button" onclick="removeFile(${index})">
-                            <i class="bi bi-x-circle"></i>
-                        </button>
-                    `;
-                    fileList.appendChild(fileItem);
-                });
+                if (file.size > maxSize) {
+                    showNotification(`File too large: ${file.name}`, 'error');
+                    continue;
+                }
+                
+                // Add file to list
+                uploadedFiles.push(file);
+                displayFile(file);
             }
+        }
+        
+        // Display uploaded files
+        function displayFile(file) {
+            const fileList = document.getElementById('fileList');
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            const fileIcon = getFileIcon(file.type);
+            const fileSize = formatFileSize(file.size);
+            
+            fileItem.innerHTML = `
+                <div>
+                    <i class="${fileIcon}"></i>
+                    <span>${file.name} (${fileSize})</span>
+                </div>
+                <button onclick="removeFile('${file.name}')">
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
+            
+            fileList.appendChild(fileItem);
+        }
+        
+        // Get file icon based on type
+        function getFileIcon(fileType) {
+            if (fileType.startsWith('image/')) return 'bi bi-image';
+            if (fileType === 'application/pdf') return 'bi bi-file-pdf';
+            if (fileType.startsWith('video/')) return 'bi bi-file-play';
+            return 'bi bi-file-earmark';
         }
         
         // Format file size
@@ -1285,194 +1491,374 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
         
-        // Get file icon based on type
-        function getFileIcon(type) {
-            if (type.startsWith('image/')) return 'bi bi-image';
-            if (type === 'application/pdf') return 'bi bi-file-pdf';
-            if (type.startsWith('video/')) return 'bi bi-file-play';
-            return 'bi bi-file';
+        // Remove file from list
+        function removeFile(fileName) {
+            uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+            updateFileList();
         }
         
-        // Remove file
-        function removeFile(index) {
-            uploadedFiles.splice(index, 1);
-            displayFiles();
-        }
-        
-        // Update platform statistics
-        function updatePlatformStats() {
-            const totalTickets = tickets.length;
-            const noonTickets = tickets.filter(t => t.platform === 'Noon').length;
-            const careemTickets = tickets.filter(t => t.platform === 'Careem').length;
+        // Update file list display
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
             
-            document.getElementById('noonCount').textContent = noonTickets;
-            document.getElementById('careemCount').textContent = careemTickets;
-            
-            const noonPercentage = totalTickets > 0 ? ((noonTickets / totalTickets) * 100).toFixed(1) : 0;
-            const careemPercentage = totalTickets > 0 ? ((careemTickets / totalTickets) * 100).toFixed(1) : 0;
-            
-            document.getElementById('noonPercentage').textContent = `${noonPercentage}%`;
-            document.getElementById('careemPercentage').textContent = `${careemPercentage}%`;
+            uploadedFiles.forEach(file => {
+                displayFile(file);
+            });
         }
         
         // Reset form
         function resetForm() {
-            document.getElementById("orderId").value = "";
-            document.getElementById("orderDate").value = new Date().toISOString().split('T')[0];
-            document.getElementById("branch").value = "";
-            document.getElementById("platform").value = "";
-            document.getElementById("issue").value = "";
-            document.getElementById("compensation").value = "";
-            document.getElementById("evidenceLink").value = "";
-            document.getElementById("noEvidence").checked = false;
+            document.getElementById('orderForm').querySelector('input, select, textarea').forEach(el => {
+                el.value = '';
+            });
+            document.getElementById('noEvidence').checked = false;
+            document.getElementById('evidenceLink').value = '';
             uploadedFiles = [];
+            updateFileList();
+        }
+        
+        // Open form
+        function openForm() {
+            const form = document.getElementById('orderForm');
+            const overlay = document.getElementById('formOverlay');
             
-            // Clear file list
-            document.getElementById("fileList").innerHTML = "";
+            resetForm();
+            form.style.display = 'block';
+            overlay.classList.add('show');
+        }
+        
+        // Close form
+        function closeForm() {
+            const form = document.getElementById('orderForm');
+            const overlay = document.getElementById('formOverlay');
+            
+            form.style.display = 'none';
+            overlay.classList.remove('show');
         }
         
         // Save ticket
         function saveTicket() {
-            console.log('Saving ticket...');
-            
             // Validate form
-            const orderId = document.getElementById("orderId").value.trim();
-            const orderDate = document.getElementById("orderDate").value;
-            const branch = document.getElementById("branch").value;
-            const platform = document.getElementById("platform").value;
-            const issue = document.getElementById("issue").value.trim();
-            const compensation = document.getElementById("compensation").value;
-            const evidenceLink = document.getElementById("evidenceLink").value;
-            const noEvidence = document.getElementById("noEvidence").checked;
+            const orderId = document.getElementById('orderId').value.trim();
+            const orderDate = document.getElementById('orderDate').value;
+            const branch = document.getElementById('branch').value;
+            const platform = document.getElementById('platform').value;
+            const issue = document.getElementById('issue').value.trim();
+            const compensation = document.getElementById('compensation').value;
+            const noEvidence = document.getElementById('noEvidence').checked;
+            const evidenceLink = document.getElementById('evidenceLink').value.trim();
             
-            // Validation
-            if (!orderId) {
-                showNotification('Please enter Order ID', 'error');
-                document.getElementById("orderId").focus();
+            if (!orderId || !orderDate || !branch || !platform || !issue || !compensation) {
+                showNotification('Please fill in all required fields', 'error');
                 return;
             }
             
-            if (!orderDate) {
-                showNotification('Please select Order Date', 'error');
-                document.getElementById("orderDate").focus();
-                return;
-            }
-            
-            if (!branch) {
-                showNotification('Please select Branch', 'error');
-                document.getElementById("branch").focus();
-                return;
-            }
-            
-            if (!platform) {
-                showNotification('Please select Platform', 'error');
-                document.getElementById("platform").focus();
-                return;
-            }
-            
-            if (!issue) {
-                showNotification('Please enter Issue Description', 'error');
-                document.getElementById("issue").focus();
-                return;
-            }
-            
-            if (!compensation) {
-                showNotification('Please enter Compensation Value', 'error');
-                document.getElementById("compensation").focus();
-                return;
-            }
-            
-            let evidence = "None";
-            
-            if (noEvidence) {
-                evidence = "No evidence provided";
-            } else if (evidenceLink) {
-                evidence = evidenceLink;
-            } else if (uploadedFiles.length > 0) {
-                evidence = `Uploaded files: ${uploadedFiles.map(f => f.name).join(', ')}`;
-            }
-            
-            const ticket = {
+            // Create new ticket
+            const newTicket = {
                 id: Date.now(),
                 orderId,
                 orderDate,
                 branch,
                 platform,
                 issue,
-                compensation: parseFloat(compensation) || 0,
-                evidence,
-                status: "Open",
-                dateCreated: new Date().toISOString(),
-                files: uploadedFiles.map(file => ({
-                    name: file.name,
-                    size: file.size,
-                    type: file.type
-                }))
+                compensation: parseFloat(compensation),
+                evidence: noEvidence ? 'None' : evidenceLink,
+                status: 'Open',
+                dateCreated: new Date().toISOString().split('T')[0],
+                files: uploadedFiles.map(file => file.name)
             };
             
-            console.log('Creating ticket:', ticket);
+            // Add to tickets array
+            tickets.unshift(newTicket);
+            filteredTickets = [...tickets];
             
-            tickets.push(ticket);
+            // Save to localStorage
+            localStorage.setItem('crispyTickets', JSON.stringify(tickets));
+            
+            // Update UI
+            renderTickets();
+            updateStats();
+            updatePlatformStats();
+            updateRecentTickets();
+            updateQuickStats();
+            
+            // Close form and show notification
+            closeForm();
+            showNotification('Ticket added successfully!', 'success');
+        }
+        
+        // Open edit form
+        function openEditForm(ticketId) {
+            const ticket = tickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+            
+            const form = document.getElementById('editTicketForm');
+            const overlay = document.getElementById('formOverlay');
+            
+            // Populate form with ticket data
+            document.getElementById('editTicketId').value = ticket.id;
+            document.getElementById('editOrderId').value = ticket.orderId;
+            document.getElementById('editOrderDate').value = ticket.orderDate;
+            document.getElementById('editBranch').value = ticket.branch;
+            document.getElementById('editPlatform').value = ticket.platform;
+            document.getElementById('editIssue').value = ticket.issue;
+            document.getElementById('editCompensation').value = ticket.compensation;
+            document.getElementById('editEvidence').value = ticket.evidence;
+            document.getElementById('editNoEvidence').checked = ticket.evidence === 'None';
+            
+            form.style.display = 'block';
+            overlay.classList.add('show');
+        }
+        
+        // Close edit form
+        function closeEditForm() {
+            const form = document.getElementById('editTicketForm');
+            const overlay = document.getElementById('formOverlay');
+            
+            form.style.display = 'none';
+            overlay.classList.remove('show');
+        }
+        
+        // Save edited ticket
+        function saveEditedTicket() {
+            const ticketId = parseInt(document.getElementById('editTicketId').value);
+            const ticketIndex = tickets.findIndex(t => t.id === ticketId);
+            
+            if (ticketIndex === -1) return;
+            
+            // Get form values
+            const updatedTicket = {
+                ...tickets[ticketIndex],
+                orderId: document.getElementById('editOrderId').value.trim(),
+                orderDate: document.getElementById('editOrderDate').value,
+                branch: document.getElementById('editBranch').value,
+                platform: document.getElementById('editPlatform').value,
+                issue: document.getElementById('editIssue').value.trim(),
+                compensation: parseFloat(document.getElementById('editCompensation').value),
+                evidence: document.getElementById('editNoEvidence').checked ? 'None' : document.getElementById('editEvidence').value.trim()
+            };
+            
+            // Update ticket
+            tickets[ticketIndex] = updatedTicket;
+            filteredTickets = [...tickets];
+            
+            // Save to localStorage
+            localStorage.setItem('crispyTickets', JSON.stringify(tickets));
+            
+            // Update UI
+            renderTickets();
+            updateStats();
+            updatePlatformStats();
+            updateRecentTickets();
+            updateQuickStats();
+            
+            // Close form and show notification
+            closeEditForm();
+            showNotification('Ticket updated successfully!', 'success');
+        }
+        
+        // Close ticket
+        function closeTicket(ticketId) {
+            if (!confirm('Are you sure you want to close this ticket?')) return;
+            
+            const ticketIndex = tickets.findIndex(t => t.id === ticketId);
+            if (ticketIndex === -1) return;
+            
+            tickets[ticketIndex].status = 'Closed';
+            filteredTickets = [...tickets];
+            
             localStorage.setItem('crispyTickets', JSON.stringify(tickets));
             
             renderTickets();
             updateStats();
             updatePlatformStats();
-            closeForm();
+            updateRecentTickets();
+            updateQuickStats();
             
-            showNotification('Ticket added successfully!');
+            showNotification('Ticket closed successfully!', 'success');
         }
         
-        // Edit ticket functions
-        function editTicket(ticketId) {
+        // Send email
+        function sendEmail(ticketId) {
             const ticket = tickets.find(t => t.id === ticketId);
             if (!ticket) return;
             
-            document.getElementById("editTicketId").value = ticket.id;
-            document.getElementById("editOrderId").value = ticket.orderId;
-            document.getElementById("editOrderDate").value = ticket.orderDate;
-            document.getElementById("editBranch").value = ticket.branch;
-            document.getElementById("editPlatform").value = ticket.platform;
-            document.getElementById("editIssue").value = ticket.issue;
-            document.getElementById("editCompensation").value = ticket.compensation || "";
-            document.getElementById("editEvidence").value = ticket.evidence === "None" ? "" : ticket.evidence;
-            document.getElementById("editNoEvidence").checked = ticket.evidence === "No evidence provided";
+            const subject = `Complaint Regarding Order ${ticket.orderId}`;
+            const body = `Dear Customer,\n\nWe are writing regarding your complaint about order ${ticket.orderId} from ${ticket.branch}.\n\nIssue: ${ticket.issue}\n\nWe are investigating this matter and will get back to you shortly.\n\nThank you,\nCrispy Chicken Team`;
             
-            document.getElementById("editTicketForm").style.display = "block";
-        }
-        
-        function closeEditForm() {
-            document.getElementById("editTicketForm").style.display = "none";
-        }
-        
-        function saveEditedTicket() {
-            const ticketId = parseInt(document.getElementById("editTicketId").value);
-            const ticket = tickets.find(t => t.id === ticketId);
+            const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailtoLink;
             
-            if (!ticket) return;
-            
-            ticket.orderId = document.getElementById("editOrderId").value;
-            ticket.orderDate = document.getElementById("editOrderDate").value;
-            ticket.branch = document.getElementById("editBranch").value;
-            ticket.platform = document.getElementById("editPlatform").value;
-            ticket.issue = document.getElementById("editIssue").value;
-            ticket.compensation = document.getElementById("editCompensation").value || 0;
-            
-            const noEvidence = document.getElementById("editNoEvidence").checked;
-            if (noEvidence) {
-                ticket.evidence = "No evidence provided";
-            } else {
-                ticket.evidence = document.getElementById("editEvidence").value || "None";
+            // Update ticket status
+            const ticketIndex = tickets.findIndex(t => t.id === ticketId);
+            if (ticketIndex !== -1) {
+                tickets[ticketIndex].status = 'Sent';
+                filteredTickets = [...tickets];
+                
+                localStorage.setItem('crispyTickets', JSON.stringify(tickets));
+                
+                renderTickets();
+                updateStats();
+                updatePlatformStats();
+                updateRecentTickets();
+                updateQuickStats();
             }
             
-            localStorage.setItem('crispyTickets', JSON.stringify(tickets));
+            showNotification('Email client opened!', 'success');
+        }
+        
+        // Send WhatsApp
+        function sendWhatsApp(ticketId) {
+            const ticket = tickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+            
+            const branchNumber = branchNumbers[ticket.branch];
+            if (!branchNumber) {
+                showNotification('WhatsApp number not available for this branch', 'error');
+                return;
+            }
+            
+            const message = `Hi, I'm writing about my order ${ticket.orderId} from ${ticket.branch}. The issue was: ${ticket.issue}. Please assist.`;
+            const whatsappUrl = `https://wa.me/${branchNumber}?text=${encodeURIComponent(message)}`;
+            
+            window.open(whatsappUrl, '_blank');
+            
+            // Update ticket status
+            const ticketIndex = tickets.findIndex(t => t.id === ticketId);
+            if (ticketIndex !== -1) {
+                tickets[ticketIndex].status = 'Sent';
+                filteredTickets = [...tickets];
+                
+                localStorage.setItem('crispyTickets', JSON.stringify(tickets));
+                
+                renderTickets();
+                updateStats();
+                updatePlatformStats();
+                updateRecentTickets();
+                updateQuickStats();
+            }
+            
+            showNotification('WhatsApp opened!', 'success');
+        }
+        
+        // Apply filters
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchOrder').value.toLowerCase();
+            const branchFilter = document.getElementById('filterBranch').value;
+            const platformFilter = document.getElementById('filterPlatform').value;
+            const statusFilter = document.getElementById('filterStatus').value;
+            const dateFrom = document.getElementById('filterDateFrom').value;
+            const dateTo = document.getElementById('filterDateTo').value;
+            const orderDate = document.getElementById('filterOrderDate').value;
+            
+            filteredTickets = tickets.filter(ticket => {
+                // Search filter
+                if (searchTerm && !ticket.orderId.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                
+                // Branch filter
+                if (branchFilter && ticket.branch !== branchFilter) {
+                    return false;
+                }
+                
+                // Platform filter
+                if (platformFilter && ticket.platform !== platformFilter) {
+                    return false;
+                }
+                
+                // Status filter
+                if (statusFilter && ticket.status !== statusFilter) {
+                    return false;
+                }
+                
+                // Date range filters
+                if (dateFrom && ticket.dateCreated < dateFrom) {
+                    return false;
+                }
+                
+                if (dateTo && ticket.dateCreated > dateTo) {
+                    return false;
+                }
+                
+                // Order date filter
+                if (orderDate && ticket.orderDate !== orderDate) {
+                    return false;
+                }
+                
+                return true;
+            });
             
             renderTickets();
-            updateStats();
-            updatePlatformStats();
-            closeEditForm();
+            showNotification(`Found ${filteredTickets.length} matching tickets`, 'info');
+        }
+        
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('searchOrder').value = '';
+            document.getElementById('filterBranch').value = '';
+            document.getElementById('filterPlatform').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterDateFrom').value = '';
+            document.getElementById('filterDateTo').value = '';
+            document.getElementById('filterOrderDate').value = '';
             
-            showNotification('Ticket updated successfully!');
+            filteredTickets = [...tickets];
+            renderTickets();
+            showNotification('Filters reset', 'info');
+        }
+        
+        // Export to CSV
+        function exportToCSV() {
+            if (filteredTickets.length === 0) {
+                showNotification('No tickets to export', 'error');
+                return;
+            }
+            
+            // Define CSV headers
+            const headers = [
+                'Order ID',
+                'Order Date',
+                'Branch',
+                'Platform',
+                'Issue',
+                'Evidence',
+                'Status',
+                'Compensation (AED)',
+                'Date Created'
+            ];
+            
+            // Create CSV content
+            const csvContent = [
+                headers.join(','),
+                ...filteredTickets.map(ticket => [
+                    ticket.orderId,
+                    ticket.orderDate,
+                    ticket.branch,
+                    ticket.platform,
+                    `"${ticket.issue.replace(/"/g, '""')}"`,
+                    ticket.evidence,
+                    ticket.status,
+                    ticket.compensation,
+                    ticket.dateCreated
+                ].join(','))
+            ].join('\n');
+            
+            // Create blob and download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `crispy_tickets_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification('CSV exported successfully!', 'success');
         }
         
         // Render tickets table
@@ -1480,183 +1866,56 @@
             const tbody = document.querySelector('#ticketsTable tbody');
             const emptyState = document.getElementById('emptyState');
             
+            // Clear existing rows
             tbody.innerHTML = '';
             
             if (filteredTickets.length === 0) {
-                tbody.parentElement.style.display = 'none';
                 emptyState.style.display = 'block';
                 return;
             }
             
-            tbody.parentElement.style.display = 'table';
             emptyState.style.display = 'none';
             
+            // Add tickets to table
             filteredTickets.forEach(ticket => {
-                const tr = document.createElement('tr');
-                tr.className = 'new-ticket-row';
+                const row = document.createElement('tr');
+                row.className = 'new-ticket-row';
                 
-                let evidenceDisplay = ticket.evidence;
-                if (ticket.evidence === "None") {
-                    evidenceDisplay = '<span class="evidence-none">None</span>';
-                } else if (ticket.evidence.startsWith("http")) {
-                    evidenceDisplay = `<a href="${ticket.evidence}" target="_blank" class="evidence-link">${ticket.evidence}</a>`;
-                } else if (ticket.evidence.startsWith("Uploaded files")) {
-                    evidenceDisplay = `<span class="text-muted">${ticket.evidence}</span>`;
-                } else {
-                    evidenceDisplay = `<span class="text-muted">${ticket.evidence}</span>`;
-                }
+                const statusClass = `badge-${ticket.status.toLowerCase()}`;
+                const evidenceText = ticket.evidence === 'None' ? 
+                    '<span class="evidence-none">No evidence</span>' : 
+                    `<a href="${ticket.evidence}" class="evidence-link" target="_blank">${ticket.evidence}</a>`;
                 
-                const compensationDisplay = ticket.compensation > 0 ? 
-                    `<span class="badge" style="background-color: var(--crispy-red); color: white;">${ticket.compensation} AED</span>` : 
-                    '<span class="text-muted">No compensation</span>';
-                
-                tr.innerHTML = `
-                    <td><strong>${ticket.orderId}</strong></td>
-                    <td>${formatDate(ticket.orderDate)}</td>
+                row.innerHTML = `
+                    <td>${ticket.orderId}</td>
+                    <td>${ticket.orderDate}</td>
                     <td>${ticket.branch}</td>
-                    <td>
-                        <span class="badge" style="background-color: ${ticket.platform === 'Noon' ? '#FFB800' : '#00A86B'}; color: white;">
-                            ${ticket.platform}
-                        </span>
-                    </td>
+                    <td>${ticket.platform}</td>
                     <td>${ticket.issue}</td>
-                    <td>${evidenceDisplay}</td>
+                    <td>${evidenceText}</td>
+                    <td><span class="badge ${statusClass}">${ticket.status}</span></td>
+                    <td>AED ${ticket.compensation.toFixed(2)}</td>
+                    <td>${ticket.dateCreated}</td>
                     <td>
-                        <span class="badge badge-${ticket.status.toLowerCase()}">${ticket.status}</span>
-                    </td>
-                    <td>${compensationDisplay}</td>
-                    <td>${formatDate(ticket.dateCreated)}</td>
-                    <td class="action-buttons">
-                        <button class="btn btn-edit" onclick="editTicket(${ticket.id})" title="Edit Ticket">
-                            <i class="bi bi-pencil"></i> Edit
-                        </button>
-                        <button class="btn btn-email" onclick="handleEmailClick('${ticket.platform}', '${ticket.orderId}', '${ticket.branch}', '${ticket.issue}', '${ticket.evidence}', '${ticket.compensation}')" title="Send Email">
-                            <i class="bi bi-envelope"></i> Email
-                        </button>
-                        <button class="btn btn-whatsapp" onclick="handleWhatsAppClick('${ticket.branch}', '${ticket.orderId}', '${ticket.issue}', '${ticket.evidence}', '${ticket.compensation}')" title="Send WhatsApp">
-                            <i class="bi bi-whatsapp"></i> WhatsApp
-                        </button>
-                        <button class="btn btn-close-ticket" onclick="closeTicket(this, ${ticket.id})" title="Close Ticket">
-                            <i class="bi bi-check-circle"></i> Close
-                        </button>
+                        <div class="action-buttons">
+                            <button class="btn btn-edit" onclick="openEditForm(${ticket.id})">
+                                <i class="bi bi-pencil"></i> Edit
+                            </button>
+                            <button class="btn btn-email" onclick="sendEmail(${ticket.id})">
+                                <i class="bi bi-envelope"></i> Email
+                            </button>
+                            <button class="btn btn-whatsapp" onclick="sendWhatsApp(${ticket.id})">
+                                <i class="bi bi-whatsapp"></i> WhatsApp
+                            </button>
+                            <button class="btn btn-close-ticket" onclick="closeTicket(${ticket.id})">
+                                <i class="bi bi-check-circle"></i> Close
+                            </button>
+                        </div>
                     </td>
                 `;
-                tbody.appendChild(tr);
+                
+                tbody.appendChild(row);
             });
-        }
-        
-        // Handle email click with improved error handling
-        function handleEmailClick(platform, orderId, branch, issue, evidence, compensation) {
-            console.log('Email clicked:', { platform, orderId, branch, issue, evidence, compensation });
-            
-            let emails = "";
-            
-            if (platform === "Noon") {
-                emails = "resops@noon.com, foodfinance@noon.com, muismail@noon.com";
-            } else {
-                emails = "rashid.waqas@careem.com, partners_uae@careem.com, david.chamas@careem.com";
-            }
-            
-            let compensationText = "";
-            if (compensation > 0) {
-                compensationText = `%nCompensation Amount: ${compensation} AED`;
-            }
-            
-            // Build email body
-            const body = `Dear Team,%0D%0A%0D%0AWe would like to follow up on the claim regarding order ${orderId}. Please review the claim details and take appropriate action.%0D%0A%0D%0AOrder Details:%0D%0A- Order ID: ${orderId}%0D%0A- Branch: ${branch}%0D%0A- Issue: ${issue}%0D%0A- Evidence: ${evidence}${compensationText}%0D%0A%0D%0APlease investigate this claim and provide an update.%0D%0A%0D%0ABest regards,%0DAhmed Kenawy%0ACall Center Manager | Crispy Chicken`;
-            
-            const subject = `Follow-up on Claim - Order ${orderId}`;
-            const mailtoLink = `mailto:${emails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            
-            console.log('Email link:', mailtoLink);
-            
-            try {
-                // Try to open email client
-                window.location.href = mailtoLink;
-                
-                // Update ticket status
-                const ticket = tickets.find(t => t.orderId === orderId);
-                if (ticket) {
-                    ticket.status = "Sent";
-                    localStorage.setItem('crispyTickets', JSON.stringify(tickets));
-                    renderTickets();
-                    updateStats();
-                    updatePlatformStats();
-                }
-                
-                showNotification('Opening email client...');
-            } catch (error) {
-                console.error('Email error:', error);
-                showNotification('Error opening email client. Please try again.', 'error');
-                
-                // Alternative: copy email addresses to clipboard
-                navigator.clipboard.writeText(emails).then(() => {
-                    showNotification('Email addresses copied to clipboard. Please send manually.');
-                }).catch(() => {
-                    showNotification('Please copy email addresses manually: ' + emails, 'error');
-                });
-            }
-        }
-        
-        // Handle WhatsApp click with improved error handling
-        function handleWhatsAppClick(branch, orderId, issue, evidence, compensation) {
-            console.log('WhatsApp clicked:', { branch, orderId, issue, evidence, compensation });
-            
-            // Check if branch exists in our lookup table
-            if (!branchNumbers[branch]) {
-                showNotification(`Branch number not found for: ${branch}. Available branches: ${Object.keys(branchNumbers).join(', ')}`, 'error');
-                return;
-            }
-            
-            const number = branchNumbers[branch];
-            console.log('WhatsApp number:', number);
-            
-            let compensationText = "";
-            if (compensation > 0) {
-                compensationText = `%nCompensation: ${compensation} AED`;
-            }
-            
-            // Build WhatsApp message with proper encoding
-            const message = `🔔 New ${branch} Claim%n%nOrder ID: ${orderId}%nIssue: ${issue}%nEvidence: ${evidence}${compensationText}%n%nPlease check the claim details and take appropriate action.%n%nTicket Status: Open%n%nBest regards,%nAhmed Kenawy%nCall Center Manager%nCrispy Chicken`;
-            
-            // Properly encode the message
-            const encodedMessage = encodeURIComponent(message);
-            
-            // Build WhatsApp URL
-            const waLink = `https://wa.me/${number}?text=${encodedMessage}`;
-            
-            console.log('WhatsApp link:', waLink);
-            
-            try {
-                // Try to open WhatsApp
-                const newWindow = window.open(waLink, '_blank');
-                
-                if (!newWindow || newWindow.closed || typeof newWindow.closed === 'boolean') {
-                    throw new Error('Popup blocked');
-                }
-                
-                showNotification('Opening WhatsApp...');
-                
-                // Update ticket status
-                const ticket = tickets.find(t => t.orderId === orderId);
-                if (ticket) {
-                    ticket.status = "Sent";
-                    localStorage.setItem('crispyTickets', JSON.stringify(tickets));
-                    renderTickets();
-                    updateStats();
-                    updatePlatformStats();
-                }
-            } catch (error) {
-                console.error('WhatsApp error:', error);
-                showNotification('Error opening WhatsApp. Please try again.', 'error');
-                
-                // Alternative: copy number to clipboard
-                navigator.clipboard.writeText(number).then(() => {
-                    showNotification('WhatsApp number copied to clipboard. Please send manually.');
-                }).catch(() => {
-                    showNotification('Please copy WhatsApp number manually: ' + number, 'error');
-                });
-            }
         }
         
         // Update statistics
@@ -1672,125 +1931,97 @@
             document.getElementById('closedTickets').textContent = closed;
         }
         
-        // Close ticket
-        function closeTicket(btn, ticketId) {
-            const ticket = tickets.find(t => t.id === ticketId);
-            if (ticket) {
-                ticket.status = "Closed";
-                localStorage.setItem('crispyTickets', JSON.stringify(tickets));
-                renderTickets();
-                updateStats();
-                updatePlatformStats();
-                showNotification('Ticket closed successfully!');
+        // Update platform statistics
+        function updatePlatformStats() {
+            const noonTickets = tickets.filter(t => t.platform === 'Noon');
+            const careemTickets = tickets.filter(t => t.platform === 'Careem');
+            
+            const total = tickets.length;
+            const noonCount = noonTickets.length;
+            const careemCount = careemTickets.length;
+            
+            document.getElementById('noonCount').textContent = noonCount;
+            document.getElementById('careemCount').textContent = careemCount;
+            
+            // Calculate percentages
+            const noonPercentage = total > 0 ? ((noonCount / total) * 100).toFixed(1) : 0;
+            const careemPercentage = total > 0 ? ((careemCount / total) * 100).toFixed(1) : 0;
+            
+            document.getElementById('noonPercentage').textContent = `${noonPercentage}%`;
+            document.getElementById('careemPercentage').textContent = `${careemPercentage}%`;
+        }
+        
+        // Update recent tickets
+        function updateRecentTickets() {
+            const recentTicketsList = document.getElementById('recentTicketsList');
+            const recentTickets = tickets.slice(0, 5); // Get last 5 tickets
+            
+            if (recentTickets.length === 0) {
+                recentTicketsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-inbox"></i>
+                        <h5>No recent tickets</h5>
+                        <p>Add your first complaint ticket using the button below</p>
+                    </div>
+                `;
+                return;
             }
-        }
-        
-        // Apply filters
-        function applyFilters() {
-            const searchOrder = document.getElementById('searchOrder').value.toLowerCase();
-            const filterBranch = document.getElementById('filterBranch').value;
-            const filterPlatform = document.getElementById('filterPlatform').value;
-            const filterStatus = document.getElementById('filterStatus').value;
-            const filterDateFrom = document.getElementById('filterDateFrom').value;
-            const filterDateTo = document.getElementById('filterDateTo').value;
-            const filterOrderDate = document.getElementById('filterOrderDate').value;
             
-            filteredTickets = tickets.filter(ticket => {
-                const matchOrder = ticket.orderId.toLowerCase().includes(searchOrder);
-                const matchBranch = !filterBranch || ticket.branch === filterBranch;
-                const matchPlatform = !filterPlatform || ticket.platform === filterPlatform;
-                const matchStatus = !filterStatus || ticket.status === filterStatus;
+            recentTicketsList.innerHTML = '';
+            
+            recentTickets.forEach(ticket => {
+                const ticketItem = document.createElement('div');
+                ticketItem.className = 'recent-ticket-item';
                 
-                // Date filtering
-                let matchDate = true;
-                if (filterDateFrom) {
-                    matchDate = matchDate && new Date(ticket.dateCreated) >= new Date(filterDateFrom);
-                }
-                if (filterDateTo) {
-                    matchDate = matchDate && new Date(ticket.dateCreated) <= new Date(filterDateTo);
-                }
-                if (filterOrderDate) {
-                    matchDate = matchDate && ticket.orderDate === filterOrderDate;
-                }
+                const statusClass = `recent-ticket-status-${ticket.status.toLowerCase()}`;
                 
-                return matchOrder && matchBranch && matchPlatform && matchStatus && matchDate;
+                ticketItem.innerHTML = `
+                    <div class="recent-ticket-info">
+                        <h6>Order ${ticket.orderId}</h6>
+                        <p>${ticket.branch} • ${ticket.platform}</p>
+                    </div>
+                    <span class="recent-ticket-status ${statusClass}">${ticket.status}</span>
+                `;
+                
+                recentTicketsList.appendChild(ticketItem);
             });
-            
-            renderTickets();
         }
         
-        // Reset filters
-        function resetFilters() {
-            document.getElementById('searchOrder').value = '';
-            document.getElementById('filterBranch').value = '';
-            document.getElementById('filterPlatform').value = '';
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterDateFrom').value = '';
-            document.getElementById('filterDateTo').value = '';
-            document.getElementById('filterOrderDate').value = '';
+        // Update quick stats
+        function updateQuickStats() {
+            const total = tickets.length;
+            const open = tickets.filter(t => t.status === 'Open').length;
+            const sent = tickets.filter(t => t.status === 'Sent').length;
+            const closed = tickets.filter(t => t.status === 'Closed').length;
             
-            filteredTickets = [...tickets];
-            renderTickets();
-        }
-        
-        // Export to CSV
-        function exportToCSV() {
-            let csv = 'Order ID,Order Date,Branch,Platform,Issue,Compensation,Evidence,Status,Date Created\n';
-            
-            filteredTickets.forEach(ticket => {
-                csv += `"${ticket.orderId}","${ticket.orderDate}","${ticket.branch}","${ticket.platform}","${ticket.issue}","${ticket.compensation}","${ticket.evidence}","${ticket.status}","${formatDate(ticket.dateCreated)}"\n`;
-            });
-            
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('hidden', '');
-            a.setAttribute('href', url);
-            a.setAttribute('download', 'crispy_chicken_tickets.csv');
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            
-            showNotification('Data exported successfully!');
-        }
-        
-        // Format date
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('quickTotal').textContent = total;
+            document.getElementById('quickOpen').textContent = open;
+            document.getElementById('quickSent').textContent = sent;
+            document.getElementById('quickClosed').textContent = closed;
         }
         
         // Show notification
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             const notificationText = document.getElementById('notificationText');
+            const icon = notification.querySelector('i');
             
+            // Set message
             notificationText.textContent = message;
             
-            if (type === 'error') {
-                notification.style.borderLeftColor = '#dc3545';
-                notification.querySelector('i').className = 'bi bi-exclamation-circle-fill';
-                notification.querySelector('i').style.color = '#dc3545';
-            } else {
-                notification.style.borderLeftColor = 'var(--crispy-red)';
-                notification.querySelector('i').className = 'bi bi-check-circle-fill';
-                notification.querySelector('i').style.color = 'var(--crispy-red)';
-            }
+            // Set icon based on type
+            icon.className = type === 'success' ? 'bi bi-check-circle-fill' : 
+                            type === 'error' ? 'bi bi-exclamation-circle-fill' : 
+                            'bi bi-info-circle-fill';
             
+            // Show notification
             notification.classList.add('show');
             
+            // Hide after 3 seconds
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
         }
-        
-        // Global error handler
-        window.onerror = function(message, source, lineno, colno, error) {
-            console.error('Global error:', message, source, lineno, colno, error);
-            showNotification('An error occurred. Please refresh the page.', 'error');
-            return true;
-        };
     </script>
 </body>
 </html>
