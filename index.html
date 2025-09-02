@@ -374,6 +374,7 @@
             resize: vertical;
             min-height: 100px;
             max-height: 200px;
+            overflow-y: auto;
         }
         
         .save-btn {
@@ -1056,6 +1057,17 @@
         let filteredTickets = [...tickets];
         let uploadedFiles = [];
         
+        // WhatsApp branch numbers with improved error handling
+        const branchNumbers = {
+            "Crispy Chicken Khalidiya": "971569494764",
+            "Crispy Chicken Muroor": "971505414641",
+            "Crispy Chicken Shabiya 11": "971562690688",
+            "Crispy Chicken Al Barsha": "971569659524",
+            "Crispy Chicken Al Satwa": "971567970685",
+            "Crispy Chicken Electra": "971563866859",
+            "Crispy Chicken Hamdan": "971556886650"
+        };
+        
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
             renderTickets();
@@ -1454,22 +1466,13 @@
         
         // Send WhatsApp with improved template and fixed branch lookup
         function sendWhatsApp(branch, orderId, issue, evidence, compensation) {
-            // Fixed branch numbers with correct matching
-            const branchNumbers = {
-                "Crispy Chicken Khalidiya": "971569494764",
-                "Crispy Chicken Muroor": "971505414641",
-                "Crispy Chicken Shabiya 11": "971562690688",
-                "Crispy Chicken Al Barsha": "971567405572",
-                "Crispy Chicken Al Satwa": "971567970685",
-                "Crispy Chicken Electra": "971563866859",
-                "Crispy Chicken Hamdan": "971556886650"
-            };
-            
-            const number = branchNumbers[branch];
-            if (!number) {
-                showNotification(`Branch number not found for: ${branch}`, 'error');
+            // Check if branch exists in our lookup table
+            if (!branchNumbers[branch]) {
+                showNotification(`Branch number not found for: ${branch}. Please check the branch name.`, 'error');
                 return;
             }
+            
+            const number = branchNumbers[branch];
             
             let compensationText = "";
             if (compensation > 0) {
@@ -1480,9 +1483,24 @@
             let message = `🔔 New ${branch} Claim%n%nOrder ID: ${orderId}%nIssue: ${issue}%nEvidence: ${evidence}${compensationText}%n%nPlease check the claim details and take appropriate action.%n%nTicket Status: Open%n%nBest regards,%nAhmed Kenawy%nCall Center Manager%nCrispy Chicken`;
             
             const waLink = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
-            window.open(waLink, '_blank');
             
-            showNotification('WhatsApp message sent successfully!');
+            try {
+                window.open(waLink, '_blank');
+                showNotification('WhatsApp message sent successfully!');
+                
+                // Update ticket status
+                const ticket = tickets.find(t => t.orderId === orderId);
+                if (ticket) {
+                    ticket.status = "Sent";
+                    localStorage.setItem('crispyTickets', JSON.stringify(tickets));
+                    renderTickets();
+                    updateStats();
+                    updatePlatformStats();
+                }
+            } catch (error) {
+                showNotification('Error opening WhatsApp. Please try again.', 'error');
+                console.error('WhatsApp error:', error);
+            }
         }
         
         // Close ticket
