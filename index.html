@@ -139,6 +139,23 @@ html_content = """
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         
+        .btn-edit {
+            background-color: #ffc107;
+            color: #212529;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-edit:hover {
+            background-color: #e0a800;
+            color: #212529;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
         .stats-card {
             border-left: 5px solid var(--crispy-red);
             padding: 20px;
@@ -713,6 +730,58 @@ html_content = """
         </button>
     </div>
 
+    <!-- Edit Ticket Form -->
+    <div class="form-popup" id="editTicketForm">
+        <h3><i class="bi bi-pencil"></i> Edit Ticket</h3>
+        <input type="hidden" id="editTicketId">
+        
+        <label>Order ID</label>
+        <input type="text" id="editOrderId" required>
+        
+        <label>Branch</label>
+        <select id="editBranch" required>
+            <option value="">Select Branch</option>
+            <option value="Crispy Chicken Khalidiya">Crispy Chicken Khalidiya</option>
+            <option value="Crispy Chicken Muroor">Crispy Chicken Muroor</option>
+            <option value="Crispy Chicken Shabiya 11">Crispy Chicken Shabiya 11</option>
+            <option value="Crispy Chicken Al Barsha">Crispy Chicken Al Barsha</option>
+            <option value="Crispy Chicken Al Satwa">Crispy Chicken Al Satwa</option>
+            <option value="Crispy Chicken Electra">Crispy Chicken Electra</option>
+            <option value="Crispy Chicken Hamdan">Crispy Chicken Hamdan</option>
+        </select>
+        
+        <label>Platform</label>
+        <select id="editPlatform" required>
+            <option value="">Select Platform</option>
+            <option value="Noon">Noon</option>
+            <option value="Careem">Careem</option>
+        </select>
+        
+        <label>Issue Description</label>
+        <textarea id="editIssue" required></textarea>
+        
+        <div class="evidence-section">
+            <h5><i class="bi bi-paperclip"></i> Evidence</h5>
+            <label class="form-label">Evidence (link or description):</label>
+            <input type="text" class="form-control" id="editEvidence">
+            <div class="form-check mt-2">
+                <input class="form-check-input" type="checkbox" id="editNoEvidence">
+                <label class="form-check-label" for="editNoEvidence">
+                    No evidence available
+                </label>
+            </div>
+        </div>
+        
+        <div class="d-flex gap-2">
+            <button class="btn btn-crispy" onclick="saveEditedTicket()">
+                <i class="bi bi-check-circle"></i> Save Changes
+            </button>
+            <button class="btn btn-outline-secondary" onclick="closeEditForm()">
+                <i class="bi bi-x-circle"></i> Cancel
+            </button>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -926,6 +995,53 @@ html_content = """
             showNotification('Ticket added successfully!');
         }
         
+        // Edit ticket functions
+        function editTicket(ticketId) {
+            const ticket = tickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+            
+            document.getElementById("editTicketId").value = ticket.id;
+            document.getElementById("editOrderId").value = ticket.orderId;
+            document.getElementById("editBranch").value = ticket.branch;
+            document.getElementById("editPlatform").value = ticket.platform;
+            document.getElementById("editIssue").value = ticket.issue;
+            document.getElementById("editEvidence").value = ticket.evidence === "None" ? "" : ticket.evidence;
+            document.getElementById("editNoEvidence").checked = ticket.evidence === "No evidence provided";
+            
+            document.getElementById("editTicketForm").style.display = "block";
+        }
+        
+        function closeEditForm() {
+            document.getElementById("editTicketForm").style.display = "none";
+        }
+        
+        function saveEditedTicket() {
+            const ticketId = parseInt(document.getElementById("editTicketId").value);
+            const ticket = tickets.find(t => t.id === ticketId);
+            
+            if (!ticket) return;
+            
+            ticket.orderId = document.getElementById("editOrderId").value;
+            ticket.branch = document.getElementById("editBranch").value;
+            ticket.platform = document.getElementById("editPlatform").value;
+            ticket.issue = document.getElementById("editIssue").value;
+            
+            const noEvidence = document.getElementById("editNoEvidence").checked;
+            if (noEvidence) {
+                ticket.evidence = "No evidence provided";
+            } else {
+                ticket.evidence = document.getElementById("editEvidence").value || "None";
+            }
+            
+            localStorage.setItem('crispyTickets', JSON.stringify(tickets));
+            
+            renderTickets();
+            updateStats();
+            closeEditForm();
+            
+            showNotification('Ticket updated successfully!');
+        }
+        
         // Render tickets table
         function renderTickets() {
             const tbody = document.querySelector('#ticketsTable tbody');
@@ -967,13 +1083,16 @@ html_content = """
                     </td>
                     <td>${formatDate(ticket.dateCreated)}</td>
                     <td class="action-buttons">
-                        <button class="btn btn-email" onclick="sendEmail('${ticket.platform}', '${ticket.orderId}', '${ticket.branch}', '${ticket.issue}', '${ticket.evidence}')">
+                        <button class="btn btn-edit" onclick="editTicket(${ticket.id})" title="Edit Ticket">
+                            <i class="bi bi-pencil"></i> Edit
+                        </button>
+                        <button class="btn btn-email" onclick="sendEmail('${ticket.platform}', '${ticket.orderId}', '${ticket.branch}', '${ticket.issue}', '${ticket.evidence}')" title="Send Email">
                             <i class="bi bi-envelope"></i> Email
                         </button>
-                        <button class="btn btn-whatsapp" onclick="sendWhatsApp('${ticket.branch}', '${ticket.orderId}', '${ticket.issue}', '${ticket.evidence}')">
+                        <button class="btn btn-whatsapp" onclick="sendWhatsApp('${ticket.branch}', '${ticket.orderId}', '${ticket.issue}', '${ticket.evidence}')" title="Send WhatsApp">
                             <i class="bi bi-whatsapp"></i> WhatsApp
                         </button>
-                        <button class="btn btn-close-ticket" onclick="closeTicket(this, ${ticket.id})">
+                        <button class="btn btn-close-ticket" onclick="closeTicket(this, ${ticket.id})" title="Close Ticket">
                             <i class="bi bi-check-circle"></i> Close
                         </button>
                     </td>
@@ -1024,21 +1143,22 @@ html_content = """
             showNotification('Email sent successfully!');
         }
         
-        // Send WhatsApp with improved template
+        // Send WhatsApp with improved template and fixed branch lookup
         function sendWhatsApp(branch, orderId, issue, evidence) {
+            // Fixed branch numbers with correct matching
             const branchNumbers = {
-                "Crispy Chicken Khalidiya": "569494764",
-                "Crispy Chicken Muroor": "505414641",
-                "Crispy Chicken Shabiya 11": "562690688",
-                "Crispy Chicken Al Barsha": "567405572",
-                "Crispy Chicken Al Satwa": "567970685",
-                "Crispy Chicken Electra": "563866859",
-                "Crispy Chicken Hamdan": "556886650"
+                "Crispy Chicken Khalidiya": "971569494764",
+                "Crispy Chicken Muroor": "971505414641",
+                "Crispy Chicken Shabiya 11": "971562690688",
+                "Crispy Chicken Al Barsha": "971567405572",
+                "Crispy Chicken Al Satwa": "971567970685",
+                "Crispy Chicken Electra": "971563866859",
+                "Crispy Chicken Hamdan": "971556886650"
             };
             
             const number = branchNumbers[branch];
             if (!number) {
-                showNotification('Branch number not found!', 'error');
+                showNotification(`Branch number not found for: ${branch}`, 'error');
                 return;
             }
             
