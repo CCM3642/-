@@ -6,8 +6,9 @@
     <title>Crispy Chicken - Complaints Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Previous styles remain the same */
+        /* Enhanced styles */
         :root {
             --crispy-red: #d32f2f;
             --crispy-dark: #b71c1c;
@@ -18,6 +19,8 @@
             --text-secondary: #666;
             --noon-color: #FFB800;
             --careem-color: #00A86B;
+            --whatsapp-color: #25D366;
+            --email-color: #007bff;
         }
         
         body {
@@ -26,12 +29,34 @@
             color: var(--text-primary);
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
+        }
+        
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(211, 47, 47, 0.05) 0%, rgba(255, 184, 0, 0.05) 100%);
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background: linear-gradient(135deg, rgba(211, 47, 47, 0.05) 0%, rgba(255, 184, 0, 0.05) 100%); }
+            50% { background: linear-gradient(135deg, rgba(255, 184, 0, 0.05) 0%, rgba(0, 168, 107, 0.05) 100%); }
         }
         
         .navbar {
             background: linear-gradient(135deg, var(--crispy-red) 0%, var(--crispy-dark) 100%);
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
         
         .navbar-brand {
@@ -40,6 +65,13 @@
             color: white !important;
             display: flex;
             align-items: center;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         
         .navbar-brand i {
@@ -49,147 +81,205 @@
         
         .container {
             padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
         
         .card {
             border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
             background-color: white;
             overflow: hidden;
-            transition: transform 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
         }
         
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--crispy-red), var(--noon-color), var(--careem-color));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s ease;
+        }
+        
+        .card:hover::before {
+            transform: scaleX(1);
         }
         
         .card-header {
             background: linear-gradient(135deg, var(--crispy-red) 0%, var(--crispy-dark) 100%);
             color: white;
             font-weight: 600;
-            padding: 15px 20px;
+            padding: 20px 25px;
             border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(45deg);
         }
         
         .btn-crispy {
             background-color: var(--crispy-red);
             color: white;
             border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
+            border-radius: 10px;
+            padding: 12px 25px;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .btn-crispy::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-crispy:hover::before {
+            left: 100%;
         }
         
         .btn-crispy:hover {
             background-color: var(--crispy-dark);
             color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(211, 47, 47, 0.4);
         }
         
         .btn-email {
-            background: linear-gradient(135deg, #007bff, #0056b3);
+            background: linear-gradient(135deg, var(--email-color), #0056b3);
             color: white;
             border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
+            border-radius: 10px;
+            padding: 12px 25px;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+            box-shadow: 0 4px 15px rgba(0,123,255,0.3);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            cursor: pointer;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
         }
         
         .btn-email:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,123,255,0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,123,255,0.4);
         }
         
         .btn-whatsapp {
-            background: linear-gradient(135deg, #25D366, #128C7E);
+            background: linear-gradient(135deg, var(--whatsapp-color), #128C7E);
             color: white;
             border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
+            border-radius: 10px;
+            padding: 12px 25px;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(37,211,102,0.3);
+            box-shadow: 0 4px 15px rgba(37,211,102,0.3);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            cursor: pointer;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
         }
         
         .btn-whatsapp:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(37,211,102,0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37,211,102,0.4);
         }
         
-        .btn-close-ticket {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(220,53,69,0.3);
-            cursor: pointer;
+        .btn-whatsapp .status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 5px;
+            animation: blink 1.5s infinite;
         }
         
-        .btn-close-ticket:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(220,53,69,0.4);
+        .btn-whatsapp .status.online {
+            background-color: #25D366;
         }
         
-        .btn-edit {
-            background: linear-gradient(135deg, #ffc107, #e0a800);
-            color: #212529;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(255,193,7,0.3);
-            cursor: pointer;
+        .btn-whatsapp .status.offline {
+            background-color: #999;
         }
         
-        .btn-edit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(255,193,7,0.4);
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
         
         .stats-card {
             border-left: 5px solid var(--crispy-red);
-            padding: 20px;
+            padding: 25px;
             background-color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-            margin-bottom: 20px;
-            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            border-radius: 50%;
         }
         
         .stats-card:hover {
-            transform: translateX(5px);
+            transform: translateX(10px) scale(1.03);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
         }
         
         .stats-card h3 {
-            font-size: 2.5rem;
-            font-weight: 700;
+            font-size: 3rem;
+            font-weight: 800;
             margin: 0;
+            position: relative;
+            z-index: 1;
         }
         
         .stats-card p {
-            margin: 5px 0 0;
+            margin: 10px 0 0;
             color: var(--text-secondary);
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
         }
         
         .stats-card.total h3 { color: var(--crispy-red); }
@@ -197,26 +287,51 @@
         .stats-card.sent h3 { color: #ff8f00; }
         .stats-card.closed h3 { color: #2e7d32; }
         
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        
         .platform-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
             margin-bottom: 30px;
         }
         
         .platform-card {
             background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             text-align: center;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .platform-card::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
         }
         
         .platform-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .platform-card:hover::after {
+            top: -50%;
+            left: -50%;
         }
         
         .platform-card.noon {
@@ -228,9 +343,11 @@
         }
         
         .platform-card h3 {
-            font-size: 3rem;
-            font-weight: 700;
-            margin: 15px 0;
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 20px 0;
+            position: relative;
+            z-index: 1;
         }
         
         .platform-card.noon h3 {
@@ -242,8 +359,10 @@
         }
         
         .platform-card .platform-icon {
-            font-size: 4rem;
-            margin-bottom: 15px;
+            font-size: 5rem;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
         }
         
         .platform-card.noon .platform-icon {
@@ -255,10 +374,12 @@
         }
         
         .platform-card .percentage {
-            font-size: 1.2rem;
-            font-weight: 600;
+            font-size: 1.5rem;
+            font-weight: 700;
             color: var(--text-secondary);
-            margin-top: 10px;
+            margin-top: 15px;
+            position: relative;
+            z-index: 1;
         }
         
         .table {
@@ -268,62 +389,99 @@
         .table th {
             background-color: var(--crispy-light);
             color: var(--crispy-dark);
-            font-weight: 600;
+            font-weight: 700;
             border: none;
-            padding: 15px 12px;
+            padding: 18px 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
         
         .table td {
             vertical-align: middle;
             border-color: #e0e0e0;
-            padding: 15px 12px;
+            padding: 18px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(211, 47, 47, 0.05);
+            transform: scale(1.01);
         }
         
         .badge {
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 20px;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 0.9rem;
         }
         
         .badge-open {
             background-color: #e3f2fd;
             color: #0d47a1;
+            box-shadow: 0 2px 5px rgba(13, 71, 161, 0.2);
         }
         
         .badge-sent {
             background-color: #fff8e1;
             color: #ff8f00;
+            box-shadow: 0 2px 5px rgba(255, 143, 0, 0.2);
         }
         
         .badge-closed {
             background-color: #e8f5e9;
             color: #2e7d32;
+            box-shadow: 0 2px 5px rgba(46, 125, 50, 0.2);
         }
         
         .action-buttons {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
         }
         
         .action-buttons button {
-            border-radius: 8px;
-            padding: 8px 16px;
+            border-radius: 10px;
+            padding: 10px 18px;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-buttons button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .action-buttons button:hover::before {
+            width: 300px;
+            height: 300px;
         }
         
         .action-buttons button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
         }
         
         .form-control, .form-select {
-            border-radius: 8px;
+            border-radius: 10px;
             border: 2px solid #e0e0e0;
-            padding: 12px 15px;
+            padding: 12px 18px;
             transition: all 0.3s ease;
             font-weight: 500;
         }
@@ -338,17 +496,25 @@
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) scale(0.9);
             background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             z-index: 1000;
             width: 90%;
-            max-width: 800px;
+            max-width: 900px;
             max-height: 90vh;
             overflow-y: auto;
-            border: 2px solid var(--crispy-light);
+            border: 3px solid var(--crispy-light);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .form-popup.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
         }
         
         .form-popup h3 {
@@ -361,16 +527,16 @@
         
         .form-popup label {
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: block;
             color: var(--text-primary);
         }
         
         .form-popup input, .form-popup select, .form-popup textarea {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px 18px;
             margin-bottom: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 2px solid #e0e0e0;
             transition: all 0.3s ease;
             font-weight: 500;
@@ -388,26 +554,26 @@
             background: linear-gradient(135deg, var(--crispy-red), var(--crispy-dark));
             color: white;
             border: none;
-            border-radius: 8px;
-            padding: 15px 30px;
+            border-radius: 10px;
+            padding: 15px 35px;
             width: 100%;
             font-weight: 700;
             font-size: 16px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+            box-shadow: 0 8px 20px rgba(211, 47, 47, 0.3);
             cursor: pointer;
         }
         
         .save-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(211, 47, 47, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(211, 47, 47, 0.4);
         }
         
         .evidence-section {
             margin: 25px 0;
-            padding: 20px;
+            padding: 25px;
             border: 3px dashed var(--crispy-light);
-            border-radius: 12px;
+            border-radius: 15px;
             background-color: #f8f9fa;
             transition: all 0.3s ease;
         }
@@ -421,13 +587,13 @@
             color: var(--crispy-red);
             margin-bottom: 20px;
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
         }
         
         .file-drop-area {
             border: 3px dashed #ced4da;
-            border-radius: 12px;
-            padding: 30px;
+            border-radius: 15px;
+            padding: 40px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -459,23 +625,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
+            padding: 18px;
             background-color: #f8f9fa;
-            border-radius: 10px;
-            margin-bottom: 10px;
+            border-radius: 12px;
+            margin-bottom: 15px;
             border: 2px solid #e0e0e0;
             transition: all 0.3s ease;
         }
         
         .file-item:hover {
             border-color: var(--crispy-red);
-            transform: translateX(5px);
+            transform: translateX(8px);
         }
         
         .file-item i {
             color: var(--crispy-red);
             margin-right: 15px;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
         }
         
         .file-item button {
@@ -483,7 +649,7 @@
             border: none;
             color: var(--crispy-red);
             cursor: pointer;
-            font-size: 18px;
+            font-size: 20px;
             transition: all 0.2s ease;
             padding: 5px;
         }
@@ -494,7 +660,7 @@
         }
         
         .evidence-link {
-            color: #007bff;
+            color: var(--email-color);
             text-decoration: none;
             font-weight: 600;
             transition: all 0.2s ease;
@@ -512,94 +678,104 @@
         
         .notification {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 20px 25px;
+            top: 30px;
+            right: 30px;
+            padding: 25px 30px;
             background-color: white;
             border-left: 5px solid var(--crispy-red);
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
             z-index: 1001;
-            transform: translateX(150%);
-            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            max-width: 350px;
+            transform: translateX(200%) rotate(5deg);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 400px;
             border: 2px solid var(--crispy-light);
         }
         
         .notification.show {
-            transform: translateX(0);
+            transform: translateX(0) rotate(0);
         }
         
         .notification i {
             margin-right: 15px;
             color: var(--crispy-red);
-            font-size: 1.5rem;
+            font-size: 1.8rem;
         }
         
         .footer {
             background-color: var(--crispy-dark);
             color: white;
-            padding: 30px 0;
-            margin-top: 50px;
+            padding: 40px 0;
+            margin-top: 60px;
             text-align: center;
-            border-radius: 15px 15px 0 0;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--crispy-red), var(--noon-color), var(--careem-color));
         }
         
         .filter-section {
             background-color: white;
-            border-radius: 15px;
-            padding: 30px;
+            border-radius: 20px;
+            padding: 35px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border: 2px solid var(--crispy-light);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 3px solid var(--crispy-light);
         }
         
         .filter-section h5 {
             color: var(--crispy-red);
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             font-weight: 700;
-            font-size: 1.3rem;
-            border-bottom: 2px solid var(--crispy-light);
-            padding-bottom: 10px;
+            font-size: 1.4rem;
+            border-bottom: 3px solid var(--crispy-light);
+            padding-bottom: 15px;
         }
         
         .filter-section .row {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
         
         .filter-section .form-label {
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             color: var(--text-primary);
         }
         
         .filter-section button {
             margin-right: 15px;
-            border-radius: 8px;
-            padding: 12px 24px;
+            border-radius: 10px;
+            padding: 12px 25px;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             cursor: pointer;
         }
         
         .filter-section button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         }
         
         .table-responsive {
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border: 2px solid var(--crispy-light);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 3px solid var(--crispy-light);
         }
         
         .table thead th {
-            position: sticky;
-            top: 0;
             background-color: var(--crispy-light);
-            z-index: 10;
+            color: var(--crispy-dark);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -621,23 +797,23 @@
         
         .empty-state {
             text-align: center;
-            padding: 60px 40px;
+            padding: 80px 50px;
             color: var(--text-secondary);
-            border-radius: 15px;
+            border-radius: 20px;
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border: 2px dashed var(--crispy-light);
+            border: 3px dashed var(--crispy-light);
         }
         
         .empty-state i {
-            font-size: 4rem;
+            font-size: 5rem;
             color: var(--crispy-light);
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
         
         .empty-state h5 {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             color: var(--text-primary);
         }
         
@@ -651,7 +827,7 @@
             }
             
             .stats-card h3 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
             
             .action-buttons {
@@ -665,12 +841,12 @@
             
             .form-popup {
                 width: 95%;
-                padding: 20px;
+                padding: 25px;
                 max-height: 95vh;
             }
             
             .filter-section {
-                padding: 20px;
+                padding: 25px;
             }
             
             .filter-section button {
@@ -682,13 +858,21 @@
             .platform-stats {
                 grid-template-columns: 1fr;
             }
+            
+            .table-responsive {
+                font-size: 0.9rem;
+            }
+            
+            .table th, .table td {
+                padding: 12px 10px;
+            }
         }
         
         /* Animation for new tickets */
         @keyframes slideIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -697,7 +881,7 @@
         }
         
         .new-ticket-row {
-            animation: slideIn 0.5s ease-out;
+            animation: slideIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
         /* Pulse animation for important buttons */
@@ -706,7 +890,7 @@
                 box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7);
             }
             70% {
-                box-shadow: 0 0 0 10px rgba(211, 47, 47, 0);
+                box-shadow: 0 0 0 15px rgba(211, 47, 47, 0);
             }
             100% {
                 box-shadow: 0 0 0 0 rgba(211, 47, 47, 0);
@@ -758,81 +942,65 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.6);
             z-index: 999;
+            backdrop-filter: blur(5px);
         }
         
         .form-overlay.show {
             display: block;
         }
         
-        /* WhatsApp status indicator */
-        .whatsapp-status {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-        
-        .whatsapp-status.online {
-            background-color: #25D366;
-        }
-        
-        .whatsapp-status.offline {
-            background-color: #gray;
-        }
-        
         /* Enhanced styles for new features */
         .help-section {
             background-color: white;
-            border-radius: 15px;
-            padding: 25px;
+            border-radius: 20px;
+            padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border: 2px solid var(--crispy-light);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 3px solid var(--crispy-light);
         }
         
         .help-section h5 {
             color: var(--crispy-red);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             font-weight: 700;
-            font-size: 1.3rem;
-            border-bottom: 2px solid var(--crispy-light);
-            padding-bottom: 10px;
+            font-size: 1.4rem;
+            border-bottom: 3px solid var(--crispy-light);
+            padding-bottom: 15px;
         }
         
         .help-item {
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
-            padding: 15px;
-            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 15px;
             background-color: #f8f9fa;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
         }
         
         .help-item:hover {
             background-color: var(--crispy-light);
-            transform: translateX(5px);
+            transform: translateX(10px);
         }
         
         .help-item i {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             color: var(--crispy-red);
-            margin-right: 15px;
+            margin-right: 20px;
         }
         
         .help-item h6 {
             margin: 0;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-primary);
         }
         
         .help-item p {
-            margin: 5px 0 0 0;
+            margin: 8px 0 0 0;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
         
         .quick-stats {
@@ -844,35 +1012,50 @@
         
         .quick-stat {
             background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             text-align: center;
-            transition: all 0.3s ease;
-            border: 2px solid var(--crispy-light);
+            transition: all 0.4s ease;
+            border: 3px solid var(--crispy-light);
             flex: 1;
-            min-width: 150px;
+            min-width: 180px;
             margin: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-stat::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            border-radius: 50%;
         }
         
         .quick-stat:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
         }
         
         .quick-stat h6 {
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 1rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         
         .quick-stat .value {
-            font-size: 2rem;
-            font-weight: 700;
+            font-size: 3rem;
+            font-weight: 800;
             margin: 0;
+            position: relative;
+            z-index: 1;
         }
         
         .quick-stat .value.open {
@@ -893,55 +1076,55 @@
         
         .recent-tickets {
             background-color: white;
-            border-radius: 15px;
-            padding: 25px;
+            border-radius: 20px;
+            padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border: 2px solid var(--crispy-light);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 3px solid var(--crispy-light);
         }
         
         .recent-tickets h5 {
             color: var(--crispy-red);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             font-weight: 700;
-            font-size: 1.3rem;
-            border-bottom: 2px solid var(--crispy-light);
-            padding-bottom: 10px;
+            font-size: 1.4rem;
+            border-bottom: 3px solid var(--crispy-light);
+            padding-bottom: 15px;
         }
         
         .recent-ticket-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            border-radius: 10px;
+            padding: 20px;
+            border-radius: 15px;
             background-color: #f8f9fa;
-            margin-bottom: 15px;
-            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            transition: all 0.4s ease;
         }
         
         .recent-ticket-item:hover {
             background-color: var(--crispy-light);
-            transform: translateX(5px);
+            transform: translateX(15px);
         }
         
         .recent-ticket-info h6 {
             margin: 0;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-primary);
         }
         
         .recent-ticket-info p {
-            margin: 5px 0 0;
+            margin: 8px 0 0;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
         
         .recent-ticket-status {
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 5px 12px;
-            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 8px 15px;
+            border-radius: 25px;
         }
         
         .recent-ticket-status.open {
@@ -957,6 +1140,95 @@
         .recent-ticket-status.closed {
             background-color: #e8f5e9;
             color: #2e7d32;
+        }
+        
+        .communication-panel {
+            background-color: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 3px solid var(--crispy-light);
+        }
+        
+        .communication-panel h5 {
+            color: var(--crispy-red);
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: 1.4rem;
+            border-bottom: 3px solid var(--crispy-light);
+            padding-bottom: 15px;
+        }
+        
+        .communication-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 25px;
+        }
+        
+        .comm-stat {
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+            flex: 1;
+            margin: 0 10px;
+        }
+        
+        .comm-stat:hover {
+            transform: translateY(-5px);
+            background-color: var(--crispy-light);
+        }
+        
+        .comm-stat i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .comm-stat.whatsapp i {
+            color: var(--whatsapp-color);
+        }
+        
+        .comm-stat.email i {
+            color: var(--email-color);
+        }
+        
+        .comm-stat h6 {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+        
+        .comm-stat p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .chart-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        
+        .chart-tab {
+            padding: 12px 25px;
+            margin: 0 5px;
+            background-color: #f8f9fa;
+            border-radius: 10px 10px 0 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .chart-tab.active {
+            background-color: var(--crispy-light);
+            color: var(--crispy-dark);
+        }
+        
+        .chart-tab:hover {
+            background-color: var(--crispy-light);
         }
     </style>
 </head>
@@ -980,7 +1252,7 @@
                         <a class="nav-link" href="#"><i class="bi bi-list-task"></i> Tickets</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-graph-up"></i> Reports</a>
+                        <a class="nav-link" href="#"><i class="bi bi-graph-up"></i> Analytics</a>
                     </li>
                 </ul>
             </div>
@@ -1005,6 +1277,40 @@
             <div class="quick-stat">
                 <h6>Closed</h6>
                 <p class="value closed" id="quickClosed">0</p>
+            </div>
+        </div>
+        
+        <!-- Communication Panel -->
+        <div class="communication-panel">
+            <h5><i class="bi bi-chat-dots"></i> Communication Analytics</h5>
+            <div class="communication-stats">
+                <div class="comm-stat whatsapp">
+                    <i class="bi bi-whatsapp"></i>
+                    <h6>WhatsApp Messages</h6>
+                    <p id="whatsappCount">0</p>
+                </div>
+                <div class="comm-stat email">
+                    <i class="bi bi-envelope"></i>
+                    <h6>Email Sent</h6>
+                    <p id="emailCount">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts Section -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-graph-up"></i> Data Analytics</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-tabs">
+                    <div class="chart-tab active" onclick="showChart('status')">Status Distribution</div>
+                    <div class="chart-tab" onclick="showChart('platform')">Platform Comparison</div>
+                    <div class="chart-tab" onclick="showChart('trend')">Ticket Trend</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="analyticsChart"></canvas>
+                </div>
             </div>
         </div>
         
@@ -1092,7 +1398,7 @@
                 <i class="bi bi-whatsapp"></i>
                 <div>
                     <h6>Communicate via WhatsApp</h6>
-                    <p>Send messages directly to customers using WhatsApp integration</p>
+                    <p>Send messages directly to customers using WhatsApp integration with status indicators</p>
                 </div>
             </div>
         </div>
@@ -1169,6 +1475,20 @@
         <div class="text-center mb-5">
             <button class="btn btn-crispy btn-lg pulse" onclick="openForm()">
                 <i class="bi bi-plus-circle"></i> Add New Ticket
+            </button>
+        </div>
+        
+        <!-- Add Sample Ticket Button -->
+        <div class="text-center mb-3">
+            <button class="btn btn-outline-info" onclick="addSampleTicket()">
+                <i class="bi bi-plus-circle"></i> Add Sample Ticket
+            </button>
+        </div>
+        
+        <!-- Generate Random Tickets Button -->
+        <div class="text-center mb-5">
+            <button class="btn btn-outline-warning" onclick="generateRandomTickets()">
+                <i class="bi bi-shuffle"></i> Generate Random Tickets
             </button>
         </div>
         
@@ -1278,6 +1598,54 @@
         </div>
     </div>
     
+    <!-- Sample Ticket Form -->
+    <div class="form-popup" id="sampleTicketForm">
+        <h3><i class="bi bi-plus-circle"></i> Add Sample Ticket</h3>
+        <div class="mb-3">
+            <label class="form-label">Order ID</label>
+            <input type="text" class="form-control" id="sampleOrderId" placeholder="e.g., NC123456">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Branch</label>
+            <select class="form-select" id="sampleBranch">
+                <option value="Crispy Chicken Khalidiya">Crispy Chicken Khalidiya</option>
+                <option value="Crispy Chicken Muroor">Crispy Chicken Muroor</option>
+                <option value="Crispy Chicken Shabiya 11">Crispy Chicken Shabiya 11</option>
+                <option value="Crispy Chicken Al Barsha">Crispy Chicken Al Barsha</option>
+                <option value="Crispy Chicken Al Satwa">Crispy Chicken Al Satwa</option>
+                <option value="Crispy Chicken Electra">Crispy Chicken Electra</option>
+                <option value="Crispy Chicken Hamdan">Crispy Chicken Hamdan</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Platform</label>
+            <select class="form-select" id="samplePlatform">
+                <option value="Noon">Noon</option>
+                <option value="Careem">Careem</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Issue</label>
+            <textarea class="form-control" id="sampleIssue" rows="3" placeholder="Describe the issue..."></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Compensation (AED)</label>
+            <input type="number" class="form-control" id="sampleCompensation" min="0" step="0.01" placeholder="0.00">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Evidence Link</label>
+            <input type="url" class="form-control" id="sampleEvidence" placeholder="https://example.com/evidence.jpg">
+        </div>
+        <div class="d-flex gap-3">
+            <button class="btn btn-crispy" onclick="saveSampleTicket()">
+                <i class="bi bi-check-circle"></i> Add Ticket
+            </button>
+            <button class="btn btn-outline-secondary" onclick="closeSampleTicketForm()">
+                <i class="bi bi-x-circle"></i> Cancel
+            </button>
+        </div>
+    </div>
+    
     <!-- Edit Ticket Form -->
     <div class="form-popup" id="editTicketForm">
         <h3><i class="bi bi-pencil"></i> Edit Ticket</h3>
@@ -1353,16 +1721,20 @@
         let tickets = JSON.parse(localStorage.getItem('crispyTickets')) || [];
         let filteredTickets = [...tickets];
         let uploadedFiles = [];
+        let analyticsChart = null;
+        let currentChartType = 'status';
+        let whatsappCount = 0;
+        let emailCount = 0;
         
-        // WhatsApp branch numbers
+        // WhatsApp branch numbers with status
         const branchNumbers = {
-            "Crispy Chicken Khalidiya": "971569494764",
-            "Crispy Chicken Muroor": "971505414641",
-            "Crispy Chicken Shabiya 11": "971562690688",
-            "Crispy Chicken Al Barsha": "971569659524",
-            "Crispy Chicken Al Satwa": "971567970685",
-            "Crispy Chicken Electra": "971563866859",
-            "Crispy Chicken Hamdan": "971556886650"
+            "Crispy Chicken Khalidiya": { number: "971569494764", status: "online" },
+            "Crispy Chicken Muroor": { number: "971505414641", status: "online" },
+            "Crispy Chicken Shabiya 11": { number: "971562690688", status: "offline" },
+            "Crispy Chicken Al Barsha": { number: "971569659524", status: "online" },
+            "Crispy Chicken Al Satwa": { number: "971567970685", status: "offline" },
+            "Crispy Chicken Electra": { number: "971563866859", status: "online" },
+            "Crispy Chicken Hamdan": { number: "971556886650", status: "online" }
         };
         
         // Initialize the app
@@ -1376,12 +1748,16 @@
             // Initialize file upload
             initFileUpload();
             
+            // Initialize chart
+            initChart();
+            
             // Render initial data
             renderTickets();
             updateStats();
             updatePlatformStats();
             updateRecentTickets();
             updateQuickStats();
+            updateCommunicationStats();
             
             // Add event listeners
             document.getElementById('searchOrder').addEventListener('input', applyFilters);
@@ -1394,7 +1770,149 @@
             
             // Show notification on load
             showNotification('Dashboard loaded successfully!', 'success');
+            
+            // Simulate WhatsApp status changes
+            setInterval(updateWhatsAppStatus, 5000);
         });
+        
+        // Initialize chart
+        function initChart() {
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+            analyticsChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Open', 'Sent', 'Closed'],
+                    datasets: [{
+                        data: [0, 0, 0],
+                        backgroundColor: [
+                            '#0d47a1',
+                            '#ff8f00',
+                            '#2e7d32'
+                        ],
+                        borderColor: [
+                            '#0d47a1',
+                            '#ff8f00',
+                            '#2e7d32'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 16
+                            },
+                            bodyFont: {
+                                size: 14
+                            },
+                            padding: 15,
+                            cornerRadius: 10
+                        }
+                    },
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true
+                    }
+                }
+            });
+            
+            // Update chart data
+            updateChart();
+        }
+        
+        // Update chart based on current type
+        function updateChart() {
+            if (!analyticsChart) return;
+            
+            let data, labels;
+            
+            if (currentChartType === 'status') {
+                const open = tickets.filter(t => t.status === 'Open').length;
+                const sent = tickets.filter(t => t.status === 'Sent').length;
+                const closed = tickets.filter(t => t.status === 'Closed').length;
+                
+                data = [open, sent, closed];
+                labels = ['Open', 'Sent', 'Closed'];
+            } else if (currentChartType === 'platform') {
+                const noon = tickets.filter(t => t.platform === 'Noon').length;
+                const careem = tickets.filter(t => t.platform === 'Careem').length;
+                
+                data = [noon, careem];
+                labels = ['Noon', 'Careem'];
+            } else if (currentChartType === 'trend') {
+                // Generate trend data for last 7 days
+                const today = new Date();
+                const labels = [];
+                const data = [];
+                
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toISOString().split('T')[0];
+                    
+                    labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                    data.push(tickets.filter(t => t.dateCreated === dateStr).length);
+                }
+                
+                analyticsChart.config.type = 'line';
+                analyticsChart.data.labels = labels;
+                analyticsChart.data.datasets[0].data = data;
+                analyticsChart.data.datasets[0].backgroundColor = 'rgba(211, 47, 47, 0.2)';
+                analyticsChart.data.datasets[0].borderColor = '#d32f2f';
+                analyticsChart.data.datasets[0].tension = 0.4;
+                analyticsChart.data.datasets[0].fill = true;
+            }
+            
+            analyticsChart.data.datasets[0].data = data;
+            analyticsChart.update();
+        }
+        
+        // Show specific chart
+        function showChart(type) {
+            currentChartType = type;
+            
+            // Update tab styles
+            document.querySelectorAll('.chart-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update chart
+            updateChart();
+        }
+        
+        // Update WhatsApp status
+        function updateWhatsAppStatus() {
+            // Randomly change some statuses for demo
+            Object.keys(branchNumbers).forEach(branch => {
+                if (Math.random() > 0.7) {
+                    branchNumbers[branch].status = branchNumbers[branch].status === 'online' ? 'offline' : 'online';
+                }
+            });
+            
+            // Update UI
+            renderTickets();
+        }
+        
+        // Update communication statistics
+        function updateCommunicationStats() {
+            document.getElementById('whatsappCount').textContent = whatsappCount;
+            document.getElementById('emailCount').textContent = emailCount;
+        }
         
         // Initialize file upload functionality
         function initFileUpload() {
@@ -1524,7 +2042,7 @@
             const overlay = document.getElementById('formOverlay');
             
             resetForm();
-            form.style.display = 'block';
+            form.classList.add('show');
             overlay.classList.add('show');
         }
         
@@ -1533,7 +2051,7 @@
             const form = document.getElementById('orderForm');
             const overlay = document.getElementById('formOverlay');
             
-            form.style.display = 'none';
+            form.classList.remove('show');
             overlay.classList.remove('show');
         }
         
@@ -1582,6 +2100,7 @@
             updatePlatformStats();
             updateRecentTickets();
             updateQuickStats();
+            updateChart();
             
             // Close form and show notification
             closeForm();
@@ -1607,7 +2126,7 @@
             document.getElementById('editEvidence').value = ticket.evidence;
             document.getElementById('editNoEvidence').checked = ticket.evidence === 'None';
             
-            form.style.display = 'block';
+            form.classList.add('show');
             overlay.classList.add('show');
         }
         
@@ -1616,7 +2135,7 @@
             const form = document.getElementById('editTicketForm');
             const overlay = document.getElementById('formOverlay');
             
-            form.style.display = 'none';
+            form.classList.remove('show');
             overlay.classList.remove('show');
         }
         
@@ -1652,6 +2171,7 @@
             updatePlatformStats();
             updateRecentTickets();
             updateQuickStats();
+            updateChart();
             
             // Close form and show notification
             closeEditForm();
@@ -1675,6 +2195,7 @@
             updatePlatformStats();
             updateRecentTickets();
             updateQuickStats();
+            updateChart();
             
             showNotification('Ticket closed successfully!', 'success');
         }
@@ -1690,11 +2211,14 @@
             const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             window.location.href = mailtoLink;
             
-            // Update ticket status
+            // Update ticket status and communication count
             const ticketIndex = tickets.findIndex(t => t.id === ticketId);
             if (ticketIndex !== -1) {
                 tickets[ticketIndex].status = 'Sent';
                 filteredTickets = [...tickets];
+                
+                emailCount++;
+                updateCommunicationStats();
                 
                 localStorage.setItem('crispyTickets', JSON.stringify(tickets));
                 
@@ -1703,6 +2227,7 @@
                 updatePlatformStats();
                 updateRecentTickets();
                 updateQuickStats();
+                updateChart();
             }
             
             showNotification('Email client opened!', 'success');
@@ -1720,15 +2245,19 @@
             }
             
             const message = `Hi, I'm writing about my order ${ticket.orderId} from ${ticket.branch}. The issue was: ${ticket.issue}. Please assist.`;
-            const whatsappUrl = `https://wa.me/${branchNumber}?text=${encodeURIComponent(message)}`;
+            const whatsappUrl = `https://wa.me/${branchNumber.number}?text=${encodeURIComponent(message)}`;
             
+            // Open WhatsApp in new tab
             window.open(whatsappUrl, '_blank');
             
-            // Update ticket status
+            // Update ticket status and communication count
             const ticketIndex = tickets.findIndex(t => t.id === ticketId);
             if (ticketIndex !== -1) {
                 tickets[ticketIndex].status = 'Sent';
                 filteredTickets = [...tickets];
+                
+                whatsappCount++;
+                updateCommunicationStats();
                 
                 localStorage.setItem('crispyTickets', JSON.stringify(tickets));
                 
@@ -1737,6 +2266,7 @@
                 updatePlatformStats();
                 updateRecentTickets();
                 updateQuickStats();
+                updateChart();
             }
             
             showNotification('WhatsApp opened!', 'success');
@@ -1886,6 +2416,10 @@
                     '<span class="evidence-none">No evidence</span>' : 
                     `<a href="${ticket.evidence}" class="evidence-link" target="_blank">${ticket.evidence}</a>`;
                 
+                // Get WhatsApp status for this branch
+                const branchInfo = branchNumbers[ticket.branch];
+                const whatsappStatus = branchInfo ? branchInfo.status : 'offline';
+                
                 row.innerHTML = `
                     <td>${ticket.orderId}</td>
                     <td>${ticket.orderDate}</td>
@@ -1906,6 +2440,7 @@
                             </button>
                             <button class="btn btn-whatsapp" onclick="sendWhatsApp(${ticket.id})">
                                 <i class="bi bi-whatsapp"></i> WhatsApp
+                                <span class="status ${whatsappStatus}"></span>
                             </button>
                             <button class="btn btn-close-ticket" onclick="closeTicket(${ticket.id})">
                                 <i class="bi bi-check-circle"></i> Close
@@ -1998,6 +2533,132 @@
             document.getElementById('quickOpen').textContent = open;
             document.getElementById('quickSent').textContent = sent;
             document.getElementById('quickClosed').textContent = closed;
+        }
+        
+        // Add sample ticket
+        function addSampleTicket() {
+            const sampleTicketForm = document.getElementById('sampleTicketForm');
+            sampleTicketForm.classList.add('show');
+            
+            // Set default values
+            const today = new Date().toISOString().split('T')[0];
+            const orderId = `NC${Math.floor(Math.random() * 900000) + 100000}`;
+            
+            document.getElementById('sampleOrderId').value = orderId;
+            document.getElementById('sampleBranch').value = 'Crispy Chicken Khalidiya';
+            document.getElementById('samplePlatform').value = 'Noon';
+            document.getElementById('sampleIssue').value = 'Food was cold and delivery was late';
+            document.getElementById('sampleCompensation').value = '50.00';
+            document.getElementById('sampleEvidence').value = 'https://example.com/evidence.jpg';
+        }
+        
+        // Close sample ticket form
+        function closeSampleTicketForm() {
+            document.getElementById('sampleTicketForm').classList.remove('show');
+        }
+        
+        // Save sample ticket
+        function saveSampleTicket() {
+            const orderId = document.getElementById('sampleOrderId').value.trim();
+            const branch = document.getElementById('sampleBranch').value;
+            const platform = document.getElementById('samplePlatform').value;
+            const issue = document.getElementById('sampleIssue').value.trim();
+            const compensation = parseFloat(document.getElementById('sampleCompensation').value) || 0;
+            const evidence = document.getElementById('sampleEvidence').value.trim();
+            
+            if (!orderId || !branch || !platform || !issue) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Create new ticket
+            const newTicket = {
+                id: Date.now(),
+                orderId,
+                orderDate: new Date().toISOString().split('T')[0],
+                branch,
+                platform,
+                issue,
+                compensation: compensation,
+                evidence: evidence || 'None',
+                status: 'Open',
+                dateCreated: new Date().toISOString().split('T')[0],
+                files: []
+            };
+            
+            // Add to tickets array
+            tickets.unshift(newTicket);
+            filteredTickets = [...tickets];
+            
+            // Save to localStorage
+            localStorage.setItem('crispyTickets', JSON.stringify(tickets));
+            
+            // Update UI
+            renderTickets();
+            updateStats();
+            updatePlatformStats();
+            updateRecentTickets();
+            updateQuickStats();
+            updateChart();
+            
+            // Close form and show notification
+            closeSampleTicketForm();
+            showNotification('Sample ticket added successfully!', 'success');
+        }
+        
+        // Generate random tickets
+        function generateRandomTickets() {
+            const sampleIssues = [
+                "Food was cold and delivery was late",
+                "Wrong order items received",
+                "Missing items in the order",
+                "Poor quality food",
+                "Long delivery time",
+                "Damaged packaging",
+                "Incorrect billing amount",
+                "Food allergy concerns not addressed",
+                "Rude delivery staff",
+                "Payment issues"
+            ];
+            
+            const branches = Object.keys(branchNumbers);
+            const platforms = ["Noon", "Careem"];
+            
+            for (let i = 0; i < 5; i++) {
+                const randomIssue = sampleIssues[Math.floor(Math.random() * sampleIssues.length)];
+                const randomBranch = branches[Math.floor(Math.random() * branches.length)];
+                const randomPlatform = platforms[Math.floor(Math.random() * platforms.length)];
+                const randomCompensation = Math.floor(Math.random() * 100) + 10;
+                const randomOrderId = `NC${Math.floor(Math.random() * 900000) + 100000}`;
+                
+                const newTicket = {
+                    id: Date.now() + i,
+                    orderId: randomOrderId,
+                    orderDate: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    branch: randomBranch,
+                    platform: randomPlatform,
+                    issue: randomIssue,
+                    compensation: randomCompensation,
+                    evidence: 'None',
+                    status: 'Open',
+                    dateCreated: new Date().toISOString().split('T')[0],
+                    files: []
+                };
+                
+                tickets.unshift(newTicket);
+            }
+            
+            filteredTickets = [...tickets];
+            localStorage.setItem('crispyTickets', JSON.stringify(tickets));
+            
+            renderTickets();
+            updateStats();
+            updatePlatformStats();
+            updateRecentTickets();
+            updateQuickStats();
+            updateChart();
+            
+            showNotification('5 random tickets generated successfully!', 'success');
         }
         
         // Show notification
