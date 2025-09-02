@@ -81,6 +81,7 @@
             font-weight: 600;
             transition: all 0.3s ease;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
         }
         
         .btn-crispy:hover {
@@ -139,6 +140,7 @@
             font-weight: 600;
             transition: all 0.3s ease;
             box-shadow: 0 4px 8px rgba(220,53,69,0.3);
+            cursor: pointer;
         }
         
         .btn-close-ticket:hover {
@@ -155,6 +157,7 @@
             font-weight: 600;
             transition: all 0.3s ease;
             box-shadow: 0 4px 8px rgba(255,193,7,0.3);
+            cursor: pointer;
         }
         
         .btn-edit:hover {
@@ -308,6 +311,7 @@
             font-weight: 600;
             transition: all 0.3s ease;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
         }
         
         .action-buttons button:hover {
@@ -390,6 +394,7 @@
             font-size: 16px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+            cursor: pointer;
         }
         
         .save-btn:hover {
@@ -574,6 +579,7 @@
             font-weight: 600;
             transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
         }
         
         .filter-section button:hover {
@@ -741,6 +747,22 @@
         .table th:nth-child(6), .table td:nth-child(6) {
             width: 15%;
             word-wrap: break-word;
+        }
+        
+        /* Form overlay */
+        .form-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        
+        .form-overlay.show {
+            display: block;
         }
     </style>
 </head>
@@ -920,6 +942,10 @@
             </div>
         </div>
     </div>
+    
+    <!-- Form Overlay -->
+    <div class="form-overlay" id="formOverlay" onclick="closeForm()"></div>
+    
     <!-- Add Ticket Form -->
     <div class="form-popup" id="orderForm">
         <h3><i class="bi bi-plus-circle"></i> Add New Ticket</h3>
@@ -979,10 +1005,16 @@
             </div>
         </div>
         
-        <button class="save-btn" onclick="saveTicket()">
-            <i class="bi bi-check-circle"></i> Save Ticket
-        </button>
+        <div class="d-flex gap-3 mt-4">
+            <button class="btn btn-crispy" onclick="saveTicket()">
+                <i class="bi bi-check-circle"></i> Save Ticket
+            </button>
+            <button class="btn btn-outline-secondary" onclick="closeForm()">
+                <i class="bi bi-x-circle"></i> Cancel
+            </button>
+        </div>
     </div>
+    
     <!-- Edit Ticket Form -->
     <div class="form-popup" id="editTicketForm">
         <h3><i class="bi bi-pencil"></i> Edit Ticket</h3>
@@ -1031,7 +1063,7 @@
             </div>
         </div>
         
-        <div class="d-flex gap-3">
+        <div class="d-flex gap-3 mt-4">
             <button class="btn btn-crispy" onclick="saveEditedTicket()">
                 <i class="bi bi-check-circle"></i> Save Changes
             </button>
@@ -1076,8 +1108,9 @@
             
             // Test function availability
             console.log('Function availability:', {
-                sendEmail: typeof sendEmail,
-                sendWhatsApp: typeof sendWhatsApp
+                openForm: typeof openForm,
+                closeForm: typeof closeForm,
+                saveTicket: typeof saveTicket
             });
             
             renderTickets();
@@ -1114,22 +1147,49 @@
         function testFunctions() {
             console.log('Testing functions...');
             alert('Testing functions...\n\n' +
-                  'sendEmail: ' + (typeof sendEmail) + '\n' +
-                  'sendWhatsApp: ' + (typeof sendWhatsApp) + '\n\n' +
+                  'openForm: ' + (typeof openForm) + '\n' +
+                  'closeForm: ' + (typeof closeForm) + '\n' +
+                  'saveTicket: ' + (typeof saveTicket) + '\n\n' +
                   'Tickets count: ' + tickets.length + '\n' +
                   'Branch numbers count: ' + Object.keys(branchNumbers).length);
             
-            // Test with dummy data
-            const dummyTicket = {
-                platform: 'Noon',
-                orderId: 'TEST123',
-                branch: 'Crispy Chicken Khalidiya',
-                issue: 'Test issue',
-                evidence: 'Test evidence',
-                compensation: '50'
-            };
+            // Test form visibility
+            openForm();
+        }
+        
+        // Open form
+        function openForm() {
+            console.log('Opening form...');
+            const form = document.getElementById('orderForm');
+            const overlay = document.getElementById('formOverlay');
             
-            sendEmail(dummyTicket.platform, dummyTicket.orderId, dummyTicket.branch, dummyTicket.issue, dummyTicket.evidence, dummyTicket.compensation);
+            // Reset form
+            resetForm();
+            
+            // Show form and overlay
+            form.style.display = 'block';
+            overlay.classList.add('show');
+            
+            // Set today's date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('orderDate').value = today;
+            
+            // Focus on first input
+            document.getElementById('orderId').focus();
+            
+            showNotification('Form opened successfully!');
+        }
+        
+        // Close form
+        function closeForm() {
+            console.log('Closing form...');
+            const form = document.getElementById('orderForm');
+            const overlay = document.getElementById('formOverlay');
+            
+            form.style.display = 'none';
+            overlay.classList.remove('show');
+            
+            showNotification('Form closed');
         }
         
         // Initialize file upload
@@ -1255,20 +1315,6 @@
             document.getElementById('careemPercentage').textContent = `${careemPercentage}%`;
         }
         
-        // Open form
-        function openForm() {
-            document.getElementById("orderForm").style.display = "block";
-            // Reset order date to today
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('orderDate').value = today;
-        }
-        
-        // Close form
-        function closeForm() {
-            document.getElementById("orderForm").style.display = "none";
-            resetForm();
-        }
-        
         // Reset form
         function resetForm() {
             document.getElementById("orderId").value = "";
@@ -1280,19 +1326,61 @@
             document.getElementById("evidenceLink").value = "";
             document.getElementById("noEvidence").checked = false;
             uploadedFiles = [];
-            displayFiles();
+            
+            // Clear file list
+            document.getElementById("fileList").innerHTML = "";
         }
         
         // Save ticket
         function saveTicket() {
-            const orderId = document.getElementById("orderId").value;
+            console.log('Saving ticket...');
+            
+            // Validate form
+            const orderId = document.getElementById("orderId").value.trim();
             const orderDate = document.getElementById("orderDate").value;
             const branch = document.getElementById("branch").value;
             const platform = document.getElementById("platform").value;
-            const issue = document.getElementById("issue").value;
+            const issue = document.getElementById("issue").value.trim();
             const compensation = document.getElementById("compensation").value;
             const evidenceLink = document.getElementById("evidenceLink").value;
             const noEvidence = document.getElementById("noEvidence").checked;
+            
+            // Validation
+            if (!orderId) {
+                showNotification('Please enter Order ID', 'error');
+                document.getElementById("orderId").focus();
+                return;
+            }
+            
+            if (!orderDate) {
+                showNotification('Please select Order Date', 'error');
+                document.getElementById("orderDate").focus();
+                return;
+            }
+            
+            if (!branch) {
+                showNotification('Please select Branch', 'error');
+                document.getElementById("branch").focus();
+                return;
+            }
+            
+            if (!platform) {
+                showNotification('Please select Platform', 'error');
+                document.getElementById("platform").focus();
+                return;
+            }
+            
+            if (!issue) {
+                showNotification('Please enter Issue Description', 'error');
+                document.getElementById("issue").focus();
+                return;
+            }
+            
+            if (!compensation) {
+                showNotification('Please enter Compensation Value', 'error');
+                document.getElementById("compensation").focus();
+                return;
+            }
             
             let evidence = "None";
             
@@ -1311,7 +1399,7 @@
                 branch,
                 platform,
                 issue,
-                compensation: compensation || 0,
+                compensation: parseFloat(compensation) || 0,
                 evidence,
                 status: "Open",
                 dateCreated: new Date().toISOString(),
@@ -1321,6 +1409,8 @@
                     type: file.type
                 }))
             };
+            
+            console.log('Creating ticket:', ticket);
             
             tickets.push(ticket);
             localStorage.setItem('crispyTickets', JSON.stringify(tickets));
@@ -1680,7 +1770,7 @@
             } else {
                 notification.style.borderLeftColor = 'var(--crispy-red)';
                 notification.querySelector('i').className = 'bi bi-check-circle-fill';
-                notification.querySelector('i').style.color = 'var(--crispy-red');
+                notification.querySelector('i').style.color = 'var(--crispy-red)';
             }
             
             notification.classList.add('show');
