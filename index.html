@@ -75,85 +75,88 @@ html_content = """
             background-color: var(--crispy-red);
             color: white;
             border: none;
-            border-radius: 6px;
-            padding: 8px 16px;
-            font-weight: 500;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         
         .btn-crispy:hover {
             background-color: var(--crispy-dark);
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
         
         .btn-email {
-            background-color: #007bff;
+            background: linear-gradient(135deg, #007bff, #0056b3);
             color: white;
             border: none;
-            border-radius: 6px;
-            padding: 8px 16px;
-            font-weight: 500;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .btn-email:hover {
-            background-color: #0056b3;
-            color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 12px rgba(0,123,255,0.4);
         }
         
         .btn-whatsapp {
-            background-color: #25D366;
+            background: linear-gradient(135deg, #25D366, #128C7E);
             color: white;
             border: none;
-            border-radius: 6px;
-            padding: 8px 16px;
-            font-weight: 500;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(37,211,102,0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .btn-whatsapp:hover {
-            background-color: #128C7E;
-            color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 12px rgba(37,211,102,0.4);
         }
         
         .btn-close-ticket {
-            background-color: #dc3545;
+            background: linear-gradient(135deg, #dc3545, #c82333);
             color: white;
             border: none;
-            border-radius: 6px;
-            padding: 8px 16px;
-            font-weight: 500;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(220,53,69,0.3);
         }
         
         .btn-close-ticket:hover {
-            background-color: #c82333;
-            color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 12px rgba(220,53,69,0.4);
         }
         
         .btn-edit {
-            background-color: #ffc107;
+            background: linear-gradient(135deg, #ffc107, #e0a800);
             color: #212529;
             border: none;
-            border-radius: 6px;
-            padding: 8px 16px;
-            font-weight: 500;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(255,193,7,0.3);
         }
         
         .btn-edit:hover {
-            background-color: #e0a800;
-            color: #212529;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 12px rgba(255,193,7,0.4);
         }
         
         .stats-card {
@@ -163,6 +166,7 @@ html_content = """
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: transform 0.3s ease;
             margin-bottom: 20px;
+            border-radius: 10px;
         }
         
         .stats-card:hover {
@@ -191,18 +195,18 @@ html_content = """
             color: var(--crispy-dark);
             font-weight: 600;
             border: none;
-            padding: 12px;
+            padding: 15px 12px;
         }
         
         .table td {
             vertical-align: middle;
             border-color: #e0e0e0;
-            padding: 12px;
+            padding: 15px 12px;
         }
         
         .badge {
             font-weight: 500;
-            padding: 6px 12px;
+            padding: 8px 16px;
             border-radius: 20px;
         }
         
@@ -221,23 +225,31 @@ html_content = """
             color: #2e7d32;
         }
         
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
         .action-buttons button {
-            margin-right: 5px;
-            border-radius: 6px;
-            padding: 6px 12px;
-            font-size: 14px;
-            transition: all 0.2s ease;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .action-buttons button:hover {
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         
         .form-control, .form-select {
-            border-radius: 6px;
-            border: 1px solid #ced4da;
-            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            padding: 12px 15px;
             transition: all 0.3s ease;
+            font-weight: 500;
         }
         
         .form-control:focus, .form-select:focus {
@@ -252,90 +264,107 @@ html_content = """
             left: 50%;
             transform: translate(-50%, -50%);
             background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
             z-index: 1000;
             width: 90%;
             max-width: 700px;
             max-height: 90vh;
             overflow-y: auto;
+            border: 2px solid var(--crispy-light);
         }
         
         .form-popup h3 {
             margin-top: 0;
             color: var(--crispy-red);
-            border-bottom: 2px solid var(--crispy-light);
-            padding-bottom: 10px;
+            border-bottom: 3px solid var(--crispy-light);
+            padding-bottom: 15px;
+            font-weight: 700;
         }
         
         .form-popup label {
-            font-weight: 500;
-            margin-bottom: 5px;
+            font-weight: 600;
+            margin-bottom: 8px;
             display: block;
+            color: var(--text-primary);
         }
         
         .form-popup input, .form-popup select, .form-popup textarea {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid #ced4da;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
         
         .form-popup textarea {
-            height: 100px;
+            height: 120px;
             resize: vertical;
         }
         
         .save-btn {
-            background-color: var(--crispy-red);
+            background: linear-gradient(135deg, var(--crispy-red), var(--crispy-dark));
             color: white;
             border: none;
-            border-radius: 6px;
-            padding: 10px 20px;
+            border-radius: 8px;
+            padding: 15px 30px;
             width: 100%;
-            font-weight: 500;
+            font-weight: 700;
+            font-size: 16px;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
         }
         
         .save-btn:hover {
-            background-color: var(--crispy-dark);
             transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(211, 47, 47, 0.4);
         }
         
         .evidence-section {
-            margin: 20px 0;
-            padding: 15px;
-            border: 2px dashed #ced4da;
-            border-radius: 8px;
+            margin: 25px 0;
+            padding: 20px;
+            border: 3px dashed var(--crispy-light);
+            border-radius: 12px;
             background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .evidence-section:hover {
+            border-color: var(--crispy-red);
+            background-color: rgba(211, 47, 47, 0.05);
         }
         
         .evidence-section h5 {
             color: var(--crispy-red);
-            margin-bottom: 15px;
-            font-weight: 600;
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 1.2rem;
         }
         
         .file-drop-area {
-            border: 2px dashed #ced4da;
-            border-radius: 8px;
-            padding: 20px;
+            border: 3px dashed #ced4da;
+            border-radius: 12px;
+            padding: 30px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
             background-color: white;
+            margin-bottom: 20px;
         }
         
         .file-drop-area:hover {
             border-color: var(--crispy-red);
             background-color: var(--crispy-light);
+            transform: scale(1.02);
         }
         
         .file-drop-area.drag-over {
             border-color: var(--crispy-red);
             background-color: rgba(211, 47, 47, 0.1);
+            transform: scale(1.05);
         }
         
         .file-input {
@@ -343,23 +372,30 @@ html_content = """
         }
         
         .file-list {
-            margin-top: 15px;
+            margin-top: 20px;
         }
         
         .file-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
+            padding: 15px;
             background-color: #f8f9fa;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .file-item:hover {
+            border-color: var(--crispy-red);
+            transform: translateX(5px);
         }
         
         .file-item i {
             color: var(--crispy-red);
-            margin-right: 10px;
+            margin-right: 15px;
+            font-size: 1.2rem;
         }
         
         .file-item button {
@@ -367,23 +403,26 @@ html_content = """
             border: none;
             color: var(--crispy-red);
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             transition: all 0.2s ease;
+            padding: 5px;
         }
         
         .file-item button:hover {
-            transform: scale(1.1);
+            transform: scale(1.2);
+            color: var(--crispy-dark);
         }
         
         .evidence-link {
             color: #007bff;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             transition: all 0.2s ease;
         }
         
         .evidence-link:hover {
             text-decoration: underline;
+            transform: translateX(5px);
         }
         
         .evidence-none {
@@ -395,15 +434,16 @@ html_content = """
             position: fixed;
             top: 20px;
             right: 20px;
-            padding: 15px 20px;
+            padding: 20px 25px;
             background-color: white;
             border-left: 5px solid var(--crispy-red);
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
             z-index: 1001;
             transform: translateX(150%);
-            transition: transform 0.3s ease;
-            max-width: 300px;
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 350px;
+            border: 2px solid var(--crispy-light);
         }
         
         .notification.show {
@@ -411,57 +451,67 @@ html_content = """
         }
         
         .notification i {
-            margin-right: 10px;
+            margin-right: 15px;
             color: var(--crispy-red);
+            font-size: 1.5rem;
         }
         
         .footer {
             background-color: var(--crispy-dark);
             color: white;
-            padding: 20px 0;
-            margin-top: 40px;
+            padding: 30px 0;
+            margin-top: 50px;
             text-align: center;
+            border-radius: 15px 15px 0 0;
         }
         
         .filter-section {
             background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 2px solid var(--crispy-light);
         }
         
         .filter-section h5 {
             color: var(--crispy-red);
-            margin-bottom: 15px;
-            font-weight: 600;
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--crispy-light);
+            padding-bottom: 10px;
         }
         
         .filter-section .row {
-            margin-bottom: 15px;
+            margin-bottom: 25px;
         }
         
         .filter-section .form-label {
-            font-weight: 500;
-            margin-bottom: 5px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
         }
         
         .filter-section button {
-            margin-right: 10px;
-            border-radius: 6px;
-            padding: 8px 16px;
-            font-weight: 500;
+            margin-right: 15px;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 600;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         .filter-section button:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
         }
         
         .table-responsive {
-            border-radius: 10px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 2px solid var(--crispy-light);
         }
         
         .table thead th {
@@ -469,6 +519,9 @@ html_content = """
             top: 0;
             background-color: var(--crispy-light);
             z-index: 10;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .loading {
@@ -487,14 +540,24 @@ html_content = """
         
         .empty-state {
             text-align: center;
-            padding: 40px;
+            padding: 60px 40px;
             color: var(--text-secondary);
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px dashed var(--crispy-light);
         }
         
         .empty-state i {
-            font-size: 3rem;
+            font-size: 4rem;
             color: var(--crispy-light);
+            margin-bottom: 25px;
+        }
+        
+        .empty-state h5 {
+            font-size: 1.5rem;
+            font-weight: 700;
             margin-bottom: 15px;
+            color: var(--text-primary);
         }
         
         @media (max-width: 768px) {
@@ -510,15 +573,62 @@ html_content = """
                 font-size: 2rem;
             }
             
+            .action-buttons {
+                flex-direction: column;
+            }
+            
             .action-buttons button {
-                margin-bottom: 5px;
-                font-size: 12px;
-                padding: 5px 10px;
+                margin-bottom: 10px;
+                width: 100%;
             }
             
             .form-popup {
                 width: 95%;
+                padding: 20px;
             }
+            
+            .filter-section {
+                padding: 20px;
+            }
+            
+            .filter-section button {
+                margin-right: 10px;
+                margin-bottom: 10px;
+                width: 100%;
+            }
+        }
+        
+        /* Animation for new tickets */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .new-ticket-row {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        /* Pulse animation for important buttons */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(211, 47, 47, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(211, 47, 47, 0);
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
@@ -619,6 +729,20 @@ html_content = """
                 </div>
             </div>
             <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="filterDateFrom" class="form-label">Date From</label>
+                    <input type="date" class="form-control" id="filterDateFrom">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="filterDateTo" class="form-label">Date To</label>
+                    <input type="date" class="form-control" id="filterDateTo">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="filterOrderDate" class="form-label">Order Date</label>
+                    <input type="date" class="form-control" id="filterOrderDate">
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-12">
                     <button class="btn btn-crispy" onclick="applyFilters()">
                         <i class="bi bi-funnel"></i> Apply Filters
@@ -634,8 +758,8 @@ html_content = """
         </div>
 
         <!-- Add New Ticket Button -->
-        <div class="text-center mb-4">
-            <button class="btn btn-crispy btn-lg" onclick="openForm()">
+        <div class="text-center mb-5">
+            <button class="btn btn-crispy btn-lg pulse" onclick="openForm()">
                 <i class="bi bi-plus-circle"></i> Add New Ticket
             </button>
         </div>
@@ -651,6 +775,7 @@ html_content = """
                         <thead>
                             <tr>
                                 <th>Order ID</th>
+                                <th>Order Date</th>
                                 <th>Branch</th>
                                 <th>Platform</th>
                                 <th>Issue</th>
@@ -677,6 +802,9 @@ html_content = """
         <h3><i class="bi bi-plus-circle"></i> Add New Ticket</h3>
         <label>Order ID</label>
         <input type="text" id="orderId" required>
+        
+        <label>Order Date</label>
+        <input type="date" id="orderDate" required>
         
         <label>Branch</label>
         <select id="branch" required>
@@ -738,6 +866,9 @@ html_content = """
         <label>Order ID</label>
         <input type="text" id="editOrderId" required>
         
+        <label>Order Date</label>
+        <input type="date" id="editOrderDate" required>
+        
         <label>Branch</label>
         <select id="editBranch" required>
             <option value="">Select Branch</option>
@@ -772,7 +903,7 @@ html_content = """
             </div>
         </div>
         
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-3">
             <button class="btn btn-crispy" onclick="saveEditedTicket()">
                 <i class="bi bi-check-circle"></i> Save Changes
             </button>
@@ -809,6 +940,10 @@ html_content = """
             updateStats();
             initFileUpload();
             
+            // Set today's date as default for order date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('orderDate').value = today;
+            
             // Search functionality
             document.getElementById('searchOrder').addEventListener('input', function() {
                 applyFilters();
@@ -818,6 +953,9 @@ html_content = """
             document.getElementById('filterBranch').addEventListener('change', applyFilters);
             document.getElementById('filterPlatform').addEventListener('change', applyFilters);
             document.getElementById('filterStatus').addEventListener('change', applyFilters);
+            document.getElementById('filterDateFrom').addEventListener('change', applyFilters);
+            document.getElementById('filterDateTo').addEventListener('change', applyFilters);
+            document.getElementById('filterOrderDate').addEventListener('change', applyFilters);
         });
         
         // Initialize file upload
@@ -930,6 +1068,9 @@ html_content = """
         // Open form
         function openForm() {
             document.getElementById("orderForm").style.display = "block";
+            // Reset order date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('orderDate').value = today;
         }
         
         // Close form
@@ -941,6 +1082,7 @@ html_content = """
         // Reset form
         function resetForm() {
             document.getElementById("orderId").value = "";
+            document.getElementById("orderDate").value = new Date().toISOString().split('T')[0];
             document.getElementById("branch").value = "";
             document.getElementById("platform").value = "";
             document.getElementById("issue").value = "";
@@ -953,6 +1095,7 @@ html_content = """
         // Save ticket
         function saveTicket() {
             const orderId = document.getElementById("orderId").value;
+            const orderDate = document.getElementById("orderDate").value;
             const branch = document.getElementById("branch").value;
             const platform = document.getElementById("platform").value;
             const issue = document.getElementById("issue").value;
@@ -972,6 +1115,7 @@ html_content = """
             const ticket = {
                 id: Date.now(),
                 orderId,
+                orderDate,
                 branch,
                 platform,
                 issue,
@@ -1002,6 +1146,7 @@ html_content = """
             
             document.getElementById("editTicketId").value = ticket.id;
             document.getElementById("editOrderId").value = ticket.orderId;
+            document.getElementById("editOrderDate").value = ticket.orderDate;
             document.getElementById("editBranch").value = ticket.branch;
             document.getElementById("editPlatform").value = ticket.platform;
             document.getElementById("editIssue").value = ticket.issue;
@@ -1022,6 +1167,7 @@ html_content = """
             if (!ticket) return;
             
             ticket.orderId = document.getElementById("editOrderId").value;
+            ticket.orderDate = document.getElementById("editOrderDate").value;
             ticket.branch = document.getElementById("editBranch").value;
             ticket.platform = document.getElementById("editPlatform").value;
             ticket.issue = document.getElementById("editIssue").value;
@@ -1060,6 +1206,7 @@ html_content = """
             
             filteredTickets.forEach(ticket => {
                 const tr = document.createElement('tr');
+                tr.className = 'new-ticket-row';
                 
                 let evidenceDisplay = ticket.evidence;
                 if (ticket.evidence === "None") {
@@ -1073,7 +1220,8 @@ html_content = """
                 }
                 
                 tr.innerHTML = `
-                    <td>${ticket.orderId}</td>
+                    <td><strong>${ticket.orderId}</strong></td>
+                    <td>${formatDate(ticket.orderDate)}</td>
                     <td>${ticket.branch}</td>
                     <td>${ticket.platform}</td>
                     <td>${ticket.issue}</td>
@@ -1189,6 +1337,9 @@ html_content = """
             const filterBranch = document.getElementById('filterBranch').value;
             const filterPlatform = document.getElementById('filterPlatform').value;
             const filterStatus = document.getElementById('filterStatus').value;
+            const filterDateFrom = document.getElementById('filterDateFrom').value;
+            const filterDateTo = document.getElementById('filterDateTo').value;
+            const filterOrderDate = document.getElementById('filterOrderDate').value;
             
             filteredTickets = tickets.filter(ticket => {
                 const matchOrder = ticket.orderId.toLowerCase().includes(searchOrder);
@@ -1196,7 +1347,19 @@ html_content = """
                 const matchPlatform = !filterPlatform || ticket.platform === filterPlatform;
                 const matchStatus = !filterStatus || ticket.status === filterStatus;
                 
-                return matchOrder && matchBranch && matchPlatform && matchStatus;
+                // Date filtering
+                let matchDate = true;
+                if (filterDateFrom) {
+                    matchDate = matchDate && new Date(ticket.dateCreated) >= new Date(filterDateFrom);
+                }
+                if (filterDateTo) {
+                    matchDate = matchDate && new Date(ticket.dateCreated) <= new Date(filterDateTo);
+                }
+                if (filterOrderDate) {
+                    matchDate = matchDate && ticket.orderDate === filterOrderDate;
+                }
+                
+                return matchOrder && matchBranch && matchPlatform && matchStatus && matchDate;
             });
             
             renderTickets();
@@ -1208,6 +1371,9 @@ html_content = """
             document.getElementById('filterBranch').value = '';
             document.getElementById('filterPlatform').value = '';
             document.getElementById('filterStatus').value = '';
+            document.getElementById('filterDateFrom').value = '';
+            document.getElementById('filterDateTo').value = '';
+            document.getElementById('filterOrderDate').value = '';
             
             filteredTickets = [...tickets];
             renderTickets();
@@ -1215,10 +1381,10 @@ html_content = """
         
         // Export to CSV
         function exportToCSV() {
-            let csv = 'Order ID,Branch,Platform,Issue,Evidence,Status,Date Created\n';
+            let csv = 'Order ID,Order Date,Branch,Platform,Issue,Evidence,Status,Date Created\n';
             
             filteredTickets.forEach(ticket => {
-                csv += `"${ticket.orderId}","${ticket.branch}","${ticket.platform}","${ticket.issue}","${ticket.evidence}","${ticket.status}","${formatDate(ticket.dateCreated)}"\n`;
+                csv += `"${ticket.orderId}","${ticket.orderDate}","${ticket.branch}","${ticket.platform}","${ticket.issue}","${ticket.evidence}","${ticket.status}","${formatDate(ticket.dateCreated)}"\n`;
             });
             
             const blob = new Blob([csv], { type: 'text/csv' });
@@ -1236,6 +1402,7 @@ html_content = """
         
         // Format date
         function formatDate(dateString) {
+            if (!dateString) return '';
             const date = new Date(dateString);
             return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         }
