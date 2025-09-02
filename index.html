@@ -240,7 +240,7 @@ html_content = """
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             z-index: 1000;
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -285,6 +285,93 @@ html_content = """
         .save-btn:hover {
             background-color: var(--crispy-dark);
             transform: translateY(-2px);
+        }
+        
+        .evidence-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed #ced4da;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        
+        .evidence-section h5 {
+            color: var(--crispy-red);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .file-drop-area {
+            border: 2px dashed #ced4da;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        
+        .file-drop-area:hover {
+            border-color: var(--crispy-red);
+            background-color: var(--crispy-light);
+        }
+        
+        .file-drop-area.drag-over {
+            border-color: var(--crispy-red);
+            background-color: rgba(211, 47, 47, 0.1);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-list {
+            margin-top: 15px;
+        }
+        
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .file-item i {
+            color: var(--crispy-red);
+            margin-right: 10px;
+        }
+        
+        .file-item button {
+            background: none;
+            border: none;
+            color: var(--crispy-red);
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+        
+        .file-item button:hover {
+            transform: scale(1.1);
+        }
+        
+        .evidence-link {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .evidence-link:hover {
+            text-decoration: underline;
+        }
+        
+        .evidence-none {
+            color: var(--text-secondary);
+            font-style: italic;
         }
         
         .notification {
@@ -596,8 +683,30 @@ html_content = """
         <label>Issue Description</label>
         <textarea id="issue" required></textarea>
         
-        <label>Evidence (link or None)</label>
-        <input type="text" id="evidence">
+        <div class="evidence-section">
+            <h5><i class="bi bi-paperclip"></i> Evidence Upload</h5>
+            <p class="text-muted mb-3">Upload photos, videos, or other evidence files to support your claim</p>
+            
+            <div class="file-drop-area" id="fileDropArea">
+                <i class="bi bi-cloud-upload fs-1 text-muted"></i>
+                <p class="mb-2">Drag & drop files here or click to browse</p>
+                <small class="text-muted">Supported formats: JPG, PNG, PDF, MP4 (Max 10MB)</small>
+                <input type="file" class="file-input" id="fileInput" multiple accept=".jpg,.jpeg,.png,.pdf,.mp4">
+            </div>
+            
+            <div class="file-list" id="fileList"></div>
+            
+            <div class="mt-3">
+                <label class="form-label">Or provide a link to evidence:</label>
+                <input type="url" class="form-control" id="evidenceLink" placeholder="https://example.com/evidence.jpg">
+                <div class="form-check mt-2">
+                    <input class="form-check-input" type="checkbox" id="noEvidence">
+                    <label class="form-check-label" for="noEvidence">
+                        No evidence available
+                    </label>
+                </div>
+            </div>
+        </div>
         
         <button class="save-btn" onclick="saveTicket()">
             <i class="bi bi-check-circle"></i> Save Ticket
@@ -623,11 +732,13 @@ html_content = """
         // Global variables
         let tickets = JSON.parse(localStorage.getItem('crispyTickets')) || [];
         let filteredTickets = [...tickets];
+        let uploadedFiles = [];
         
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
             renderTickets();
             updateStats();
+            initFileUpload();
             
             // Search functionality
             document.getElementById('searchOrder').addEventListener('input', function() {
@@ -640,6 +751,113 @@ html_content = """
             document.getElementById('filterStatus').addEventListener('change', applyFilters);
         });
         
+        // Initialize file upload
+        function initFileUpload() {
+            const fileDropArea = document.getElementById('fileDropArea');
+            const fileInput = document.getElementById('fileInput');
+            const fileList = document.getElementById('fileList');
+            
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            // Highlight drop area when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            // Handle dropped files
+            fileDropArea.addEventListener('drop', handleDrop, false);
+            
+            // Handle file selection via input
+            fileInput.addEventListener('change', function() {
+                handleFiles(this.files);
+            });
+            
+            // Open file selector when drop area is clicked
+            fileDropArea.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            function highlight() {
+                fileDropArea.classList.add('drag-over');
+            }
+            
+            function unhighlight() {
+                fileDropArea.classList.remove('drag-over');
+            }
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+            
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    uploadedFiles = Array.from(files);
+                    displayFiles();
+                }
+            }
+            
+            function displayFiles() {
+                fileList.innerHTML = '';
+                
+                uploadedFiles.forEach((file, index) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    
+                    const fileSize = formatFileSize(file.size);
+                    const fileIcon = getFileIcon(file.type);
+                    
+                    fileItem.innerHTML = `
+                        <div>
+                            <i class="${fileIcon}"></i>
+                            <span>${file.name} (${fileSize})</span>
+                        </div>
+                        <button type="button" onclick="removeFile(${index})">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    `;
+                    fileList.appendChild(fileItem);
+                });
+            }
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Get file icon based on type
+        function getFileIcon(type) {
+            if (type.startsWith('image/')) return 'bi bi-image';
+            if (type === 'application/pdf') return 'bi bi-file-pdf';
+            if (type.startsWith('video/')) return 'bi bi-file-play';
+            return 'bi bi-file';
+        }
+        
+        // Remove file
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            displayFiles();
+        }
+        
         // Open form
         function openForm() {
             document.getElementById("orderForm").style.display = "block";
@@ -648,6 +866,19 @@ html_content = """
         // Close form
         function closeForm() {
             document.getElementById("orderForm").style.display = "none";
+            resetForm();
+        }
+        
+        // Reset form
+        function resetForm() {
+            document.getElementById("orderId").value = "";
+            document.getElementById("branch").value = "";
+            document.getElementById("platform").value = "";
+            document.getElementById("issue").value = "";
+            document.getElementById("evidenceLink").value = "";
+            document.getElementById("noEvidence").checked = false;
+            uploadedFiles = [];
+            displayFiles();
         }
         
         // Save ticket
@@ -656,7 +887,18 @@ html_content = """
             const branch = document.getElementById("branch").value;
             const platform = document.getElementById("platform").value;
             const issue = document.getElementById("issue").value;
-            const evidence = document.getElementById("evidence").value;
+            const evidenceLink = document.getElementById("evidenceLink").value;
+            const noEvidence = document.getElementById("noEvidence").checked;
+            
+            let evidence = "None";
+            
+            if (noEvidence) {
+                evidence = "No evidence provided";
+            } else if (evidenceLink) {
+                evidence = evidenceLink;
+            } else if (uploadedFiles.length > 0) {
+                evidence = `Uploaded files: ${uploadedFiles.map(f => f.name).join(', ')}`;
+            }
             
             const ticket = {
                 id: Date.now(),
@@ -664,9 +906,14 @@ html_content = """
                 branch,
                 platform,
                 issue,
-                evidence: evidence || "None",
+                evidence,
                 status: "Open",
-                dateCreated: new Date().toISOString()
+                dateCreated: new Date().toISOString(),
+                files: uploadedFiles.map(file => ({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                }))
             };
             
             tickets.push(ticket);
@@ -675,13 +922,6 @@ html_content = """
             renderTickets();
             updateStats();
             closeForm();
-            
-            // Reset form
-            document.getElementById("orderId").value = "";
-            document.getElementById("branch").value = "";
-            document.getElementById("platform").value = "";
-            document.getElementById("issue").value = "";
-            document.getElementById("evidence").value = "";
             
             showNotification('Ticket added successfully!');
         }
@@ -705,12 +945,23 @@ html_content = """
             filteredTickets.forEach(ticket => {
                 const tr = document.createElement('tr');
                 
+                let evidenceDisplay = ticket.evidence;
+                if (ticket.evidence === "None") {
+                    evidenceDisplay = '<span class="evidence-none">None</span>';
+                } else if (ticket.evidence.startsWith("http")) {
+                    evidenceDisplay = `<a href="${ticket.evidence}" target="_blank" class="evidence-link">${ticket.evidence}</a>`;
+                } else if (ticket.evidence.startsWith("Uploaded files")) {
+                    evidenceDisplay = `<span class="text-muted">${ticket.evidence}</span>`;
+                } else {
+                    evidenceDisplay = `<span class="text-muted">${ticket.evidence}</span>`;
+                }
+                
                 tr.innerHTML = `
                     <td>${ticket.orderId}</td>
                     <td>${ticket.branch}</td>
                     <td>${ticket.platform}</td>
                     <td>${ticket.issue}</td>
-                    <td>${ticket.evidence}</td>
+                    <td>${evidenceDisplay}</td>
                     <td>
                         <span class="badge badge-${ticket.status.toLowerCase()}">${ticket.status}</span>
                     </td>
@@ -754,14 +1005,18 @@ html_content = """
                 emails = "rashid.waqas@careem.com, partners_uae@careem.com, david.chamas@careem.com";
             }
             
-            const subject = `Dispute Order ${orderId}`;
-            const body = `Dear Team,%0D%0AWe dispute this refund claim for Order ${orderId}.%0D%0ABest regards,%0DAhmed Kenawy`;
+            const ticket = tickets.find(t => t.orderId === orderId);
+            let body = `Dear Team,%0D%0AWe dispute this refund claim for Order ${orderId}.%0D%0ABest regards,%0DAhmed Kenawy`;
             
+            if (ticket && ticket.evidence && ticket.evidence !== "None") {
+                body = `Dear Team,%0D%0ARegarding the claim for Order ID: ${orderId} from ${ticket.branch}, after verification with the branch manager, the order was delivered in full and in proper condition.%0D%0AEvidence: ${ticket.evidence}%0D%0AWe request the claim be rejected and the deducted amount refunded to the restaurant's account.%0D%0ABest regards,%0DAhmed Kenawy`;
+            }
+            
+            const subject = `Dispute Order ${orderId}`;
             const mailtoLink = `mailto:${emails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             window.location.href = mailtoLink;
             
             // Update ticket status
-            const ticket = tickets.find(t => t.orderId === orderId);
             if (ticket) {
                 ticket.status = "Sent";
                 localStorage.setItem('crispyTickets', JSON.stringify(tickets));
@@ -790,7 +1045,7 @@ html_content = """
                 return;
             }
             
-            const message = `New complaint for Order ${orderId} at ${branch}`;
+            const message = `🔔 New ${branch} Claim%nOrder ID: ${orderId}%nPlease check the claim details and take appropriate action.`;
             const waLink = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
             window.open(waLink, '_blank');
             
