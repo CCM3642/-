@@ -1616,10 +1616,15 @@
                 compensationText = `%nCompensation: ${compensation} AED`;
             }
             
-            // Build WhatsApp message
+            // Build WhatsApp message with proper encoding
             const message = `🔔 New ${branch} Claim%n%nOrder ID: ${orderId}%nIssue: ${issue}%nEvidence: ${evidence}${compensationText}%n%nPlease check the claim details and take appropriate action.%n%nTicket Status: Open%n%nBest regards,%nAhmed Kenawy%nCall Center Manager%nCrispy Chicken`;
             
-            const waLink = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+            // Properly encode the message
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Build WhatsApp URL
+            const waLink = `https://wa.me/${number}?text=${encodedMessage}`;
+            
             console.log('WhatsApp link:', waLink);
             
             try {
