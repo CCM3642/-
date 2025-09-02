@@ -339,10 +339,11 @@ html_content = """
             box-shadow: 0 15px 35px rgba(0,0,0,0.3);
             z-index: 1000;
             width: 90%;
-            max-width: 700px;
+            max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
             border: 2px solid var(--crispy-light);
+            max-height: 90vh;
         }
         
         .form-popup h3 {
@@ -373,6 +374,7 @@ html_content = """
         .form-popup textarea {
             height: 120px;
             resize: vertical;
+            min-height: 100px;
         }
         
         .save-btn {
@@ -655,6 +657,7 @@ html_content = """
             .form-popup {
                 width: 95%;
                 padding: 20px;
+                max-height: 95vh;
             }
             
             .filter-section {
@@ -918,6 +921,9 @@ html_content = """
         <label>Issue Description</label>
         <textarea id="issue" required></textarea>
         
+        <label>Compensation Value (AED)</label>
+        <input type="number" id="compensation" placeholder="Enter compensation amount" min="0" step="0.01">
+        
         <div class="evidence-section">
             <h5><i class="bi bi-paperclip"></i> Evidence Upload</h5>
             <p class="text-muted mb-3">Upload photos, videos, or other evidence files to support your claim</p>
@@ -980,6 +986,9 @@ html_content = """
         
         <label>Issue Description</label>
         <textarea id="editIssue" required></textarea>
+        
+        <label>Compensation Value (AED)</label>
+        <input type="number" id="editCompensation" placeholder="Enter compensation amount" min="0" step="0.01">
         
         <div class="evidence-section">
             <h5><i class="bi bi-paperclip"></i> Evidence</h5>
@@ -1193,6 +1202,7 @@ html_content = """
             document.getElementById("branch").value = "";
             document.getElementById("platform").value = "";
             document.getElementById("issue").value = "";
+            document.getElementById("compensation").value = "";
             document.getElementById("evidenceLink").value = "";
             document.getElementById("noEvidence").checked = false;
             uploadedFiles = [];
@@ -1206,6 +1216,7 @@ html_content = """
             const branch = document.getElementById("branch").value;
             const platform = document.getElementById("platform").value;
             const issue = document.getElementById("issue").value;
+            const compensation = document.getElementById("compensation").value;
             const evidenceLink = document.getElementById("evidenceLink").value;
             const noEvidence = document.getElementById("noEvidence").checked;
             
@@ -1226,6 +1237,7 @@ html_content = """
                 branch,
                 platform,
                 issue,
+                compensation: compensation || 0,
                 evidence,
                 status: "Open",
                 dateCreated: new Date().toISOString(),
@@ -1258,6 +1270,7 @@ html_content = """
             document.getElementById("editBranch").value = ticket.branch;
             document.getElementById("editPlatform").value = ticket.platform;
             document.getElementById("editIssue").value = ticket.issue;
+            document.getElementById("editCompensation").value = ticket.compensation || "";
             document.getElementById("editEvidence").value = ticket.evidence === "None" ? "" : ticket.evidence;
             document.getElementById("editNoEvidence").checked = ticket.evidence === "No evidence provided";
             
@@ -1279,6 +1292,7 @@ html_content = """
             ticket.branch = document.getElementById("editBranch").value;
             ticket.platform = document.getElementById("editPlatform").value;
             ticket.issue = document.getElementById("editIssue").value;
+            ticket.compensation = document.getElementById("editCompensation").value || 0;
             
             const noEvidence = document.getElementById("editNoEvidence").checked;
             if (noEvidence) {
@@ -1328,6 +1342,10 @@ html_content = """
                     evidenceDisplay = `<span class="text-muted">${ticket.evidence}</span>`;
                 }
                 
+                const compensationDisplay = ticket.compensation > 0 ? 
+                    `<span class="badge" style="background-color: var(--crispy-red); color: white;">${ticket.compensation} AED</span>` : 
+                    '<span class="text-muted">No compensation</span>';
+                
                 tr.innerHTML = `
                     <td><strong>${ticket.orderId}</strong></td>
                     <td>${formatDate(ticket.orderDate)}</td>
@@ -1342,15 +1360,16 @@ html_content = """
                     <td>
                         <span class="badge badge-${ticket.status.toLowerCase()}">${ticket.status}</span>
                     </td>
+                    <td>${compensationDisplay}</td>
                     <td>${formatDate(ticket.dateCreated)}</td>
                     <td class="action-buttons">
                         <button class="btn btn-edit" onclick="editTicket(${ticket.id})" title="Edit Ticket">
                             <i class="bi bi-pencil"></i> Edit
                         </button>
-                        <button class="btn btn-email" onclick="sendEmail('${ticket.platform}', '${ticket.orderId}', '${ticket.branch}', '${ticket.issue}', '${ticket.evidence}')" title="Send Email">
+                        <button class="btn btn-email" onclick="sendEmail('${ticket.platform}', '${ticket.orderId}', '${ticket.branch}', '${ticket.issue}', '${ticket.evidence}', '${ticket.compensation}')" title="Send Email">
                             <i class="bi bi-envelope"></i> Email
                         </button>
-                        <button class="btn btn-whatsapp" onclick="sendWhatsApp('${ticket.branch}', '${ticket.orderId}', '${ticket.issue}', '${ticket.evidence}')" title="Send WhatsApp">
+                        <button class="btn btn-whatsapp" onclick="sendWhatsApp('${ticket.branch}', '${ticket.orderId}', '${ticket.issue}', '${ticket.evidence}', '${ticket.compensation}')" title="Send WhatsApp">
                             <i class="bi bi-whatsapp"></i> WhatsApp
                         </button>
                         <button class="btn btn-close-ticket" onclick="closeTicket(this, ${ticket.id})" title="Close Ticket">
@@ -1376,7 +1395,7 @@ html_content = """
         }
         
         // Send email with improved template
-        function sendEmail(platform, orderId, branch, issue, evidence) {
+        function sendEmail(platform, orderId, branch, issue, evidence, compensation) {
             let emails = "";
             
             if (platform === "Noon") {
@@ -1385,8 +1404,13 @@ html_content = """
                 emails = "rashid.waqas@careem.com, partners_uae@careem.com, david.chamas@careem.com";
             }
             
+            let compensationText = "";
+            if (compensation > 0) {
+                compensationText = `%nCompensation Amount: ${compensation} AED`;
+            }
+            
             // Improved email template with better formatting
-            let body = `Subject: Follow-up on Claim - Order ${orderId}%0D%0A%0D%0ADear Team,%0D%0A%0D%0AWe would like to follow up on the claim regarding order ${orderId}. Please review the claim details and take appropriate action.%0D%0A%0D%0AOrder Details:%0D%0A- Order ID: ${orderId}%0D%0A- Branch: ${branch}%0D%0A- Issue: ${issue}%0D%0A- Evidence: ${evidence}%0D%0A%0D%0APlease investigate this claim and provide an update.%0D%0A%0D%0ABest regards,%0DAhmed Kenawy%0ACall Center Manager | Crispy Chicken`;
+            let body = `Subject: Follow-up on Claim - Order ${orderId}%0D%0A%0D%0ADear Team,%0D%0A%0D%0AWe would like to follow up on the claim regarding order ${orderId}. Please review the claim details and take appropriate action.%0D%0A%0D%0AOrder Details:%0D%0A- Order ID: ${orderId}%0D%0A- Branch: ${branch}%0D%0A- Issue: ${issue}%0D%0A- Evidence: ${evidence}${compensationText}%0D%0A%0D%0APlease investigate this claim and provide an update.%0D%0A%0D%0ABest regards,%0DAhmed Kenawy%0ACall Center Manager | Crispy Chicken`;
             
             const subject = `Follow-up on Claim - Order ${orderId}`;
             const mailtoLink = `mailto:${emails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -1406,7 +1430,7 @@ html_content = """
         }
         
         // Send WhatsApp with improved template and fixed branch lookup
-        function sendWhatsApp(branch, orderId, issue, evidence) {
+        function sendWhatsApp(branch, orderId, issue, evidence, compensation) {
             // Fixed branch numbers with correct matching
             const branchNumbers = {
                 "Crispy Chicken Khalidiya": "971569494764",
@@ -1424,8 +1448,13 @@ html_content = """
                 return;
             }
             
+            let compensationText = "";
+            if (compensation > 0) {
+                compensationText = `%nCompensation: ${compensation} AED`;
+            }
+            
             // Improved WhatsApp template with better formatting
-            let message = `🔔 New ${branch} Claim%n%nOrder ID: ${orderId}%nIssue: ${issue}%nEvidence: ${evidence}%n%nPlease check the claim details and take appropriate action.%n%nTicket Status: Open%n%nBest regards,%nAhmed Kenawy%nCall Center Manager%nCrispy Chicken`;
+            let message = `🔔 New ${branch} Claim%n%nOrder ID: ${orderId}%nIssue: ${issue}%nEvidence: ${evidence}${compensationText}%n%nPlease check the claim details and take appropriate action.%n%nTicket Status: Open%n%nBest regards,%nAhmed Kenawy%nCall Center Manager%nCrispy Chicken`;
             
             const waLink = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
             window.open(waLink, '_blank');
@@ -1496,10 +1525,10 @@ html_content = """
         
         // Export to CSV
         function exportToCSV() {
-            let csv = 'Order ID,Order Date,Branch,Platform,Issue,Evidence,Status,Date Created\n';
+            let csv = 'Order ID,Order Date,Branch,Platform,Issue,Compensation,Evidence,Status,Date Created\n';
             
             filteredTickets.forEach(ticket => {
-                csv += `"${ticket.orderId}","${ticket.orderDate}","${ticket.branch}","${ticket.platform}","${ticket.issue}","${ticket.evidence}","${ticket.status}","${formatDate(ticket.dateCreated)}"\n`;
+                csv += `"${ticket.orderId}","${ticket.orderDate}","${ticket.branch}","${ticket.platform}","${ticket.issue}","${ticket.compensation}","${ticket.evidence}","${ticket.status}","${formatDate(ticket.dateCreated)}"\n`;
             });
             
             const blob = new Blob([csv], { type: 'text/csv' });
