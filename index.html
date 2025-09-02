@@ -967,10 +967,10 @@ html_content = """
                     </td>
                     <td>${formatDate(ticket.dateCreated)}</td>
                     <td class="action-buttons">
-                        <button class="btn btn-email" onclick="sendEmail('${ticket.platform}', '${ticket.orderId}')">
+                        <button class="btn btn-email" onclick="sendEmail('${ticket.platform}', '${ticket.orderId}', '${ticket.branch}', '${ticket.issue}', '${ticket.evidence}')">
                             <i class="bi bi-envelope"></i> Email
                         </button>
-                        <button class="btn btn-whatsapp" onclick="sendWhatsApp('${ticket.branch}', '${ticket.orderId}')">
+                        <button class="btn btn-whatsapp" onclick="sendWhatsApp('${ticket.branch}', '${ticket.orderId}', '${ticket.issue}', '${ticket.evidence}')">
                             <i class="bi bi-whatsapp"></i> WhatsApp
                         </button>
                         <button class="btn btn-close-ticket" onclick="closeTicket(this, ${ticket.id})">
@@ -995,8 +995,8 @@ html_content = """
             document.getElementById('closedTickets').textContent = closed;
         }
         
-        // Send email
-        function sendEmail(platform, orderId) {
+        // Send email with improved template
+        function sendEmail(platform, orderId, branch, issue, evidence) {
             let emails = "";
             
             if (platform === "Noon") {
@@ -1005,18 +1005,15 @@ html_content = """
                 emails = "rashid.waqas@careem.com, partners_uae@careem.com, david.chamas@careem.com";
             }
             
-            const ticket = tickets.find(t => t.orderId === orderId);
-            let body = `Dear Team,%0D%0AWe dispute this refund claim for Order ${orderId}.%0D%0ABest regards,%0DAhmed Kenawy`;
+            // Improved email template with better formatting
+            let body = `Subject: Follow-up on Claim - Order ${orderId}%0D%0A%0D%0ADear Team,%0D%0A%0D%0AWe would like to follow up on the claim regarding order ${orderId}. Please review the claim details and take appropriate action.%0D%0A%0D%0AOrder Details:%0D%0A- Order ID: ${orderId}%0D%0A- Branch: ${branch}%0D%0A- Issue: ${issue}%0D%0A- Evidence: ${evidence}%0D%0A%0D%0APlease investigate this claim and provide an update.%0D%0A%0D%0ABest regards,%0DAhmed Kenawy%0ACall Center Manager | Crispy Chicken`;
             
-            if (ticket && ticket.evidence && ticket.evidence !== "None") {
-                body = `Dear Team,%0D%0ARegarding the claim for Order ID: ${orderId} from ${ticket.branch}, after verification with the branch manager, the order was delivered in full and in proper condition.%0D%0AEvidence: ${ticket.evidence}%0D%0AWe request the claim be rejected and the deducted amount refunded to the restaurant's account.%0D%0ABest regards,%0DAhmed Kenawy`;
-            }
-            
-            const subject = `Dispute Order ${orderId}`;
+            const subject = `Follow-up on Claim - Order ${orderId}`;
             const mailtoLink = `mailto:${emails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             window.location.href = mailtoLink;
             
             // Update ticket status
+            const ticket = tickets.find(t => t.orderId === orderId);
             if (ticket) {
                 ticket.status = "Sent";
                 localStorage.setItem('crispyTickets', JSON.stringify(tickets));
@@ -1027,8 +1024,8 @@ html_content = """
             showNotification('Email sent successfully!');
         }
         
-        // Send WhatsApp
-        function sendWhatsApp(branch, orderId) {
+        // Send WhatsApp with improved template
+        function sendWhatsApp(branch, orderId, issue, evidence) {
             const branchNumbers = {
                 "Crispy Chicken Khalidiya": "569494764",
                 "Crispy Chicken Muroor": "505414641",
@@ -1045,7 +1042,9 @@ html_content = """
                 return;
             }
             
-            const message = `🔔 New ${branch} Claim%nOrder ID: ${orderId}%nPlease check the claim details and take appropriate action.`;
+            // Improved WhatsApp template with better formatting
+            let message = `🔔 New ${branch} Claim%n%nOrder ID: ${orderId}%nIssue: ${issue}%nEvidence: ${evidence}%n%nPlease check the claim details and take appropriate action.%n%nTicket Status: Open%n%nBest regards,%nAhmed Kenawy%nCall Center Manager%nCrispy Chicken`;
+            
             const waLink = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
             window.open(waLink, '_blank');
             
