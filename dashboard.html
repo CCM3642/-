@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Compensation Tickets Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/heatmapjs@2.0.5/heatmap.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* Floating Dock */
+    .dock {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-end;
+      z-index: 1000;
+      cursor: grab;
+    }
+    .dock:active {
+      cursor: grabbing;
+    }
+    .dock-buttons {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .dock-buttons.show {
+      display: flex;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 p-6">
+
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-800 flex items-center">
+      📑 Compensation Tickets
+    </h1>
+  </div>
+
+  <!-- Tickets Table -->
+  <div class="bg-white shadow rounded-lg p-4">
+    <table class="min-w-full border-collapse">
+      <thead>
+        <tr class="text-left text-gray-700 border-b">
+          <th class="py-2 px-3">Order ID</th>
+          <th class="py-2 px-3">Order Date</th>
+          <th class="py-2 px-3">Branch</th>
+          <th class="py-2 px-3">Platform</th>
+          <th class="py-2 px-3">Issue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b">
+          <td class="font-bold px-3 py-2">0258</td>
+          <td class="px-3 py-2">2025-09-02</td>
+          <td class="px-3 py-2">Crispy Chicken Muroor</td>
+          <td class="px-3 py-2">Noon</td>
+          <td class="px-3 py-2">Incorrect items: Ultimate Spicy x 1, Ultimate Mix</td>
+        </tr>
+        <tr class="border-b">
+          <td class="font-bold px-3 py-2">FF92NNY2JHDG0HA</td>
+          <td class="px-3 py-2">2025-09-02</td>
+          <td class="px-3 py-2">Crispy Chicken Hamdan</td>
+          <td class="px-3 py-2">Noon</td>
+          <td class="px-3 py-2">Refund: Missing item (Outlet)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <div class="bg-white p-4 rounded-lg shadow">
+      <h2 class="text-lg font-semibold mb-2">Complaints by Branch</h2>
+      <canvas id="barChart"></canvas>
+    </div>
+    <div class="bg-white p-4 rounded-lg shadow">
+      <h2 class="text-lg font-semibold mb-2">Issues Breakdown</h2>
+      <canvas id="pieChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Floating Dock -->
+  <div id="dock" class="dock">
+    <button id="dockToggle" class="bg-gray-800 text-white px-4 py-2 rounded-full shadow">⚙️</button>
+    <div id="dockButtons" class="dock-buttons">
+      <button class="bg-red-500 text-white px-4 py-2 rounded shadow">➕ New Ticket</button>
+      <button class="bg-red-400 text-white px-4 py-2 rounded shadow">📌 Add Sample</button>
+      <button class="bg-gray-400 text-white px-4 py-2 rounded shadow">🔄 Reset</button>
+      <button class="bg-blue-500 text-white px-4 py-2 rounded shadow">🖨️ Print</button>
+      <button class="bg-green-500 text-white px-4 py-2 rounded shadow">📊 Dashboard</button>
+      <button class="bg-yellow-500 text-white px-4 py-2 rounded shadow">🔥 Heatmap</button>
+      <button class="bg-indigo-500 text-white px-4 py-2 rounded shadow">📂 Export</button>
+    </div>
+  </div>
+
+  <script>
+    // Dock Toggle
+    document.getElementById("dockToggle").addEventListener("click", () => {
+      document.getElementById("dockButtons").classList.toggle("show");
+    });
+
+    // Make Dock Draggable
+    const dock = document.getElementById("dock");
+    let isDragging = false, offsetX, offsetY;
+
+    dock.addEventListener("mousedown", (e) => {
+      if (e.target.id === "dockToggle") return; // Ignore when clicking toggle
+      isDragging = true;
+      offsetX = e.clientX - dock.getBoundingClientRect().left;
+      offsetY = e.clientY - dock.getBoundingClientRect().top;
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      dock.style.left = `${e.clientX - offsetX}px`;
+      dock.style.top = `${e.clientY - offsetY}px`;
+      dock.style.bottom = "auto";
+      dock.style.right = "auto";
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+    });
+
+    // Bar Chart
+    new Chart(document.getElementById("barChart"), {
+      type: "bar",
+      data: {
+        labels: ["Muroor", "Hamdan", "Al Danah"],
+        datasets: [{
+          label: "Complaints",
+          data: [5, 8, 3],
+          backgroundColor: "rgba(239,68,68,0.7)"
+        }]
+      }
+    });
+
+    // Pie Chart
+    new Chart(document.getElementById("pieChart"), {
+      type: "pie",
+      data: {
+        labels: ["Cold Food", "Late Delivery", "Wrong Items", "Missing Items", "Food Quality", "Other"],
+        datasets: [{
+          data: [10, 15, 5, 8, 12, 4],
+          backgroundColor: [
+            "rgba(239,68,68,0.7)",
+            "rgba(59,130,246,0.7)",
+            "rgba(16,185,129,0.7)",
+            "rgba(245,158,11,0.7)",
+            "rgba(139,92,246,0.7)",
+            "rgba(107,114,128,0.7)"
+          ]
+        }]
+      }
+    });
+  </script>
+</body>
+</html>
