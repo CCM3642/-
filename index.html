@@ -1,3 +1,4 @@
+html_content = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -559,7 +560,6 @@
             </div>
         </div>
     </nav>
-
     <!-- Main Content -->
     <div class="container my-4">
         <!-- Stats Cards -->
@@ -597,7 +597,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Charts Section -->
         <div class="row mb-4">
             <div class="col-md-6">
@@ -625,7 +624,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Add New Ticket Form -->
         <div class="card mb-4" id="addTicketCard">
             <div class="card-header">
@@ -696,7 +694,6 @@
                 </form>
             </div>
         </div>
-
         <!-- Filters -->
         <div class="filter-section">
             <div class="row">
@@ -752,7 +749,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Tickets Table -->
         <div class="card">
             <div class="card-header">
@@ -785,7 +781,6 @@
             </div>
         </div>
     </div>
-
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -799,7 +794,6 @@
             </div>
         </div>
     </footer>
-
     <!-- View Ticket Modal -->
     <div class="modal fade" id="viewTicketModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -867,7 +861,6 @@
             </div>
         </div>
     </div>
-
     <!-- Edit Ticket Modal -->
     <div class="modal fade" id="editTicketModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -929,23 +922,19 @@
             </div>
         </div>
     </div>
-
     <!-- Notification -->
     <div id="notification" class="notification">
         <i class="bi bi-check-circle-fill"></i>
         <span id="notificationText">Action completed successfully!</span>
     </div>
-
     <!-- Theme Toggle Button -->
     <button class="theme-toggle" id="themeToggle">
         <i class="bi bi-moon-fill"></i>
     </button>
-
     <!-- Floating Action Button -->
     <button class="floating-action-btn pulse" id="addTicketFab">
         <i class="bi bi-plus-lg"></i>
     </button>
-
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1452,7 +1441,7 @@
             const range = end - start;
             const minTimer = 50;
             let stepTime = Math.abs(Math.floor(duration / range));
-            stepTime = Math.max(stepTime, minTimer);
+            stepTime = Math.max(stepTimer, minTimer);
             const startTime = new Date().getTime();
             const endTime = startTime + duration;
             
@@ -2036,3 +2025,8 @@
     </script>
 </body>
 </html>
+"""
+
+file_path = "/mnt/data/CrispyChicken_Dashboard_v2.html"
+with open(file_path, "w", encoding="utf-8") as f:
+    f.write(html_content)
